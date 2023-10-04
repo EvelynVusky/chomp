@@ -56,14 +56,6 @@ rule token = parse
 | "void"   { VOID }
 | "char"   { CHAR }
 
-(*
-  int[]
-  list[int]
-  list(int)
-  list<int>
-  list int
- *)
-
 (* literals *)
 | "{{" (bins as lxm) "}}"   { BINLITERAL(lxm) } (* Binary literals *)
 | '\'' (_ as c) '\''        { CHARLIT(c) }      (* char literal*)
