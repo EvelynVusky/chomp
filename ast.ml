@@ -5,7 +5,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not | Binnot
 
-type typ = Int | Bool | Void | Char | List of typ
+type typ = Int | Bool | Void | Char | List of typ | Bit | Nibble | Byte | Word
 
 type bind = typ * string
 
@@ -21,6 +21,10 @@ type expr =
   | Call of string * expr list
   | List of expr list
   | Noexpr
+  | Bit of Binlit
+  | Nibble of Binlit
+  | Byte of BinLit
+  | Word of BinLit
 
 type stmt =
     Block of stmt list

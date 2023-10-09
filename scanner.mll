@@ -55,6 +55,10 @@ rule token = parse
 | "bool"   { BOOL }
 | "void"   { VOID }
 | "char"   { CHAR }
+| "bit"    { BIT  }
+| "nibble" { NIBBLE  }
+| "byte"   { BYTE  }
+| "word"   { WORD  }
 
 (* literals *)
 | "{{" (bins as lxm) "}}"   { BINLITERAL(lxm) } (* Binary literals *)

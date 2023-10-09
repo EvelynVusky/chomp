@@ -7,6 +7,7 @@
 %token RETURN IF ELSE FOR WHILE INT BOOL VOID LIST
 %token LBRACK RBRACK
 %token BINOR BINAND LSHIFT RSHIFT CONCAT BINXOR BINNOT
+%token BIT NIBBLE BYTE WORD
 %token <string> BINLITERAL 
 %token <char> CHARLIT
 %token <int> LITERAL
@@ -92,6 +93,10 @@ expr:
   | CHARLIT          { CharLit($1)            }
   | LBRACK l1 = list_fields RBRACK { List (l1) }
   | BINLITERAL       { BinLit ($1)            }
+  | BIT              { BinLit ($1)            }
+  | NIBBLE           { BinLit ($1)            }
+  | BYTE             { BinLit ($1)            }
+  | WORD             { BinLit ($1)            }
   | BINNOT expr      { Unop(Binnot, $2)       }
   | expr BINAND expr { Binop($1, Binand, $3)  } 
   | expr LSHIFT expr { Binop($1, Lshift, $3)  }
