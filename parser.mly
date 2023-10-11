@@ -5,8 +5,9 @@
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA PLUS MINUS TIMES DIVIDE ASSIGN
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR
 %token RETURN IF ELSE FOR WHILE INT BOOL VOID LIST
-%token LBRACK RBRACK CHAR
+%token LBRACK RBRACK
 %token BINOR BINAND LSHIFT RSHIFT CONCAT BINXOR BINNOT
+%token BIT NIBBLE BYTE WORD
 %token <string> BINLITERAL 
 %token <char> CHARLIT
 %token <int> LITERAL
@@ -33,54 +34,53 @@
 program:
   decls EOF { $1 }
 
-// decls:
-//    /* nothing */ { ([], [])               }
-//  | decls vdecl { (($2 :: fst $1), snd $1) }
-//  | decls fdecl { (fst $1, ($2 :: snd $1)) }
+decls:
+   /* nothing */ { ([], [])               }
+ | decls vdecl { (($2 :: fst $1), snd $1) }
+ | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
-// fdecl:
-//    typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-//      { { typ = $1;
-// 	 fname = $2;
-// 	 formals = List.rev $4;
-// 	 locals = List.rev $7;
-// 	 body = List.rev $8 } }
+fdecl:
+  typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    { { typ = $1;
+        fname = $2;
+        formals = List.rev $4;
+        locals = List.rev $7;
+        body = List.rev $8 } }
 
-// formals_opt:
-//     /* nothing */ { [] }
-//   | formal_list   { $1 }
+formals_opt:
+    /* nothing */ { [] }
+  | formal_list   { $1 }
 
-// formal_list:
-//     typ ID                   { [($1,$2)]     }
-//   | formal_list COMMA typ ID { ($3,$4) :: $1 }
+formal_list:
+    typ ID                   { [($1,$2)]     }
+  | formal_list COMMA typ ID { ($3,$4) :: $1 }
 
 typ:
     INT   { Int   }
   | BOOL  { Bool  }
-  | FLOAT { Float }
   | VOID  { Void  }
   | LIST typ { List $2 }
 
-// vdecl_list:
-//     /* nothing */    { [] }
-//   | vdecl_list vdecl { $2 :: $1 }
+vdecl_list:
+    /* nothing */    { [] }
+  | vdecl_list vdecl { $2 :: $1 }
 
-// vdecl:
-//    typ ID SEMI { ($1, $2) }
+vdecl:
+   typ ID SEMI { ($1, $2) }
 
-// stmt_list:
-//     /* nothing */  { [] }
-//   | stmt_list stmt { $2 :: $1 }
+stmt_list:
+    /* nothing */  { [] }
+  | stmt_list stmt { $2 :: $1 }
 
-// stmt:
-//     expr SEMI                               { Expr $1               }
-//   | RETURN expr_opt SEMI                    { Return $2             }
-//   | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
-//   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
-//   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7)        }
-//   | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt
-//                                             { For($3, $5, $7, $9)   }
-//   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
+stmt:
+    expr SEMI                               { Expr $1               }
+  | RETURN expr_opt SEMI                    { Return $2             }
+  | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
+  | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
+  | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7)        }
+  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt
+                                            { For($3, $5, $7, $9)   }
+  | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -90,9 +90,13 @@ expr:
     LITERAL          { Literal($1)            }
   | BLIT             { BoolLit($1)            }
   | ID               { Id($1)                 }
-  | CHAR             { CharLit($1)            }
+  | CHARLIT          { CharLit($1)            }
   | LBRACK l1 = list_fields RBRACK { List (l1) }
-  | BINLITERAL expr  { BinLit ($1)            }
+  | BINLITERAL       { BinLit ($1)            }
+  | BIT              { BinLit ($1)            }
+  | NIBBLE           { BinLit ($1)            }
+  | BYTE             { BinLit ($1)            }
+  | WORD             { BinLit ($1)            }
   | BINNOT expr      { Unop(Binnot, $2)       }
   | expr BINAND expr { Binop($1, Binand, $3)  } 
   | expr LSHIFT expr { Binop($1, Lshift, $3)  }
@@ -122,7 +126,7 @@ list_fields:
     l1 = separated_list(COMMA, expr) { l1 }
 
 args_opt:
-    /* nothing */ { [] }
+  /* nothing */ { [] }
   | args_list  { List.rev $1 }
 
 args_list:
