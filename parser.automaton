@@ -1,0 +1,2888 @@
+State 0:
+## Known stack suffix:
+##
+## LR(1) items:
+program' -> . program [ # ]
+## Transitions:
+-- On program shift to state 1
+-- On decls shift to state 2
+## Reductions:
+-- On VOID LIST INT EOF BOOL
+--   reduce production decls ->
+
+State 1:
+## Known stack suffix:
+## program
+## LR(1) items:
+program' -> program . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   accept program
+
+State 2:
+## Known stack suffix:
+## decls
+## LR(1) items:
+decls -> decls . vdecl [ VOID LIST INT EOF BOOL ]
+decls -> decls . fdecl [ VOID LIST INT EOF BOOL ]
+program -> decls . EOF [ # ]
+## Transitions:
+-- On VOID shift to state 3
+-- On LIST shift to state 4
+-- On INT shift to state 5
+-- On EOF shift to state 8
+-- On BOOL shift to state 6
+-- On vdecl shift to state 9
+-- On typ shift to state 10
+-- On fdecl shift to state 133
+## Reductions:
+
+State 3:
+## Known stack suffix:
+## VOID
+## LR(1) items:
+typ -> VOID . [ ID ]
+## Transitions:
+## Reductions:
+-- On ID
+--   reduce production typ -> VOID
+
+State 4:
+## Known stack suffix:
+## LIST
+## LR(1) items:
+typ -> LIST . typ [ ID ]
+## Transitions:
+-- On VOID shift to state 3
+-- On LIST shift to state 4
+-- On INT shift to state 5
+-- On BOOL shift to state 6
+-- On typ shift to state 7
+## Reductions:
+
+State 5:
+## Known stack suffix:
+## INT
+## LR(1) items:
+typ -> INT . [ ID ]
+## Transitions:
+## Reductions:
+-- On ID
+--   reduce production typ -> INT
+
+State 6:
+## Known stack suffix:
+## BOOL
+## LR(1) items:
+typ -> BOOL . [ ID ]
+## Transitions:
+## Reductions:
+-- On ID
+--   reduce production typ -> BOOL
+
+State 7:
+## Known stack suffix:
+## LIST typ
+## LR(1) items:
+typ -> LIST typ . [ ID ]
+## Transitions:
+## Reductions:
+-- On ID
+--   reduce production typ -> LIST typ
+
+State 8:
+## Known stack suffix:
+## decls EOF
+## LR(1) items:
+program -> decls EOF . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   reduce production program -> decls EOF
+
+State 9:
+## Known stack suffix:
+## decls vdecl
+## LR(1) items:
+decls -> decls vdecl . [ VOID LIST INT EOF BOOL ]
+## Transitions:
+## Reductions:
+-- On VOID LIST INT EOF BOOL
+--   reduce production decls -> decls vdecl
+
+State 10:
+## Known stack suffix:
+## typ
+## LR(1) items:
+fdecl -> typ . ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE [ VOID LIST INT EOF BOOL ]
+vdecl -> typ . ID SEMI [ VOID LIST INT EOF BOOL ]
+vdecl -> typ . ID ASSIGN expr SEMI [ VOID LIST INT EOF BOOL ]
+## Transitions:
+-- On ID shift to state 11
+## Reductions:
+
+State 11:
+## Known stack suffix:
+## typ ID
+## LR(1) items:
+fdecl -> typ ID . LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE [ VOID LIST INT EOF BOOL ]
+vdecl -> typ ID . SEMI [ VOID LIST INT EOF BOOL ]
+vdecl -> typ ID . ASSIGN expr SEMI [ VOID LIST INT EOF BOOL ]
+## Transitions:
+-- On SEMI shift to state 12
+-- On LPAREN shift to state 13
+-- On ASSIGN shift to state 117
+## Reductions:
+
+State 12:
+## Known stack suffix:
+## typ ID SEMI
+## LR(1) items:
+vdecl -> typ ID SEMI . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR EOF ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR EOF ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production vdecl -> typ ID SEMI
+
+State 13:
+## Known stack suffix:
+## typ ID LPAREN
+## LR(1) items:
+fdecl -> typ ID LPAREN . formals_opt RPAREN LBRACE stmt_list RBRACE [ VOID LIST INT EOF BOOL ]
+## Transitions:
+-- On VOID shift to state 3
+-- On LIST shift to state 4
+-- On INT shift to state 5
+-- On BOOL shift to state 6
+-- On typ shift to state 14
+-- On formals_opt shift to state 16
+-- On formal_list shift to state 129
+## Reductions:
+-- On RPAREN
+--   reduce production formals_opt ->
+
+State 14:
+## Known stack suffix:
+## typ
+## LR(1) items:
+formal_list -> typ . ID [ RPAREN COMMA ]
+## Transitions:
+-- On ID shift to state 15
+## Reductions:
+
+State 15:
+## Known stack suffix:
+## typ ID
+## LR(1) items:
+formal_list -> typ ID . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
+-- On RPAREN COMMA
+--   reduce production formal_list -> typ ID
+
+State 16:
+## Known stack suffix:
+## typ ID LPAREN formals_opt
+## LR(1) items:
+fdecl -> typ ID LPAREN formals_opt . RPAREN LBRACE stmt_list RBRACE [ VOID LIST INT EOF BOOL ]
+## Transitions:
+-- On RPAREN shift to state 17
+## Reductions:
+
+State 17:
+## Known stack suffix:
+## typ ID LPAREN formals_opt RPAREN
+## LR(1) items:
+fdecl -> typ ID LPAREN formals_opt RPAREN . LBRACE stmt_list RBRACE [ VOID LIST INT EOF BOOL ]
+## Transitions:
+-- On LBRACE shift to state 18
+## Reductions:
+
+State 18:
+## Known stack suffix:
+## typ ID LPAREN formals_opt RPAREN LBRACE
+## LR(1) items:
+fdecl -> typ ID LPAREN formals_opt RPAREN LBRACE . stmt_list RBRACE [ VOID LIST INT EOF BOOL ]
+## Transitions:
+-- On stmt_list shift to state 19
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt_list ->
+
+State 19:
+## Known stack suffix:
+## typ ID LPAREN formals_opt RPAREN LBRACE stmt_list
+## LR(1) items:
+fdecl -> typ ID LPAREN formals_opt RPAREN LBRACE stmt_list . RBRACE [ VOID LIST INT EOF BOOL ]
+stmt_list -> stmt_list . stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On WHILE shift to state 21
+-- On VOID shift to state 3
+-- On RETURN shift to state 95
+-- On RBRACE shift to state 128
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LIST shift to state 4
+-- On LBRACK shift to state 28
+-- On LBRACE shift to state 99
+-- On INT shift to state 5
+-- On IF shift to state 102
+-- On ID shift to state 29
+-- On FOR shift to state 106
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BOOL shift to state 6
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On vdecl shift to state 114
+-- On typ shift to state 115
+-- On stmt shift to state 126
+-- On expr shift to state 121
+## Reductions:
+
+State 20:
+## Known stack suffix:
+## WORD
+## LR(1) items:
+expr -> WORD . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> WORD
+
+State 21:
+## Known stack suffix:
+## WHILE
+## LR(1) items:
+stmt -> WHILE . LPAREN expr RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On LPAREN shift to state 22
+## Reductions:
+
+State 22:
+## Known stack suffix:
+## WHILE LPAREN
+## LR(1) items:
+stmt -> WHILE LPAREN . expr RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 93
+## Reductions:
+
+State 23:
+## Known stack suffix:
+## NOT
+## LR(1) items:
+expr -> NOT . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 92
+## Reductions:
+
+State 24:
+## Known stack suffix:
+## NIBBLE
+## LR(1) items:
+expr -> NIBBLE . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> NIBBLE
+
+State 25:
+## Known stack suffix:
+## MINUS
+## LR(1) items:
+expr -> MINUS . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 91
+## Reductions:
+
+State 26:
+## Known stack suffix:
+## LPAREN
+## LR(1) items:
+expr -> LPAREN . expr RPAREN [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 89
+## Reductions:
+
+State 27:
+## Known stack suffix:
+## LITERAL
+## LR(1) items:
+expr -> LITERAL . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> LITERAL
+
+State 28:
+## Known stack suffix:
+## LBRACK
+## LR(1) items:
+expr -> LBRACK . list_fields RBRACK [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On separated_nonempty_list(COMMA,expr) shift to state 82
+-- On loption(separated_nonempty_list(COMMA,expr)) shift to state 83
+-- On list_fields shift to state 84
+-- On expr shift to state 86
+## Reductions:
+-- On RBRACK
+--   reduce production loption(separated_nonempty_list(COMMA,expr)) ->
+
+State 29:
+## Known stack suffix:
+## ID
+## LR(1) items:
+expr -> ID . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> ID . ASSIGN expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> ID . LPAREN args_opt RPAREN [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On LPAREN shift to state 30
+-- On ASSIGN shift to state 80
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> ID
+
+State 30:
+## Known stack suffix:
+## ID LPAREN
+## LR(1) items:
+expr -> ID LPAREN . args_opt RPAREN [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 38
+-- On args_opt shift to state 75
+-- On args_list shift to state 77
+## Reductions:
+-- On RPAREN
+--   reduce production args_opt ->
+
+State 31:
+## Known stack suffix:
+## CHARLIT
+## LR(1) items:
+expr -> CHARLIT . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> CHARLIT
+
+State 32:
+## Known stack suffix:
+## BYTE
+## LR(1) items:
+expr -> BYTE . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> BYTE
+
+State 33:
+## Known stack suffix:
+## BLIT
+## LR(1) items:
+expr -> BLIT . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> BLIT
+
+State 34:
+## Known stack suffix:
+## BIT
+## LR(1) items:
+expr -> BIT . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> BIT
+
+State 35:
+## Known stack suffix:
+## BINNOT
+## LR(1) items:
+expr -> BINNOT . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 37
+## Reductions:
+
+State 36:
+## Known stack suffix:
+## BINLITERAL
+## LR(1) items:
+expr -> BINLITERAL . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> BINLITERAL
+
+State 37:
+## Known stack suffix:
+## BINNOT expr
+## LR(1) items:
+expr -> BINNOT expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> BINNOT expr
+
+State 38:
+## Known stack suffix:
+## expr
+## LR(1) items:
+args_list -> expr . [ RPAREN COMMA ]
+expr -> expr . BINAND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+-- On RPAREN COMMA
+--   reduce production args_list -> expr
+
+State 39:
+## Known stack suffix:
+## expr TIMES
+## LR(1) items:
+expr -> expr TIMES . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 40
+## Reductions:
+
+State 40:
+## Known stack suffix:
+## expr TIMES expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr TIMES expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr TIMES expr
+
+State 41:
+## Known stack suffix:
+## expr RSHIFT
+## LR(1) items:
+expr -> expr RSHIFT . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 42
+## Reductions:
+
+State 42:
+## Known stack suffix:
+## expr RSHIFT expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr RSHIFT expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On DIVIDE shift to state 43
+## Reductions:
+-- On SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr RSHIFT expr
+
+State 43:
+## Known stack suffix:
+## expr DIVIDE
+## LR(1) items:
+expr -> expr DIVIDE . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 44
+## Reductions:
+
+State 44:
+## Known stack suffix:
+## expr DIVIDE expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr DIVIDE expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr DIVIDE expr
+
+State 45:
+## Known stack suffix:
+## expr PLUS
+## LR(1) items:
+expr -> expr PLUS . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 46
+## Reductions:
+
+State 46:
+## Known stack suffix:
+## expr PLUS expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr PLUS expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On DIVIDE shift to state 43
+## Reductions:
+-- On SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr PLUS expr
+
+State 47:
+## Known stack suffix:
+## expr OR
+## LR(1) items:
+expr -> expr OR . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 48
+## Reductions:
+
+State 48:
+## Known stack suffix:
+## expr OR expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr OR expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+-- On SEMI RPAREN RBRACK OR COMMA BINXOR BINOR
+--   reduce production expr -> expr OR expr
+
+State 49:
+## Known stack suffix:
+## expr NEQ
+## LR(1) items:
+expr -> expr NEQ . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 50
+## Reductions:
+
+State 50:
+## Known stack suffix:
+## expr NEQ expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr NEQ expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+## Reductions:
+-- On SEMI RPAREN RBRACK OR NEQ EQ COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr NEQ expr
+
+State 51:
+## Known stack suffix:
+## expr MINUS
+## LR(1) items:
+expr -> expr MINUS . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 52
+## Reductions:
+
+State 52:
+## Known stack suffix:
+## expr MINUS expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr MINUS expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On DIVIDE shift to state 43
+## Reductions:
+-- On SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr MINUS expr
+
+State 53:
+## Known stack suffix:
+## expr LT
+## LR(1) items:
+expr -> expr LT . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 54
+## Reductions:
+
+State 54:
+## Known stack suffix:
+## expr LT expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr LT expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On MINUS shift to state 51
+-- On LSHIFT shift to state 55
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+## Reductions:
+-- On SEMI RPAREN RBRACK OR NEQ LT LEQ GT GEQ EQ COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr LT expr
+
+State 55:
+## Known stack suffix:
+## expr LSHIFT
+## LR(1) items:
+expr -> expr LSHIFT . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 56
+## Reductions:
+
+State 56:
+## Known stack suffix:
+## expr LSHIFT expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr LSHIFT expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On DIVIDE shift to state 43
+## Reductions:
+-- On SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr LSHIFT expr
+
+State 57:
+## Known stack suffix:
+## expr CONCAT
+## LR(1) items:
+expr -> expr CONCAT . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 58
+## Reductions:
+
+State 58:
+## Known stack suffix:
+## expr CONCAT expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr CONCAT expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On DIVIDE shift to state 43
+## Reductions:
+-- On SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr CONCAT expr
+
+State 59:
+## Known stack suffix:
+## expr LEQ
+## LR(1) items:
+expr -> expr LEQ . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 60
+## Reductions:
+
+State 60:
+## Known stack suffix:
+## expr LEQ expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr LEQ expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On MINUS shift to state 51
+-- On LSHIFT shift to state 55
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+## Reductions:
+-- On SEMI RPAREN RBRACK OR NEQ LT LEQ GT GEQ EQ COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr LEQ expr
+
+State 61:
+## Known stack suffix:
+## expr GT
+## LR(1) items:
+expr -> expr GT . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 62
+## Reductions:
+
+State 62:
+## Known stack suffix:
+## expr GT expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr GT expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On MINUS shift to state 51
+-- On LSHIFT shift to state 55
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+## Reductions:
+-- On SEMI RPAREN RBRACK OR NEQ LT LEQ GT GEQ EQ COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr GT expr
+
+State 63:
+## Known stack suffix:
+## expr GEQ
+## LR(1) items:
+expr -> expr GEQ . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 64
+## Reductions:
+
+State 64:
+## Known stack suffix:
+## expr GEQ expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr GEQ expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On MINUS shift to state 51
+-- On LSHIFT shift to state 55
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+## Reductions:
+-- On SEMI RPAREN RBRACK OR NEQ LT LEQ GT GEQ EQ COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr GEQ expr
+
+State 65:
+## Known stack suffix:
+## expr EQ
+## LR(1) items:
+expr -> expr EQ . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 66
+## Reductions:
+
+State 66:
+## Known stack suffix:
+## expr EQ expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr EQ expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+## Reductions:
+-- On SEMI RPAREN RBRACK OR NEQ EQ COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr EQ expr
+
+State 67:
+## Known stack suffix:
+## expr BINAND
+## LR(1) items:
+expr -> expr BINAND . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 68
+## Reductions:
+
+State 68:
+## Known stack suffix:
+## expr BINAND expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr BINAND expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+## Reductions:
+-- On SEMI RPAREN RBRACK OR COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr BINAND expr
+
+State 69:
+## Known stack suffix:
+## expr AND
+## LR(1) items:
+expr -> expr AND . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 70
+## Reductions:
+
+State 70:
+## Known stack suffix:
+## expr AND expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr AND expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+## Reductions:
+-- On SEMI RPAREN RBRACK OR COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> expr AND expr
+
+State 71:
+## Known stack suffix:
+## expr BINXOR
+## LR(1) items:
+expr -> expr BINXOR . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 72
+## Reductions:
+
+State 72:
+## Known stack suffix:
+## expr BINXOR expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr BINXOR expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+-- On SEMI RPAREN RBRACK OR COMMA BINXOR BINOR
+--   reduce production expr -> expr BINXOR expr
+
+State 73:
+## Known stack suffix:
+## expr BINOR
+## LR(1) items:
+expr -> expr BINOR . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 74
+## Reductions:
+
+State 74:
+## Known stack suffix:
+## expr BINOR expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr BINOR expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+-- On SEMI RPAREN RBRACK OR COMMA BINXOR BINOR
+--   reduce production expr -> expr BINOR expr
+
+State 75:
+## Known stack suffix:
+## ID LPAREN args_opt
+## LR(1) items:
+expr -> ID LPAREN args_opt . RPAREN [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On RPAREN shift to state 76
+## Reductions:
+
+State 76:
+## Known stack suffix:
+## ID LPAREN args_opt RPAREN
+## LR(1) items:
+expr -> ID LPAREN args_opt RPAREN . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> ID LPAREN args_opt RPAREN
+
+State 77:
+## Known stack suffix:
+## args_list
+## LR(1) items:
+args_list -> args_list . COMMA expr [ RPAREN COMMA ]
+args_opt -> args_list . [ RPAREN ]
+## Transitions:
+-- On COMMA shift to state 78
+## Reductions:
+-- On RPAREN
+--   reduce production args_opt -> args_list
+
+State 78:
+## Known stack suffix:
+## args_list COMMA
+## LR(1) items:
+args_list -> args_list COMMA . expr [ RPAREN COMMA ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 79
+## Reductions:
+
+State 79:
+## Known stack suffix:
+## args_list COMMA expr
+## LR(1) items:
+args_list -> args_list COMMA expr . [ RPAREN COMMA ]
+expr -> expr . BINAND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+-- On RPAREN COMMA
+--   reduce production args_list -> args_list COMMA expr
+
+State 80:
+## Known stack suffix:
+## ID ASSIGN
+## LR(1) items:
+expr -> ID ASSIGN . expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 81
+## Reductions:
+
+State 81:
+## Known stack suffix:
+## ID ASSIGN expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> ID ASSIGN expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+-- On SEMI RPAREN RBRACK COMMA
+--   reduce production expr -> ID ASSIGN expr
+
+State 82:
+## Known stack suffix:
+## separated_nonempty_list(COMMA,expr)
+## LR(1) items:
+loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr) . [ RBRACK ]
+## Transitions:
+## Reductions:
+-- On RBRACK
+--   reduce production loption(separated_nonempty_list(COMMA,expr)) -> separated_nonempty_list(COMMA,expr)
+
+State 83:
+## Known stack suffix:
+## loption(separated_nonempty_list(COMMA,expr))
+## LR(1) items:
+list_fields -> loption(separated_nonempty_list(COMMA,expr)) . [ RBRACK ]
+## Transitions:
+## Reductions:
+-- On RBRACK
+--   reduce production list_fields -> loption(separated_nonempty_list(COMMA,expr))
+
+State 84:
+## Known stack suffix:
+## LBRACK list_fields
+## LR(1) items:
+expr -> LBRACK list_fields . RBRACK [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On RBRACK shift to state 85
+## Reductions:
+
+State 85:
+## Known stack suffix:
+## LBRACK list_fields RBRACK
+## LR(1) items:
+expr -> LBRACK list_fields RBRACK . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> LBRACK list_fields RBRACK
+
+State 86:
+## Known stack suffix:
+## expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES RSHIFT RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+separated_nonempty_list(COMMA,expr) -> expr . [ RBRACK ]
+separated_nonempty_list(COMMA,expr) -> expr . COMMA separated_nonempty_list(COMMA,expr) [ RBRACK ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On COMMA shift to state 87
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+-- On RBRACK
+--   reduce production separated_nonempty_list(COMMA,expr) -> expr
+
+State 87:
+## Known stack suffix:
+## expr COMMA
+## LR(1) items:
+separated_nonempty_list(COMMA,expr) -> expr COMMA . separated_nonempty_list(COMMA,expr) [ RBRACK ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On separated_nonempty_list(COMMA,expr) shift to state 88
+-- On expr shift to state 86
+## Reductions:
+
+State 88:
+## Known stack suffix:
+## expr COMMA separated_nonempty_list(COMMA,expr)
+## LR(1) items:
+separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr) . [ RBRACK ]
+## Transitions:
+## Reductions:
+-- On RBRACK
+--   reduce production separated_nonempty_list(COMMA,expr) -> expr COMMA separated_nonempty_list(COMMA,expr)
+
+State 89:
+## Known stack suffix:
+## LPAREN expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> LPAREN expr . RPAREN [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On RPAREN shift to state 90
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+
+State 90:
+## Known stack suffix:
+## LPAREN expr RPAREN
+## LR(1) items:
+expr -> LPAREN expr RPAREN . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> LPAREN expr RPAREN
+
+State 91:
+## Known stack suffix:
+## MINUS expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> MINUS expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> MINUS expr
+
+State 92:
+## Known stack suffix:
+## NOT expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+expr -> NOT expr . [ TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND ]
+## Transitions:
+## Reductions:
+-- On TIMES SEMI RSHIFT RPAREN RBRACK PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT COMMA BINXOR BINOR BINAND AND
+--   reduce production expr -> NOT expr
+
+State 93:
+## Known stack suffix:
+## WHILE LPAREN expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+stmt -> WHILE LPAREN expr . RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On RPAREN shift to state 94
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+
+State 94:
+## Known stack suffix:
+## WHILE LPAREN expr RPAREN
+## LR(1) items:
+stmt -> WHILE LPAREN expr RPAREN . stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On WHILE shift to state 21
+-- On VOID shift to state 3
+-- On RETURN shift to state 95
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LIST shift to state 4
+-- On LBRACK shift to state 28
+-- On LBRACE shift to state 99
+-- On INT shift to state 5
+-- On IF shift to state 102
+-- On ID shift to state 29
+-- On FOR shift to state 106
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BOOL shift to state 6
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On vdecl shift to state 114
+-- On typ shift to state 115
+-- On stmt shift to state 127
+-- On expr shift to state 121
+## Reductions:
+
+State 95:
+## Known stack suffix:
+## RETURN
+## LR(1) items:
+stmt -> RETURN . expr_opt SEMI [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr_opt shift to state 96
+-- On expr shift to state 98
+## Reductions:
+-- On SEMI
+--   reduce production expr_opt ->
+
+State 96:
+## Known stack suffix:
+## RETURN expr_opt
+## LR(1) items:
+stmt -> RETURN expr_opt . SEMI [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On SEMI shift to state 97
+## Reductions:
+
+State 97:
+## Known stack suffix:
+## RETURN expr_opt SEMI
+## LR(1) items:
+stmt -> RETURN expr_opt SEMI . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt -> RETURN expr_opt SEMI
+
+State 98:
+## Known stack suffix:
+## expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr_opt -> expr . [ SEMI RPAREN ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+-- On SEMI RPAREN
+--   reduce production expr_opt -> expr
+
+State 99:
+## Known stack suffix:
+## LBRACE
+## LR(1) items:
+stmt -> LBRACE . stmt_list RBRACE [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On stmt_list shift to state 100
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt_list ->
+
+State 100:
+## Known stack suffix:
+## LBRACE stmt_list
+## LR(1) items:
+stmt -> LBRACE stmt_list . RBRACE [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+stmt_list -> stmt_list . stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On WHILE shift to state 21
+-- On VOID shift to state 3
+-- On RETURN shift to state 95
+-- On RBRACE shift to state 101
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LIST shift to state 4
+-- On LBRACK shift to state 28
+-- On LBRACE shift to state 99
+-- On INT shift to state 5
+-- On IF shift to state 102
+-- On ID shift to state 29
+-- On FOR shift to state 106
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BOOL shift to state 6
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On vdecl shift to state 114
+-- On typ shift to state 115
+-- On stmt shift to state 126
+-- On expr shift to state 121
+## Reductions:
+
+State 101:
+## Known stack suffix:
+## LBRACE stmt_list RBRACE
+## LR(1) items:
+stmt -> LBRACE stmt_list RBRACE . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt -> LBRACE stmt_list RBRACE
+
+State 102:
+## Known stack suffix:
+## IF
+## LR(1) items:
+stmt -> IF . LPAREN expr RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+stmt -> IF . LPAREN expr RPAREN stmt ELSE stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On LPAREN shift to state 103
+## Reductions:
+
+State 103:
+## Known stack suffix:
+## IF LPAREN
+## LR(1) items:
+stmt -> IF LPAREN . expr RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+stmt -> IF LPAREN . expr RPAREN stmt ELSE stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 104
+## Reductions:
+
+State 104:
+## Known stack suffix:
+## IF LPAREN expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES RSHIFT RPAREN PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+stmt -> IF LPAREN expr . RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+stmt -> IF LPAREN expr . RPAREN stmt ELSE stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On RSHIFT shift to state 41
+-- On RPAREN shift to state 105
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+
+State 105:
+## Known stack suffix:
+## IF LPAREN expr RPAREN
+## LR(1) items:
+stmt -> IF LPAREN expr RPAREN . stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+stmt -> IF LPAREN expr RPAREN . stmt ELSE stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On WHILE shift to state 21
+-- On VOID shift to state 3
+-- On RETURN shift to state 95
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LIST shift to state 4
+-- On LBRACK shift to state 28
+-- On LBRACE shift to state 99
+-- On INT shift to state 5
+-- On IF shift to state 102
+-- On ID shift to state 29
+-- On FOR shift to state 106
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BOOL shift to state 6
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On vdecl shift to state 114
+-- On typ shift to state 115
+-- On stmt shift to state 123
+-- On expr shift to state 121
+## Reductions:
+
+State 106:
+## Known stack suffix:
+## FOR
+## LR(1) items:
+stmt -> FOR . LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On LPAREN shift to state 107
+## Reductions:
+
+State 107:
+## Known stack suffix:
+## FOR LPAREN
+## LR(1) items:
+stmt -> FOR LPAREN . expr_opt SEMI expr SEMI expr_opt RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr_opt shift to state 108
+-- On expr shift to state 98
+## Reductions:
+-- On SEMI
+--   reduce production expr_opt ->
+
+State 108:
+## Known stack suffix:
+## FOR LPAREN expr_opt
+## LR(1) items:
+stmt -> FOR LPAREN expr_opt . SEMI expr SEMI expr_opt RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On SEMI shift to state 109
+## Reductions:
+
+State 109:
+## Known stack suffix:
+## FOR LPAREN expr_opt SEMI
+## LR(1) items:
+stmt -> FOR LPAREN expr_opt SEMI . expr SEMI expr_opt RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 110
+## Reductions:
+
+State 110:
+## Known stack suffix:
+## FOR LPAREN expr_opt SEMI expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+stmt -> FOR LPAREN expr_opt SEMI expr . SEMI expr_opt RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On SEMI shift to state 111
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+
+State 111:
+## Known stack suffix:
+## FOR LPAREN expr_opt SEMI expr SEMI
+## LR(1) items:
+stmt -> FOR LPAREN expr_opt SEMI expr SEMI . expr_opt RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr_opt shift to state 112
+-- On expr shift to state 98
+## Reductions:
+-- On RPAREN
+--   reduce production expr_opt ->
+
+State 112:
+## Known stack suffix:
+## FOR LPAREN expr_opt SEMI expr SEMI expr_opt
+## LR(1) items:
+stmt -> FOR LPAREN expr_opt SEMI expr SEMI expr_opt . RPAREN stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On RPAREN shift to state 113
+## Reductions:
+
+State 113:
+## Known stack suffix:
+## FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN
+## LR(1) items:
+stmt -> FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN . stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On WHILE shift to state 21
+-- On VOID shift to state 3
+-- On RETURN shift to state 95
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LIST shift to state 4
+-- On LBRACK shift to state 28
+-- On LBRACE shift to state 99
+-- On INT shift to state 5
+-- On IF shift to state 102
+-- On ID shift to state 29
+-- On FOR shift to state 106
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BOOL shift to state 6
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On vdecl shift to state 114
+-- On typ shift to state 115
+-- On stmt shift to state 120
+-- On expr shift to state 121
+## Reductions:
+
+State 114:
+## Known stack suffix:
+## vdecl
+## LR(1) items:
+stmt -> vdecl . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt -> vdecl
+
+State 115:
+## Known stack suffix:
+## typ
+## LR(1) items:
+vdecl -> typ . ID SEMI [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+vdecl -> typ . ID ASSIGN expr SEMI [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On ID shift to state 116
+## Reductions:
+
+State 116:
+## Known stack suffix:
+## typ ID
+## LR(1) items:
+vdecl -> typ ID . SEMI [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+vdecl -> typ ID . ASSIGN expr SEMI [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On SEMI shift to state 12
+-- On ASSIGN shift to state 117
+## Reductions:
+
+State 117:
+## Known stack suffix:
+## typ ID ASSIGN
+## LR(1) items:
+vdecl -> typ ID ASSIGN . expr SEMI [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR EOF ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LBRACK shift to state 28
+-- On ID shift to state 29
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On expr shift to state 118
+## Reductions:
+
+State 118:
+## Known stack suffix:
+## typ ID ASSIGN expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+vdecl -> typ ID ASSIGN expr . SEMI [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR EOF ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On SEMI shift to state 119
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+
+State 119:
+## Known stack suffix:
+## typ ID ASSIGN expr SEMI
+## LR(1) items:
+vdecl -> typ ID ASSIGN expr SEMI . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR EOF ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR EOF ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production vdecl -> typ ID ASSIGN expr SEMI
+
+State 120:
+## Known stack suffix:
+## FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt
+## LR(1) items:
+stmt -> FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt -> FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt
+
+State 121:
+## Known stack suffix:
+## expr
+## LR(1) items:
+expr -> expr . BINAND expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LSHIFT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . RSHIFT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . CONCAT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINXOR expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . BINOR expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . PLUS expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . MINUS expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . TIMES expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . DIVIDE expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . EQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . NEQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . LEQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GT expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . GEQ expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . AND expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+expr -> expr . OR expr [ TIMES SEMI RSHIFT PLUS OR NEQ MINUS LT LSHIFT LEQ GT GEQ EQ DIVIDE CONCAT BINXOR BINOR BINAND AND ]
+stmt -> expr . SEMI [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On TIMES shift to state 39
+-- On SEMI shift to state 122
+-- On RSHIFT shift to state 41
+-- On PLUS shift to state 45
+-- On OR shift to state 47
+-- On NEQ shift to state 49
+-- On MINUS shift to state 51
+-- On LT shift to state 53
+-- On LSHIFT shift to state 55
+-- On LEQ shift to state 59
+-- On GT shift to state 61
+-- On GEQ shift to state 63
+-- On EQ shift to state 65
+-- On DIVIDE shift to state 43
+-- On CONCAT shift to state 57
+-- On BINXOR shift to state 71
+-- On BINOR shift to state 73
+-- On BINAND shift to state 67
+-- On AND shift to state 69
+## Reductions:
+
+State 122:
+## Known stack suffix:
+## expr SEMI
+## LR(1) items:
+stmt -> expr SEMI . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt -> expr SEMI
+
+State 123:
+## Known stack suffix:
+## IF LPAREN expr RPAREN stmt
+## LR(1) items:
+stmt -> IF LPAREN expr RPAREN stmt . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+stmt -> IF LPAREN expr RPAREN stmt . ELSE stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On ELSE shift to state 124
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt -> IF LPAREN expr RPAREN stmt
+
+State 124:
+## Known stack suffix:
+## IF LPAREN expr RPAREN stmt ELSE
+## LR(1) items:
+stmt -> IF LPAREN expr RPAREN stmt ELSE . stmt [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+-- On WORD shift to state 20
+-- On WHILE shift to state 21
+-- On VOID shift to state 3
+-- On RETURN shift to state 95
+-- On NOT shift to state 23
+-- On NIBBLE shift to state 24
+-- On MINUS shift to state 25
+-- On LPAREN shift to state 26
+-- On LITERAL shift to state 27
+-- On LIST shift to state 4
+-- On LBRACK shift to state 28
+-- On LBRACE shift to state 99
+-- On INT shift to state 5
+-- On IF shift to state 102
+-- On ID shift to state 29
+-- On FOR shift to state 106
+-- On CHARLIT shift to state 31
+-- On BYTE shift to state 32
+-- On BOOL shift to state 6
+-- On BLIT shift to state 33
+-- On BIT shift to state 34
+-- On BINNOT shift to state 35
+-- On BINLITERAL shift to state 36
+-- On vdecl shift to state 114
+-- On typ shift to state 115
+-- On stmt shift to state 125
+-- On expr shift to state 121
+## Reductions:
+
+State 125:
+## Known stack suffix:
+## IF LPAREN expr RPAREN stmt ELSE stmt
+## LR(1) items:
+stmt -> IF LPAREN expr RPAREN stmt ELSE stmt . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt -> IF LPAREN expr RPAREN stmt ELSE stmt
+
+State 126:
+## Known stack suffix:
+## stmt_list stmt
+## LR(1) items:
+stmt_list -> stmt_list stmt . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt_list -> stmt_list stmt
+
+State 127:
+## Known stack suffix:
+## WHILE LPAREN expr RPAREN stmt
+## LR(1) items:
+stmt -> WHILE LPAREN expr RPAREN stmt . [ WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL ]
+## Transitions:
+## Reductions:
+-- On WORD WHILE VOID RETURN RBRACE NOT NIBBLE MINUS LPAREN LITERAL LIST LBRACK LBRACE INT IF ID FOR ELSE CHARLIT BYTE BOOL BLIT BIT BINNOT BINLITERAL
+--   reduce production stmt -> WHILE LPAREN expr RPAREN stmt
+
+State 128:
+## Known stack suffix:
+## typ ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
+## LR(1) items:
+fdecl -> typ ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE . [ VOID LIST INT EOF BOOL ]
+## Transitions:
+## Reductions:
+-- On VOID LIST INT EOF BOOL
+--   reduce production fdecl -> typ ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
+
+State 129:
+## Known stack suffix:
+## formal_list
+## LR(1) items:
+formal_list -> formal_list . COMMA typ ID [ RPAREN COMMA ]
+formals_opt -> formal_list . [ RPAREN ]
+## Transitions:
+-- On COMMA shift to state 130
+## Reductions:
+-- On RPAREN
+--   reduce production formals_opt -> formal_list
+
+State 130:
+## Known stack suffix:
+## formal_list COMMA
+## LR(1) items:
+formal_list -> formal_list COMMA . typ ID [ RPAREN COMMA ]
+## Transitions:
+-- On VOID shift to state 3
+-- On LIST shift to state 4
+-- On INT shift to state 5
+-- On BOOL shift to state 6
+-- On typ shift to state 131
+## Reductions:
+
+State 131:
+## Known stack suffix:
+## formal_list COMMA typ
+## LR(1) items:
+formal_list -> formal_list COMMA typ . ID [ RPAREN COMMA ]
+## Transitions:
+-- On ID shift to state 132
+## Reductions:
+
+State 132:
+## Known stack suffix:
+## formal_list COMMA typ ID
+## LR(1) items:
+formal_list -> formal_list COMMA typ ID . [ RPAREN COMMA ]
+## Transitions:
+## Reductions:
+-- On RPAREN COMMA
+--   reduce production formal_list -> formal_list COMMA typ ID
+
+State 133:
+## Known stack suffix:
+## decls fdecl
+## LR(1) items:
+decls -> decls fdecl . [ VOID LIST INT EOF BOOL ]
+## Transitions:
+## Reductions:
+-- On VOID LIST INT EOF BOOL
+--   reduce production decls -> decls fdecl
+

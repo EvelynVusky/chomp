@@ -36,16 +36,16 @@ program:
 
 decls:
    /* nothing */ { ([], [])               }
- | decls vdecl { (($2 :: fst $1), snd $1) }
+ | decls vdecl { (($2 :: fst $1), snd $1) } (* how global vars get assigned? *)
  | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
 fdecl:
-  typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+  typ ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     { { typ = $1;
         fname = $2;
         formals = List.rev $4;
-        locals = List.rev $7;
-        body = List.rev $8 } }
+        (* do we need to track local vars? how to get from stmt? create a list of local vars? *)
+        body = List.rev $7 } }
 
 formals_opt:
     /* nothing */ { [] }
@@ -61,13 +61,6 @@ typ:
   | VOID  { Void  }
   | LIST typ { List $2 }
 
-vdecl_list:
-    /* nothing */    { [] }
-  | vdecl_list vdecl { $2 :: $1 }
-
-vdecl:
-   typ ID SEMI { ($1, $2) }
-
 stmt_list:
     /* nothing */  { [] }
   | stmt_list stmt { $2 :: $1 }
@@ -81,6 +74,19 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt
                                             { For($3, $5, $7, $9)   }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
+  | vdecl                                   { $1 }
+
+vdecl:
+    typ ID SEMI {{
+                  typ = $1;
+                  vname = $2;
+                  value = Noexpr;
+                }}
+  | typ ID ASSIGN expr SEMI {{
+                  typ = $1;
+                  vname = $2;
+                  value = $4;
+                }}
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -118,7 +124,7 @@ expr:
   | expr OR     expr { Binop($1, Or,    $3)   }
   | MINUS expr %prec NOT { Unop(Neg, $2)      }
   | NOT expr         { Unop(Not, $2)          }
-  | ID ASSIGN expr   { Assign($1, $3)         }
+  | ID ASSIGN expr   { Assign($1, $3)         } //TODO, how to we add assignment to vdecls
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
 

@@ -38,11 +38,16 @@ type func_decl = {
     typ : typ;
     fname : string;
     formals : bind list;
-    locals : bind list;
     body : stmt list;
   }
 
-type program = bind list * func_decl list
+type vdecl = {
+    typ : typ;
+    vname : string;
+    value : expr;
+  }
+
+type program = vdecl list * func_decl list
 
 (* Pretty-printing functions *)
 
