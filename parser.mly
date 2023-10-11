@@ -33,10 +33,12 @@
 
 program:
   decls EOF { $1 }
+  (* is decls just variable & function declarations, then just matched? *)
 
 decls:
    /* nothing */ { ([], [])               }
- | decls vdecl { (($2 :: fst $1), snd $1) } (* how global vars get assigned? *)
+ | decls vdecl { (($2 :: fst $1), snd $1) } 
+ (* how global vars get assigned? *)
  | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
 fdecl:
@@ -75,6 +77,7 @@ stmt:
                                             { For($3, $5, $7, $9)   }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
   | vdecl                                   { $1 }
+  (* do we track the variable assignments here? *)
 
 vdecl:
     typ ID SEMI {{
