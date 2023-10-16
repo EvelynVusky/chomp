@@ -1,34 +1,4 @@
 
-int call2()
-{
-var list int lst = [1, 2];
-return first(lst);
-}
-
-void call(arith)
-{
-var int d = arith(5, 3);
-}
-
-list int rest(lst)
-{
-return cdrlst;
-}
-
-int first(lst)
-{
-return carlst;
-}
-
-list int concat(lst, i)
-{
-return i :: lst;
-}
-
-void noBody()
-{
-}
-
 bool arith(a, b)
 {
 c = a > b;
@@ -39,4 +9,34 @@ return c;
 }
 var int d = b - a;
 return d;
+}
+
+void noBody()
+{
+}
+
+list int concat(lst, i)
+{
+return i :: lst;
+}
+
+int first(lst)
+{
+return carlst;
+}
+
+list int rest(lst)
+{
+return cdrlst;
+}
+
+void call(arith)
+{
+var int d = arith(5, 3);
+}
+
+int call2()
+{
+var list int lst = [1, 2];
+return first(lst);
 }

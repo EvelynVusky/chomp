@@ -1,30 +1,10 @@
-list char world = ['w', 'o', 'r', 'l', 'd'];
-int y = 10;
 int x = 5;
+int y = 10;
+list char world = ['w', 'o', 'r', 'l', 'd'];
 
-void printing()
+int operations(a, b)
 {
-print ['h', 'e', 'l', 'l', 'o'];
-print world;
-println [1, 2, 3, 4, 5];
-println 1 + 1;
-}
-
-int call_func()
-{
-operations(x, y);
-}
-
-int bool_compare(c, d)
-{
-if (c || d)
-{
-return 1;
-}
-if (c && d)
-{
-return 4;
-}
+return a + b / 3 + 4 * 6;
 }
 
 int compare(a, b)
@@ -55,7 +35,27 @@ return 10;
 }
 }
 
-int operations(a, b)
+int bool_compare(c, d)
 {
-return a + b / 3 + 4 * 6;
+if (c || d)
+{
+return 1;
+}
+if (c && d)
+{
+return 4;
+}
+}
+
+int call_func()
+{
+operations(x, y);
+}
+
+void printing()
+{
+print ['h', 'e', 'l', 'l', 'o'];
+print world;
+println [1, 2, 3, 4, 5];
+println 1 + 1;
 }
