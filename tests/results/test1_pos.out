@@ -1,0 +1,14 @@
+nibble n = {{0101}};
+list list bool bb = [[true, false], [true, false]];
+list int m = [1, 2, 3];
+list nibble l = [];
+bool c = false;
+bool b = true;
+char a = 'a';
+int i = 123;
+
+int func()
+{
+i = 4;
+var bit one = {{1}};
+}

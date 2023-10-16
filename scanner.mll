@@ -17,7 +17,7 @@ rule token = parse
 | ';'      { SEMI }
 | ','      { COMMA }
 
-(* binary operations *)
+(* operations *)
 | '+'      { PLUS }
 | '-'      { MINUS }
 | '*'      { TIMES }
@@ -32,6 +32,9 @@ rule token = parse
 | "&&"     { AND }
 | "||"     { OR }
 | "!"      { NOT }
+| "::"     { CONS }
+| "cdr"    { CDR }
+| "car"    { CAR }
 
 (* bin binary operations *)
 | "|"      { BINOR }
@@ -48,6 +51,8 @@ rule token = parse
 | "for"    { FOR }
 | "while"  { WHILE }
 | "return" { RETURN }
+| "print"  { PRINT  }
+| "println"{ PRINTLN }
 
 (* types *)
 | "list"   { LIST }
@@ -61,34 +66,15 @@ rule token = parse
 | "word"   { WORD  }
 
 (* literals *)
-| "{{" (bins as lxm) "}}"   { binlit lxm } (* Binary literals *)
+| "{{" (bins as lxm)  "}}"  { BINLIT(lxm) } (* Binary literals *)
 | '\'' (_ as c) '\''        { CHARLIT(c) }      (* char literal*)
 | "true"                    { BLIT(true) }
-| "false"                   { BLIT(false) }
+| "false"                   { BLIT(false)}
+| "null"                    { NULL       }
 | digits as lxm             { LITERAL(int_of_string lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }
 | eof                       { EOF }
 | _ as char                 { raise (Failure("illegal character " ^ Char.escaped char)) }
-
-and binlit = parse
-     bin  { BIT(bin)   }
-  | (bin bin) as lxm { NIBBLE(lxm) }
-  | (bin bin bin) as lxm  { NIBBLE(lxm) }
-  | (bin bin bin bin) as lxm  { NIBBLE(lxm) }
-  | (bin bin bin bin bin) as lxm  { BYTE(lxm) }
-  | (bin bin bin bin bin bin) as lxm  { BYTE(lxm) }
-  | (bin bin bin bin bin bin bin) as lxm  { BYTE(lxm) }
-  | (bin bin bin bin bin bin bin bin) as lxm  { BYTE(lxm) }
-  | (bin bin bin bin bin bin bin bin bin) as lxm  { WORD(lxm) }
-  | (bin bin bin bin bin bin bin bin bin bin) as lxm  { WORD(lxm) }
-  | (bin bin bin bin bin bin bin bin bin bin bin) as lxm  { WORD(lxm) }
-  | (bin bin bin bin bin bin bin bin bin bin bin bin) as lxm  { WORD(lxm) }
-  | (bin bin bin bin bin bin bin bin bin bin bin bin bin) as lxm { WORD (lxm) } 
-  | (bin bin bin bin bin bin bin bin bin bin bin bin bin bin) as lxm { WORD (lxm) } 
-  | (bin bin bin bin bin bin bin bin bin bin bin bin bin bin bin) as lxm { WORD (lxm) } 
-  | (bin bin bin bin bin bin bin bin bin bin bin bin bin bin bin bin) as lxm { WORD (lxm) } 
-  
-  | _ { raise (Failure("Bin type does not support length")) }
 
 and comment = parse
   "*/" { token lexbuf }

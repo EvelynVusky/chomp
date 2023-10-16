@@ -7,11 +7,13 @@
 %token RETURN IF ELSE FOR WHILE INT BOOL VOID LIST CHAR
 %token LBRACK RBRACK
 %token BINOR BINAND LSHIFT RSHIFT CONCAT BINXOR BINNOT
-%token BIT NIBBLE BYTE WORD
+%token BIT NIBBLE BYTE WORD CAR CDR CONS
 %token <char> CHARLIT
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID
+%token <string> BINLIT
+%token NULL PRINT PRINTLN
 %token EOF
 
 %start program
@@ -27,6 +29,8 @@
 %left PLUS MINUS LSHIFT RSHIFT CONCAT
 %left TIMES DIVIDE
 %right NOT BINNOT
+%left CONS
+%left CAR CDR
 
 %%
 
@@ -43,7 +47,6 @@ fdecl:
     { { typ = $1;
         fname = $2;
         formals = List.rev $4;
-        (* do we need to track local vars? how to get from stmt? create a list of local vars? *)
         body = List.rev $7 } }
 
 formals_opt:
@@ -63,7 +66,7 @@ typ:
   | BIT   { Bit   }
   | NIBBLE { Nibble }
   | BYTE  { Byte  }
-  | WORD  { WORD  }
+  | WORD  { Word  }
 
 
 stmt_list:
@@ -79,9 +82,8 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt
                                             { For($3, $5, $7, $9)   }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
-  | vdecl                                   { $1 }
-  (* do we track the variable assignments here? *)
-
+  | vdecl                                   { Var $1 }
+  
 vdecl:
     typ ID SEMI {{
                   typ = $1;
@@ -104,10 +106,8 @@ expr:
   | ID               { Id($1)                 }
   | CHARLIT          { CharLit($1)            }
   | LBRACK l1 = list_fields RBRACK { List (l1) }
-  | BIT              { Bit ($1)               }
-  | NIBBLE           { Nibble ($1)            }
-  | BYTE             { Byte ($1)              }
-  | WORD             { WORD ($1)              }
+  | BINLIT           { BinLit ($1)            }
+  | NULL             { Null                   }
   | BINNOT expr      { Unop(Binnot, $2)       }
   | expr BINAND expr { Binop($1, Binand, $3)  } 
   | expr LSHIFT expr { Binop($1, Lshift, $3)  }
@@ -127,11 +127,17 @@ expr:
   | expr GEQ    expr { Binop($1, Geq,   $3)   }
   | expr AND    expr { Binop($1, And,   $3)   }
   | expr OR     expr { Binop($1, Or,    $3)   }
+  | expr CONS expr   { Binop($1, Cons,    $3) }
+  | CDR  expr        { Unop(Cdr, $2)          }
+  | CAR  expr        { Unop(Car, $2)          }
   | MINUS expr %prec NOT { Unop(Neg, $2)      }
   | NOT expr         { Unop(Not, $2)          }
   | ID ASSIGN expr   { Assign($1, $3)         } 
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
+  | PRINT LPAREN expr RPAREN   { Print($3)    }
+  | PRINTLN LPAREN expr RPAREN  { PrintLn($3) }
+
 
 list_fields:
     l1 = separated_list(COMMA, expr) { l1 }

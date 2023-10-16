@@ -1,0 +1,13 @@
+
+void main()
+{
+var nibble n = {{0101}};
+var bit b = {{1}};
+var word w = {{1100101010101101}};
+var byte b = n >< b;
+w = w >> 2;
+var nibble b = n & n;
+var nibble c = n & n | ~n;
+var word x = w ^ w;
+var nibble n = ~c;
+}

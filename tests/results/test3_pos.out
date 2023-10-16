@@ -1,0 +1,61 @@
+list char world = ['w', 'o', 'r', 'l', 'd'];
+int y = 10;
+int x = 5;
+
+void printing()
+{
+print ['h', 'e', 'l', 'l', 'o'];
+print world;
+println [1, 2, 3, 4, 5];
+println 1 + 1;
+}
+
+int call_func()
+{
+operations(x, y);
+}
+
+int bool_compare(c, d)
+{
+if (c || d)
+{
+return 1;
+}
+if (c && d)
+{
+return 4;
+}
+}
+
+int compare(a, b)
+{
+if (a == b)
+{
+return 4;
+}
+else
+{
+return 0;
+}
+if (a >= b)
+{
+return 5;
+}
+if (a <= b)
+{
+return 1;
+}
+if (a < b)
+{
+return 4;
+}
+if (a != b)
+{
+return 10;
+}
+}
+
+int operations(a, b)
+{
+return a + b / 3 + 4 * 6;
+}

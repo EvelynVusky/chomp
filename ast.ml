@@ -1,9 +1,9 @@
 (* Abstract Syntax Tree and functions for printing it *)
 
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
-          And | Or | Binnor | Binand | Lshift | Rshift | Concat | Binxor
+          And | Or | Binor | Binand | Lshift | Rshift | Concat | Binxor | Cons
 
-type uop = Neg | Not | Binnot
+type uop = Neg | Not | Binnot | Car | Cdr
 
 type typ = Int | Bool | Void | Char | List of typ | Bit | Nibble | Byte | Word
 
@@ -20,10 +20,16 @@ type expr =
   | Call of string * expr list
   | List of expr list
   | Noexpr
-  | Bit of string
-  | Nibble of string
-  | Byte of string
-  | Word of string
+  | BinLit of string
+  | Null
+  | Print of expr 
+  | PrintLn of expr 
+
+type vdecl = {
+  typ : typ;
+  vname : string;
+  value : expr;
+}
 
 type stmt =
     Block of stmt list
@@ -32,18 +38,13 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
+  | Var of vdecl
 
 type fdecl = {
     typ : typ;
     fname : string;
     formals : bind list;
     body : stmt list;
-  }
-
-type vdecl = {
-    typ : typ;
-    vname : string;
-    value : expr;
   }
 
 type program = vdecl list * fdecl list
@@ -63,27 +64,28 @@ let string_of_op = function
   | Geq -> ">="
   | And -> "&&"
   | Or -> "||"
-  | Binnor -> "|"
+  | Binor -> "|"
   | Binand -> "&"
   | Lshift -> "<<"
   | Rshift -> ">>"
   | Concat -> "><"
   | Binxor -> "^"
+  | Cons -> "::"
 
 let string_of_uop = function
     Neg -> "-"
   | Not -> "!"
   | Binnot -> "~"
+  | Car -> "car"
+  | Cdr -> "cdr"
 
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | BoolLit(true) -> "true"
   | BoolLit(false) -> "false"
-  | Bit(s) -> "{{" ^ s ^ "}}"
-  | Nibble(s) -> "{{" ^ s ^ "}}"
-  | Byte(s) -> "{{" ^ s ^ "}}"
-  | Word(s) -> "{{" ^ s ^ "}}"
+  | BinLit(s) -> "{{" ^ s ^ "}}"
   | CharLit(c) -> "\'" ^ (Char.escaped c) ^ "\'"
+  | Null -> "Null"
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
@@ -93,6 +95,22 @@ let rec string_of_expr = function
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
   | List(es) -> "[" ^ String.concat ", " (List.map string_of_expr es) ^ "]"
+  | Print(lst) -> "print " ^ string_of_expr lst
+  | PrintLn(lst) -> "println " ^ string_of_expr lst
+  
+  let rec string_of_typ = function
+    Int -> "int"
+  | Bool -> "bool"
+  | Void -> "void"
+  | Char -> "char"
+  | List(typ) -> "list " ^ (string_of_typ typ)
+  | Bit -> "bit"
+  | Nibble -> "nibble"
+  | Byte -> "byte"
+  | Word -> "word"
+  
+  let string_of_vdecl (v: vdecl) = 
+    string_of_typ v.typ ^ " " ^ v.vname ^ " = " ^ string_of_expr v.value ^ ";\n"
 
   let rec string_of_stmt = function
     Block(stmts) ->
@@ -106,27 +124,16 @@ let rec string_of_expr = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-
-let rec string_of_typ = function
-    Int -> "int"
-  | Bool -> "bool"
-  | Void -> "void"
-  | Char -> "char"
-  | List(typ) -> "list " ^ (string_of_typ typ)
-  | Bit -> "bit"
-  | Nibble -> "nibble"
-  | Byte -> "byte"
-  | Word -> "word"
-
-let string_of_vdecl vdecl = string_of_typ vdecl.typ ^ " " ^ vdecl.vname ^ string_of_expr vdecl.value ^ ";\n"
-
-let string_of_fdecl fdecl =
-  string_of_typ fdecl.typ ^ " " ^
-  fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
+  | Var(v) -> "var " ^ string_of_vdecl v
+  
+let string_of_fdecl (f: fdecl) =
+  string_of_typ f.typ ^ " " ^
+  f.fname ^ "(" ^ (String.concat ", " (List.map snd f.formals)) ^
   ")\n{\n" ^
-  String.concat "" (List.map string_of_stmt fdecl.body) ^
+  (String.concat "" (List.map string_of_stmt f.body)) ^
   "}\n"
 
 let string_of_program program =
-  String.concat "" (List.map string_of_vdecl (fst program)) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl (snd program))
+  (String.concat "" (List.map string_of_vdecl (fst program))) 
+  ^ "\n" ^
+  (String.concat "\n" (List.map string_of_fdecl (snd program)))
