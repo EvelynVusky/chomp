@@ -4,7 +4,7 @@
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA PLUS MINUS TIMES DIVIDE ASSIGN
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR
-%token RETURN IF ELSE FOR WHILE INT BOOL VOID LIST CHAR
+%token RETURN IF ELSE FOR WHILE INT BOOL VOID LIST CHAR FUNC STRING
 %token LBRACK RBRACK
 %token BINOR BINAND LSHIFT RSHIFT CONCAT BINXOR BINNOT
 %token BIT NIBBLE BYTE WORD CAR CDR CONS
@@ -13,6 +13,7 @@
 %token <bool> BLIT
 %token <string> ID
 %token <string> BINLIT
+%token <string> STRINGLIT
 %token NULL PRINT PRINTLN
 %token EOF
 
@@ -57,17 +58,26 @@ formal_list:
     typ ID                   { [($1,$2)]     }
   | formal_list COMMA typ ID { ($3,$4) :: $1 }
 
-typ:
-    INT   { Int   }
-  | BOOL  { Bool  }
-  | VOID  { Void  }
-  | CHAR  { Char  }
-  | LIST typ { List $2 }
-  | BIT   { Bit   }
-  | NIBBLE { Nibble }
-  | BYTE  { Byte  }
-  | WORD  { Word  }
+typ_opt:
+    /* nothing */ { [] }
+  | typ_list   { $1 }
 
+typ_list:
+    typ { [$1] }
+  | typ_list COMMA typ { $3 :: $1 }
+
+typ:
+    INT    { Int   }
+  | BOOL   { Bool  }
+  | VOID   { Void  }
+  | CHAR   { Char  }
+  | LIST typ { List $2 }
+  | BIT    { Bit   }
+  | NIBBLE { Nibble }
+  | BYTE   { Byte  }
+  | WORD   { Word  }
+  | LPAREN typ_opt FUNC typ RPAREN { Func (List.rev $2, $4) }
+  | STRING { String }
 
 stmt_list:
     /* nothing */  { [] }
@@ -107,6 +117,7 @@ expr:
   | CHARLIT          { CharLit($1)            }
   | LBRACK l1 = list_fields RBRACK { List (l1) }
   | BINLIT           { BinLit ($1)            }
+  | STRINGLIT        { StringLit ($1)         }
   | NULL             { Null                   }
   | BINNOT expr      { Unop(Binnot, $2)       }
   | expr BINAND expr { Binop($1, Binand, $3)  } 
@@ -137,7 +148,6 @@ expr:
   | LPAREN expr RPAREN { $2                   }
   | PRINT LPAREN expr RPAREN   { Print($3)    }
   | PRINTLN LPAREN expr RPAREN  { PrintLn($3) }
-
 
 list_fields:
     l1 = separated_list(COMMA, expr) { l1 }

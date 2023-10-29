@@ -5,7 +5,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not | Binnot | Car | Cdr
 
-type typ = Int | Bool | Void | Char | List of typ | Bit | Nibble | Byte | Word
+type typ = Int | Bool | Void | Char | List of typ | Bit | Nibble | Byte | Word | Func of typ list * typ | String
 
 type bind = typ * string
 
@@ -13,6 +13,7 @@ type expr =
     Literal of int
   | BoolLit of bool
   | CharLit of char
+  | StringLit of string
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
@@ -85,6 +86,7 @@ let rec string_of_expr = function
   | BoolLit(false) -> "false"
   | BinLit(s) -> "{{" ^ s ^ "}}"
   | CharLit(c) -> "\'" ^ (Char.escaped c) ^ "\'"
+  | StringLit(s) -> "\"" ^ s ^ "\""
   | Null -> "Null"
   | Id(s) -> s
   | Binop(e1, o, e2) ->
@@ -108,6 +110,8 @@ let rec string_of_expr = function
   | Nibble -> "nibble"
   | Byte -> "byte"
   | Word -> "word"
+  | String -> "string"
+  | Func(ts, t) ->  String.concat ", " (List.map string_of_typ ts) ^ " -> " ^ string_of_typ t 
   
   let string_of_vdecl (v: vdecl) = 
     string_of_typ v.typ ^ " " ^ v.vname ^ " = " ^ string_of_expr v.value ^ ";\n"

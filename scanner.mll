@@ -4,6 +4,8 @@ let digit = ['0' - '9']
 let digits = digit+
 let bin = ['0' - '1']
 let bins = bin+
+let char = [' ' - '~']
+let chars = char*
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
@@ -64,6 +66,8 @@ rule token = parse
 | "nibble" { NIBBLE  }
 | "byte"   { BYTE  }
 | "word"   { WORD  }
+| "->"     { FUNC }
+| "string" { STRING }
 
 (* literals *)
 | "{{" (bins as lxm)  "}}"  { BINLIT(lxm) } (* Binary literals *)
@@ -72,6 +76,7 @@ rule token = parse
 | "false"                   { BLIT(false)}
 | "null"                    { NULL       }
 | digits as lxm             { LITERAL(int_of_string lxm) }
+| '\"' (chars+ as s) '\"'   { STRINGLIT(s) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }
 | eof                       { EOF }
 | _ as char                 { raise (Failure("illegal character " ^ Char.escaped char)) }

@@ -6,6 +6,8 @@ type token =
   | WHILE
   | VOID
   | TIMES
+  | STRINGLIT of (string)
+  | STRING
   | SEMI
   | RSHIFT
   | RPAREN
@@ -34,6 +36,7 @@ type token =
   | ID of (string)
   | GT
   | GEQ
+  | FUNC
   | FOR
   | EQ
   | EOF

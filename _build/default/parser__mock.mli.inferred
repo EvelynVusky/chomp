@@ -3,6 +3,8 @@ type token =
   | WHILE
   | VOID
   | TIMES
+  | STRINGLIT of string
+  | STRING
   | SEMI
   | RSHIFT
   | RPAREN
@@ -31,6 +33,7 @@ type token =
   | ID of string
   | GT
   | GEQ
+  | FUNC
   | FOR
   | EQ
   | EOF
@@ -56,6 +59,8 @@ type token =
   | AND
 val menhir_begin_marker : int
 val xv_vdecl : Ast.vdecl
+val xv_typ_opt : Ast.typ list
+val xv_typ_list : Ast.typ list
 val xv_typ : Ast.typ
 val xv_stmt_list : Ast.stmt list
 val xv_stmt : Ast.stmt
