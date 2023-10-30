@@ -5,7 +5,8 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not | Binnot | Car | Cdr
 
-type typ = Int | Bool | Void | Char | List of typ | Bit | Nibble | Byte | Word | Func of typ list * typ | String
+type typ = Int | Bool | Void | Char | List of typ | Bit | Nibble | Byte | 
+Word | Func of typ list * typ | String | Poly | Bin
 
 type bind = typ * string
 
@@ -112,6 +113,8 @@ let rec string_of_expr = function
   | Word -> "word"
   | String -> "string"
   | Func(ts, t) ->  String.concat ", " (List.map string_of_typ ts) ^ " -> " ^ string_of_typ t 
+  | Poly -> "poly"
+  | Bin -> "bin"
   
   let string_of_vdecl (v: vdecl) = 
     string_of_typ v.typ ^ " " ^ v.vname ^ " = " ^ string_of_expr v.value ^ ";\n"
