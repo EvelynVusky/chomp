@@ -6,12 +6,14 @@ open Sast
 module StringMap = Map.Make(String)
 
 exception TypeError of string
-exception NameNotFound of string
+exception NotFoundError of string
 exception DupError of string
 exception VoidError of string
+exception InvalidError of string
+exception TodoError
 
 type symbol_table = {
-  variables: ty StringMap.t;
+  variables: typ StringMap.t;
   parent: symbol_table option;
 }
 
@@ -24,330 +26,188 @@ let check (vdecls, fdecls) =
   (************************** Helper Functions **************************)
   (* add built-in functions *)
   let built_in_funcs = 
-    let add_built_in_funcs map (name, fms, ret) = StringMap.add name {
-      typ = ret; 
-      fname = name;
-      formals = fms;
-      body = [] } map
-    List.fold_left add_built_in_funcs StringMap.empty [
-      ("toBit", [(Bin, "x")], Bit);
-      ("toCrumb", [(Bin, "x")], Crumb);
-      ("toNibble", [(Bin, "x")], Nibble);
-      ("toByte", [(Bin, "x")], Byte);
-      ("toWord", [(Bin, "x")], Word);
-      ("toChar", [(Bin, "x")], Char);
-      ("toInt", [(Bin, "x")], Int);
-      ("set", [(Bin, "x"), (Int, "y"), (Bit, "z")], Bin);
-      ("flipBit", [(Bin, "x"), (Int, "y")], Bin);
-      ("getBit", [(Bit, "x"), (Int, "y")], Bin);
-      ("print", [(Poly, "x")], Void);
-      ("println", [(Poly, "x"), Void]);
-    ]
+    let add_built_in_funcs map (name, fms, ret) = StringMap.add name (Func(fms, ret)) map
     in
+      List.fold_left add_built_in_funcs StringMap.empty [
+        ("toBit", [Poly], Bit);
+        ("toNibble", [Poly], Nibble);
+        ("toByte", [Poly], Byte);
+        ("toWord", [Poly], Word);
+        ("toChar", [Poly], Char);
+        ("toInt", [Poly], Int);
+        ("set", [Bin; Int; Bin], Bin);
+        ("flipBit", [Bin; Int], Bin);
+        ("getBit", [Bit; Int], Bin);
+        ("print", [Poly], Void);
+        ("println", [Poly], Void);
+      ]
   in
 
-  (* add decls, checks for duplicates, correct type, and adds to scope *)
-  let add_decls scope (typ, name, value) =
-    (* TODO *)
-    (* check no variables are void typed *)
-  in
+  (* add decls, checks for duplicates, and adds to scope *)
+  let add_decl scope (typ, (vname : string)) =
+    (* check no variables are duplicated or void typed *)
+    let validate =
+      if typ == Void then raise (VoidError ("void variable " ^ vname ^ " not allowed"))
+      else 
+        if StringMap.mem vname scope.variables == true
+          then raise (DupError ("duplicate variable " ^ vname ^ " not allowed"))
+    in
+      let new_scope = 
+        { 
+          variables = StringMap.add vname typ scope.variables;
+          parent = scope.parent;
+        } 
+      in new_scope
+  in 
 
   (* finds variable in given scope *)
-  let find_variable (scope: symbol_table) name = 
+  let rec find_variable (scope: symbol_table) name = 
     try
       StringMap.find name scope.variables
     with Not_found -> 
       match scope.parent with 
         Some(parent) -> find_variable parent name
-        | _          -> raise (NameNotFound ("unidentified id " ^ name))
+        | _          -> raise (NotFoundError ("unidentified id " ^ name))
   in
 
-  let eq_type ty1 ty2 =
+  (* checks if 2 types are equal, raises error if they are not *)
+  let eq_type_err ty1 ty2 =
     if ty1 <> ty2 
       then raise (TypeError (string_of_typ ty1 ^ " " ^ string_of_typ ty2))
     else true
   in
 
+  (* checks if 2 types are equal, returns true if they are, false otherwise *)
+  let eq_type ty1 ty2 =
+    if ty1 = ty2 
+      then true
+    else false
+  in
+
   (************************** Convert Exprs **************************)
   
   (* converts expr from AST to SAST form *)
-  let expr e = 
-    (* TODO *)
+  (* must convert poly type here *)
+  let rec convert_expr scope e = match e with
+    Literal l -> (Int, SLiteral(1))
+    | BoolLit b -> (Int, SLiteral(1))
+    | CharLit c -> (Int, SLiteral(1)) 
+    | StringLit s -> (Int, SLiteral(1))
+    | Id s -> (Int, SLiteral(1))
+    | Binop (e1, o, e2) -> (Int, SLiteral(1))
+    | Unop (u, e) -> (Int, SLiteral(1))
+    | Assign (s, e)-> (Int, SLiteral(1))
+    | Call (s, es) -> (Int, SLiteral(1))
+    | List es -> (Int, SLiteral(1))
+    | Noexpr -> (Int, SLiteral(1))
+    | BinLit s -> (Int, SLiteral(1))
+    | Null -> (Int, SLiteral(1))
+    | Print e -> (Int, SLiteral(1))
+    | PrintLn e -> (Int, SLiteral(1))
+    (* TODO: stringlit, call, assign (maybe) *)
+  in
+
+  (************************** Convert Statements **************************)
+
+  (* converts stmt from AST to SAST form *)
+  let rec convert_stmt (scope, acc) stmt = match stmt with
+    (* TODO: block, expr, var (maybe) *)
+    Block(e) -> (scope, SReturn((Int, SLiteral(1))) :: acc)
+    | Return(e) -> (scope, SReturn((Int, SLiteral(1))) :: acc)
+    | If(e1, st1, st2) -> (scope, SReturn((Int, SLiteral(1))) :: acc)
+    | For(e1, e2, e3, st) -> (scope, SReturn((Int, SLiteral(1))) :: acc)
+    | While(e, st) -> (scope, SReturn((Int, SLiteral(1))) :: acc)
+    | Var(vdecl) -> (scope, SReturn((Int, SLiteral(1))) :: acc)
   in
   
   (************************** Checking Variables **************************)
+
   (* check global variables and add to scope*)
-  let check_vdecls scope vdecl = 
+  let check_vdecls (scope, acc) (vdecl: vdecl) = 
     (* extract attributes of vdecl *)
-    let typ = vdecl.typ in
-    let vname = vdecl.vname in
-    let value = vdecl.value in
+    let typ = vdecl.typ 
+    and vname = vdecl.vname 
+    and value = vdecl.value in
+
     (* expr: evaluate expr *)
-    let (ty_e, val_e) = expr value in
-    (* check type equality *)
-    let _ = eq_type typ ty_e in
-    (* add variable to scope *)
-    add_bind scope vdecl
-  in
+    let sexpr = convert_expr scope value in
+
+    (* check type equality *) 
+    (* NOTE: if type isn't equal, it's polymorphic? *)
+    let _ = eq_type_err typ (fst sexpr) in
+    
+    (* add to scope *)
+    let new_var = {
+      styp = typ; 
+      svname = vname; 
+      svalue = sexpr;}
+    in
+    ((add_decl scope (typ, vname)), new_var :: acc)
+  in 
   
   (************************** Checking Functions **************************)
+
   (* check each function and everything inside of them*)
-  let check_fdecls (scope, checked) fdecls = 
+  let check_fdecls (scope, acc) fdecl = 
+    (* extract attributes of vdecl *)
+    let typ = fdecl.typ 
+    and fname = fdecl.fname 
+    and formals = fdecl.formals
+    and body = fdecl.body in
+
+    (* validate name & add to scope *)
+    let scope' =
+      if StringMap.mem fname built_in_funcs 
+        then raise (DupError ("built-in function defined with identifier " ^ fname))
+      else add_decl scope (Func((List.map fst formals), typ), fname)
+    in 
+
+    (* make new scope, parent is scope that was passed in*)
+    let new_scope = {variables = StringMap.empty; parent = Some(scope');} in
+    
+    (* check formals & add to new scope *)
+    let new_scope' = List.fold_left add_decl new_scope formals in
+    
+    (* check funcyion body *)
+    let _, sstmt_list = (List.fold_left convert_stmt (new_scope', []) body) in
+    
+    (* check return type of function *)
+    let _ = match typ with
+        Void -> match sstmt_list with
+                (SReturn((ret_typ, _)) :: _) -> eq_type_err ret_typ Void 
+                | _ -> true         
+        | _ -> match sstmt_list with
+              (SReturn((ret_typ, _)) :: _) -> eq_type_err ret_typ typ
+              | _ -> (raise (TypeError ("no return statement found")))
+    in
+
+    (* check body: "recurse" to convert body statements, using new scope *) 
+    (
+      scope',
+      {
+        styp = typ;
+        sfname = fname;
+        sformals = formals;
+        sbody = sstmt_list;
+        (* sbody = List.map snd (List.fold_left convert_stmt (new_scope', []) body);  *)
+      } :: acc
+    )
   in
 
   (************************** Driver code **************************)
 
   (* adds built in functions to scope *)
-  let scope = {variables = built_in_funcs, parent = None} in (*TODO: built_in_funcs*)
-  
+  (* NOTE: it feels like we're treating scope as an obj everywhere except here *)
+  let scope = {variables = built_in_funcs; parent = None;} in
+  (* let scope = scope_obj ref in *)
+
   (* add global variables to same scope *)
-  let scope, globals' = List.fold_left check_vdecls scope vdecls in
-  
+  let scope, globals' = List.fold_left check_vdecls (scope, []) vdecls in
+
   (* adds user defined functions to scope *)
-  let scope, functions' = List.fold_left check_fdecls scope fdecls in
+  let scope, functions' = List.fold_left check_fdecls (scope, []) fdecls in
 
   (* check main *)
-  let main = try _ find_variable scope "main" in
-  (* TODO: check main type *)
+  let _ = find_variable scope "main" in
+
   (List.rev globals', List.rev functions')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(*   
-
-let check (globals, functions) =
-
-  (* Check if a certain kind of binding has void type or is a duplicate
-     of another, previously checked binding *)
-  let check_binds (kind : string) (to_check : bind list) = 
-    let name_compare (_, n1) (_, n2) = compare n1 n2 in
-    let check_it checked binding = 
-      let void_err = "illegal void " ^ kind ^ " " ^ snd binding
-      and dup_err = "duplicate " ^ kind ^ " " ^ snd binding
-      in match binding with
-        (* No void bindings *)
-        (Void, _) -> raise (Failure void_err)
-      | (_, n1) -> match checked with
-                    (* No duplicate bindings *)
-                      ((_, n2) :: _) when n1 = n2 -> raise (Failure dup_err)
-                    | _ -> binding :: checked
-
-    in let _ = List.fold_left check_it [] (List.sort name_compare to_check) 
-       in to_check (* TODO: make global symbol_table *)
-  in 
-
-  (**** Checking Global Variables ****)
-
-  let globals' = check_binds "global" globals in
-
-  (**** Checking Functions ****)
-
-
-  (* Collect function declarations for built-in functions: no bodies *)
-  let built_in_decls = 
-    let add_bind map (name, ty) = StringMap.add name {
-      typ = Void; fname = name; 
-      formals = [(ty, "x")];
-      locals = []; body = [] } map
-    in List.fold_left add_bind StringMap.empty [ ("print", Int);
-			                         ("printb", Bool);
-			                         ("printf", Float);
-			                         ("printbig", Int) ]
-  in
-
-  (* Add function name to symbol table *)
-  let add_func map fd = 
-    let built_in_err = "function " ^ fd.fname ^ " may not be defined"
-    and dup_err = "duplicate function " ^ fd.fname
-    and make_err er = raise (Failure er)
-    and n = fd.fname (* Name of the function *)
-    in match fd with (* No duplicate functions or redefinitions of built-ins *)
-         _ when StringMap.mem n built_in_decls -> make_err built_in_err
-       | _ when StringMap.mem n map -> make_err dup_err  
-       | _ ->  StringMap.add n fd map 
-  in
-
-  (* Collect all other function names into one symbol table *)
-  let function_decls = List.fold_left add_func built_in_decls functions
-  in
-  
-  (* Return a function from our symbol table *)
-  let find_func s = 
-    try StringMap.find s function_decls
-    with Not_found -> raise (Failure ("unrecognized function " ^ s))
-  in
-
-  let _ = find_func "main" in (* Ensure "main" is defined *)
-
-  let check_function func =
-    (* Make sure no formals or locals are void or duplicates *)
-    let formals' = check_binds "formal" func.formals in
-    let locals' = check_binds "local" func.locals in
-
-    (* Raise an exception if the given rvalue type cannot be assigned to
-       the given lvalue type *)
-    let check_assign lvaluet rvaluet err =
-       if lvaluet = rvaluet then lvaluet else raise (Failure err)
-    in   
-
-    (* Build local symbol table of variables for this function *)
-    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-	                StringMap.empty (globals' @ formals' @ locals' )
-    in
-
-    (* Return a variable from our local symbol table *)
-    let type_of_identifier s =
-      try StringMap.find s symbols (* TODO: find_variable here *)
-      with Not_found -> raise (Failure ("undeclared identifier " ^ s))
-    in
-
-
-    (* Return a semantically-checked expression, i.e., with a type *)
-    let rec expr = function
-        Literal  l -> (Int, SLiteral l)
-      | Fliteral l -> (Float, SFliteral l)
-      | BoolLit l  -> (Bool, SBoolLit l)
-      | Noexpr     -> (Void, SNoexpr)
-      | Id s       -> (type_of_identifier s, SId s)
-      | Assign(var, e) as ex -> 
-          let lt = type_of_identifier var
-          and (rt, e') = expr e in
-          let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^ 
-            string_of_typ rt ^ " in " ^ string_of_expr ex
-          in (check_assign lt rt err, SAssign(var, (rt, e')))
-      | Unop(op, e) as ex -> 
-          let (t, e') = expr e in
-          let ty = match op with
-            Neg when t = Int || t = Float -> t
-          | Not when t = Bool -> Bool
-          | _ -> raise (Failure ("illegal unary operator " ^ 
-                                 string_of_uop op ^ string_of_typ t ^
-                                 " in " ^ string_of_expr ex))
-          in (ty, SUnop(op, (t, e')))
-      | Binop(e1, op, e2) as e -> 
-          let (t1, e1') = expr e1 
-          and (t2, e2') = expr e2 in
-          (* All binary operators require operands of the same type *)
-          let same = t1 = t2 in
-          (* Determine expression type based on operator and operand types *)
-          let ty = match op with
-            Add | Sub | Mult | Div when same && t1 = Int   -> Int
-          | Add | Sub | Mult | Div when same && t1 = Float -> Float
-          | Equal | Neq            when same               -> Bool
-          | Less | Leq | Greater | Geq
-                     when same && (t1 = Int || t1 = Float) -> Bool
-          | And | Or when same && t1 = Bool -> Bool
-          | _ -> raise (
-	      Failure ("illegal binary operator " ^
-                       string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
-                       string_of_typ t2 ^ " in " ^ string_of_expr e))
-          in (ty, SBinop((t1, e1'), op, (t2, e2')))
-      | Call(fname, args) as call -> 
-          let fd = find_func fname in
-          let param_length = List.length fd.formals in
-          if List.length args != param_length then
-            raise (Failure ("expecting " ^ string_of_int param_length ^ 
-                            " arguments in " ^ string_of_expr call))
-          else let check_call (ft, _) e = 
-            let (et, e') = expr e in 
-            let err = "illegal argument found " ^ string_of_typ et ^
-              " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-            in (check_assign ft et err, e')
-          in 
-          let args' = List.map2 check_call fd.formals args
-          in (fd.typ, SCall(fname, args'))
-    in
-
-    let check_bool_expr e = 
-      let (t', e') = expr e
-      and err = "expected Boolean expression in " ^ string_of_expr e
-      in if t' != Bool then raise (Failure err) else (t', e') 
-    in
-
-    (* Return a semantically-checked statement i.e. containing sexprs *)
-    let rec check_stmt = function
-        Expr e -> SExpr (expr e)
-      | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
-      | For(e1, e2, e3, st) ->
-	  SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
-      | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
-      | Return e -> let (t, e') = expr e in
-        if t = func.typ then SReturn (t, e') 
-        else raise (
-	  Failure ("return gives " ^ string_of_typ t ^ " expected " ^
-		   string_of_typ func.typ ^ " in " ^ string_of_expr e))
-	    
-	    (* A block is correct if each statement is correct and nothing
-	       follows any Return statement.  Nested blocks are flattened. *)
-      | Block sl -> 
-          let rec check_stmt_list = function
-              [Return _ as s] -> [check_stmt s]
-            | Return _ :: _   -> raise (Failure "nothing may follow a return")
-            | Block sl :: ss  -> check_stmt_list (sl @ ss) (* Flatten blocks *)
-            | s :: ss         -> check_stmt s :: check_stmt_list ss
-            | []              -> []
-          in SBlock(check_stmt_list sl)
-
-    in (* body of check_function *)
-    { styp = func.typ;
-      sfname = func.fname;
-      sformals = formals';
-      slocals  = locals';
-      sbody = match check_stmt (Block func.body) with
-	SBlock(sl) -> sl
-      | _ -> let err = "internal error: block didn't become a block?"
-      in raise (Failure err)
-    }
-  in (globals', List.map check_function functions)
-
-  *)
