@@ -25,8 +25,6 @@ type expr =
   | Noexpr
   | BinLit of string
   | Null
-  | Print of expr 
-  | PrintLn of expr 
 
 type vdecl = {
   typ : typ;
@@ -99,8 +97,6 @@ let rec string_of_expr = function
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
   | List(es) -> "[" ^ String.concat ", " (List.map string_of_expr es) ^ "]"
-  | Print(lst) -> "print " ^ string_of_expr lst
-  | PrintLn(lst) -> "println " ^ string_of_expr lst
   
   let rec string_of_typ = function
     Int -> "int"

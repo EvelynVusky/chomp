@@ -14,8 +14,6 @@ type token =
   | RETURN
   | RBRACK
   | RBRACE
-  | PRINTLN
-  | PRINT
   | PLUS
   | OR
   | NULL

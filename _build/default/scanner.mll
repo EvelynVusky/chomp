@@ -53,8 +53,8 @@ rule token = parse
 | "for"    { FOR }
 | "while"  { WHILE }
 | "return" { RETURN }
-| "print"  { PRINT  }
-| "println"{ PRINTLN }
+(* | "print"  { PRINT  }
+| "println"{ PRINTLN } *)
 
 (* types *)
 | "list"   { LIST }

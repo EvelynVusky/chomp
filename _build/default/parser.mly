@@ -14,7 +14,7 @@
 %token <string> ID
 %token <string> BINLIT
 %token <string> STRINGLIT
-%token NULL PRINT PRINTLN
+%token NULL
 %token EOF
 
 %start program
@@ -146,8 +146,8 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3)         } 
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
-  | PRINT LPAREN expr RPAREN   { Print($3)    }
-  | PRINTLN LPAREN expr RPAREN  { PrintLn($3) }
+  // | PRINT LPAREN expr RPAREN   { Print($3)    }
+  // | PRINTLN LPAREN expr RPAREN  { PrintLn($3) }
 
 list_fields:
     l1 = separated_list(COMMA, expr) { l1 }

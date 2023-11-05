@@ -17,8 +17,6 @@ and sx =
   | SNoexpr
   | SBinLit of string
   | SNull
-  | SPrint of sexpr 
-  | SPrintLn of sexpr 
 
 type svdecl = {
   styp : typ;
@@ -63,9 +61,7 @@ let rec string_of_sexpr (t, e) =
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SNoexpr -> ""
-  | SList(es) -> "[" ^ String.concat ", " (List.map string_of_sexpr es) ^ "]"
-  | SPrint(lst) -> "print " ^ string_of_sexpr lst
-  | SPrintLn(lst) -> "println " ^ string_of_sexpr lst)
+  | SList(es) -> "[" ^ String.concat ", " (List.map string_of_sexpr es) ^ "]")
   
   let string_of_svdecl (v: svdecl) = 
     string_of_typ v.styp ^ " " ^ v.svname ^ " = " ^ string_of_sexpr v.svalue ^ ";\n"

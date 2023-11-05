@@ -1,3 +1,52 @@
+let translate (globals, functions) =
+  let context    = L.global_context () in
+  (* Add types to the context so we can use them in our LLVM code *)
+  let i32_t      = L.i32_type    context (*int*)
+  and i8_t       = L.i8_type     context (*llvm pointer, char*)
+  and i1_t       = L.i1_type     context (*bool*)
+  and void_t     = L.void_type   context (*void, polys*)
+  and str_t      = L.pointer_type (L.i8_type context) (*string*)
+  and bin_t      = L.pointer_type (L.i1_type context) (*bin types*)
+  and voidptr_t  = L.pointer_type (L.i8_type context)
+  and nodeptr_t  = L.pointer_type (L.named_struct_type context "Node") 
+  and list_t     = L.pointer_type (L.struct_type context [| voidptr_t; nodeptr_t |]) (*list*)
+  
+  (* Int | Bool | Void | Char | List of typ | Bit | Nibble | Byte | 
+Word | Func of typ list * typ | String | Poly | Bin *)
+
+  (* Create an LLVM module -- this is a "container" into which we'll 
+     generate actual code *)
+  and the_module = L.create_module context "Chomp" in
+
+  (* Convert CHOMP types to LLVM types *)
+  let ltype_of_typ = function
+      A.Int   -> i32_t
+    | A.Bool  -> i1_t
+    | A.Float -> float_t
+    | A.Void  -> void_t
+    | A.Char -> i8_type
+    | A.List -> list_t
+    | A.Bit -> bin_t
+    | A.Nibble -> bin_t
+    | A.Byte  -> bin_t
+    | A.Word -> bin_t
+    | A.Func -> function_type
+    | A.String -> str_t
+    | A.Poly -> raise (Semant.TypeError ("Poly type isn't accessible by user"))
+    | A.Bin -> raise (Semant.TypeError ("Bin type isn't accessible by user"))
+  in
+in the_module
+
+
+
+
+
+
+
+
+
+
+
 (* Code generation: translate takes a semantically checked AST and
 produces LLVM IR
 
