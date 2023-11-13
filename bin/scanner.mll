@@ -53,8 +53,6 @@ rule token = parse
 | "for"    { FOR }
 | "while"  { WHILE }
 | "return" { RETURN }
-(* | "print"  { PRINT  }
-| "println"{ PRINTLN } *)
 
 (* types *)
 | "list"   { LIST }
@@ -71,7 +69,7 @@ rule token = parse
 
 (* literals *)
 | "{{" (bins as lxm)  "}}"  { BINLIT(lxm) } (* Binary literals *)
-| '\'' (_ as c) '\''        { CHARLIT(c) }      (* char literal*)
+| '\'' (_ as c) '\''        { CHARLIT(c) }      (* char literal *)
 | "true"                    { BLIT(true) }
 | "false"                   { BLIT(false)}
 | "null"                    { NULL       }

@@ -15,6 +15,10 @@ and sx =
   | SCall of string * sexpr list
   | SList of sexpr list
   | SNoexpr
+  | SBitLit of string
+  | SNibbleLit of string
+  | SByteLit of string
+  | SWordLit of string
   | SBinLit of string
   | SNull
 
@@ -50,6 +54,10 @@ let rec string_of_sexpr (t, e) =
   | SBoolLit(true) -> "true"
   | SBoolLit(false) -> "false"
   | SBinLit(s) -> "{{" ^ s ^ "}}"
+  | SBitLit(s) -> "{{" ^ s ^ "}}"
+  | SNibbleLit(s) -> "{{" ^ s ^ "}}"
+  | SByteLit(s) -> "{{" ^ s ^ "}}"
+  | SWordLit(s) -> "{{" ^ s ^ "}}"
   | SCharLit(c) -> "\'" ^ (Char.escaped c) ^ "\'"
   | SStringLit(s) -> "\"" ^ s ^ "\""
   | SNull -> "Null"
@@ -60,8 +68,9 @@ let rec string_of_sexpr (t, e) =
   | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
-  | SNoexpr -> ""
+  | SNoexpr -> "Noexpr"
   | SList(es) -> "[" ^ String.concat ", " (List.map string_of_sexpr es) ^ "]")
+  ^ ")"
   
   let string_of_svdecl (v: svdecl) = 
     string_of_typ v.styp ^ " " ^ v.svname ^ " = " ^ string_of_sexpr v.svalue ^ ";\n"

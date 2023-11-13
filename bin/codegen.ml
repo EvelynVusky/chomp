@@ -4,10 +4,10 @@ open Sast
 
 module StringMap = Map.Make(String)
 
-let translate (globals, functions) =
+let translate ((globals : svdecl list), (functions : sfdecl list)) =
   let context    = L.global_context () in
   (* Add types to the context so we can use them in our LLVM code *)
-  let i32_t      = L.i32_type    context (* int *)
+  let (*rec*) i32_t      = L.i32_type    context (* int *)
   and i8_t       = L.i8_type     context (* llvm pointer, char *)
   and i1_t       = L.i1_type     context (* bool *)
   and void_t     = L.void_type   context (* void, polys *)
@@ -15,7 +15,7 @@ let translate (globals, functions) =
   and bin_t      = L.pointer_type (L.i1_type context) (* bin types *)
   and voidptr_t  = L.pointer_type (L.i8_type context)
   and nodeptr_t  = L.pointer_type (L.named_struct_type context "Node") 
-  and list_t     = L.pointer_type (L.struct_type context [| voidptr_t; nodeptr_t |]) (*list*)
+  (* and list_t     = L.pointer_type (L.struct_type context [| voidptr_t; nodeptr_t |]) list *)
 
   (* Create an LLVM module -- this is a "container" into which we'll 
      generate actual code *)
@@ -25,73 +25,25 @@ let translate (globals, functions) =
   let ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
-    | A.Float -> float_t
     | A.Void  -> void_t
-    | A.Char -> i8_type
-    | A.List -> list_t
+    | A.Char -> i8_t
+    | A.List ty -> raise (Semant.TypeError ("TODO: list typ"))
     | A.Bit -> bin_t
     | A.Nibble -> bin_t
     | A.Byte  -> bin_t
     | A.Word -> bin_t
-    | A.Func -> function_type
+    | A.Func (ret, fs) -> raise (Semant.TypeError ("TODO: func typ"))
     | A.String -> str_t
     | A.Poly -> raise (Semant.TypeError ("Poly type isn't accessible by user"))
     | A.Bin -> raise (Semant.TypeError ("Bin type isn't accessible by user"))
   in
-(* in the_module
-
-
-
-(* Code generation: translate takes a semantically checked AST and
-produces LLVM IR
-
-LLVM tutorial: Make sure to read the OCaml version of the tutorial
-
-http://llvm.org/docs/tutorial/index.html
-
-Detailed documentation on the OCaml LLVM library:
-
-http://llvm.moe/
-http://llvm.moe/ocaml/
-
-*)
-
-(* We'll refer to Llvm and Ast constructs with module names *)
-module L = Llvm
-module A = Ast
-open Sast 
-
-module StringMap = Map.Make(String)
-
-(* Code Generation from the SAST. Returns an LLVM module if successful,
-   throws an exception if something is wrong. *)
-let translate (globals, functions) =
-  let context    = L.global_context () in
-  (* Add types to the context so we can use them in our LLVM code *)
-  let i32_t      = L.i32_type    context
-  and i8_t       = L.i8_type     context
-  and i1_t       = L.i1_type     context
-  and float_t    = L.double_type context
-  and void_t     = L.void_type   context 
-  (* Create an LLVM module -- this is a "container" into which we'll 
-     generate actual code *)
-  and the_module = L.create_module context "MicroC" in
-
-  (* Convert MicroC types to LLVM types *)
-  let ltype_of_typ = function
-      A.Int   -> i32_t
-    | A.Bool  -> i1_t
-    | A.Float -> float_t
-    | A.Void  -> void_t
-  in *)
 
   (* Declare each global variable; remember its value in a map *)
   let global_vars : L.llvalue StringMap.t =
-    let global_var m (t, n) = 
-      let init = match t with
-          A.Float -> L.const_float (ltype_of_typ t) 0.0
-        | _ -> L.const_int (ltype_of_typ t) 0
-      in StringMap.add n (L.define_global n init the_module) m in
+    let global_var m (svdecl : svdecl) = 
+      let init = match svdecl.styp with
+        | _ -> raise (Semant.TypeError ("TODO: add types"))
+      in StringMap.add svdecl.svname (L.define_global svdecl.svname init the_module) m in
     List.fold_left global_var StringMap.empty globals in
 
   let printf_t : L.lltype = 
@@ -99,12 +51,9 @@ let translate (globals, functions) =
   let printf_func : L.llvalue = 
      L.declare_function "printf" printf_t the_module in
 
-  let printbig_t = L.function_type i32_t [| i32_t |] in
-  let printbig_func = L.declare_function "printbig" printbig_t the_module in
-
   (* Define each function (arguments and return type) so we can 
    * define it's body and call it later *)
-  let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
+  let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
       let name = fdecl.sfname
       and formal_types = 
@@ -118,8 +67,12 @@ let translate (globals, functions) =
     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
 
-    let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
+    let int_format_str = L.build_global_stringptr "%d" "fmt" builder
+    and string_format_str = L.build_global_stringptr "%s" "fmt" builder 
+    and char_format_str = L.build_global_stringptr "%c" "fmt" builder
+    and int_format_str_ln = L.build_global_stringptr "%d\n" "fmt" builder
+    and string_format_str_ln = L.build_global_stringptr "%s\n" "fmt" builder 
+    and char_format_str_ln = L.build_global_stringptr "%c\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -141,7 +94,7 @@ let translate (globals, functions) =
 
       let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
           (Array.to_list (L.params the_function)) in
-      List.fold_left add_local formals fdecl.slocals 
+      List.fold_left add_local formals fdecl.sformals
     in
 
     (* Return the value for a variable or formal argument. First check
@@ -151,16 +104,16 @@ let translate (globals, functions) =
     in
 
     (* Construct code for an expression; return its value *)
-    let rec expr builder ((_, e) : sexpr) = match e with
-	SLiteral i -> L.const_int i32_t i
+    let rec expr builder ((ty, e) : sexpr) = match e with
+	      SLiteral i -> L.const_int i32_t i
+      | SStringLit s -> L.build_global_stringptr s "string" builder
       | SBoolLit b -> L.const_int i1_t (if b then 1 else 0)
-      | SFliteral l -> L.const_float_of_string float_t l
       | SNoexpr -> L.const_int i32_t 0
       | SId s -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = expr builder e in
                           let _  = L.build_store e' (lookup s) builder in e'
-      | SBinop (e1, op, e2) ->
-	  let (t, _) = e1
+      | SBinop (e1, op, e2) -> raise (Semant.TypeError ("TODO: Binop"))
+	  (* let (t, _) = e1s
 	  and e1' = expr builder e1
 	  and e2' = expr builder e2 in
 	  if t = A.Float then (match op with 
@@ -177,7 +130,7 @@ let translate (globals, functions) =
 	  | A.And | A.Or ->
 	      raise (Failure "internal error: semant should have rejected and/or on float")
 	  ) e1' e2' "tmp" builder 
-	  else (match op with
+	  else (match op with 
 	  | A.Add     -> L.build_add
 	  | A.Sub     -> L.build_sub
 	  | A.Mult    -> L.build_mul
@@ -190,22 +143,42 @@ let translate (globals, functions) =
 	  | A.Leq     -> L.build_icmp L.Icmp.Sle
 	  | A.Greater -> L.build_icmp L.Icmp.Sgt
 	  | A.Geq     -> L.build_icmp L.Icmp.Sge
-	  ) e1' e2' "tmp" builder
-      | SUnop(op, e) ->
-	  let (t, _) = e in
+	  ) e1' e2' "tmp" builder *)
+      | SUnop(op, e) -> raise (Semant.TypeError ("TODO: Unop"))
+	  (* let (t, _) = e in
           let e' = expr builder e in
 	  (match op with
 	    A.Neg when t = A.Float -> L.build_fneg 
-	  | A.Neg                  -> L.build_neg
-          | A.Not                  -> L.build_not) e' "tmp" builder
-      | SCall ("print", [e]) | SCall ("printb", [e]) ->
-	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
-	    "printf" builder
-      | SCall ("printbig", [e]) ->
-	  L.build_call printbig_func [| (expr builder e) |] "printbig" builder
-      | SCall ("printf", [e]) -> 
-	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
-	    "printf" builder
+	  | A.Neg                  -> L.build_neg 
+          | A.Not                  -> L.build_not) e' "tmp" builder *)
+    | SCall ("println", [e]) -> 
+        let e' = (expr builder e) in
+        (match (fst e) with 
+            Int -> L.build_call printf_func [| int_format_str_ln ; e' |] "printf" builder
+            (* | Bool -> (match e' with 
+                        (L.const_int i32_type 0) -> (L.build_call printf_func [| string_format_str ; (L.build_global_stringptr "false" "string" builder) |] "printf" builder)
+                      | (L.const_int i32_type 1)-> (L.build_call printf_func [| string_format_str ; (L.build_global_stringptr "true" "string" builder) |] "printf" builder)) *)
+            | Char -> L.build_call printf_func [| char_format_str_ln ; e' |] "printf" builder
+            (* | Bit -> raise (Semant.InvalidError ("TODO"))
+            | Nibble -> raise (Semant.InvalidError ("TODO"))
+            | Byte -> raise (Semant.InvalidError ("TODO"))
+            | Word -> raise (Semant.InvalidError ("TODO")) *)
+            | String -> L.build_call printf_func [| string_format_str_ln ; e' |] "printf" builder
+            | _ -> raise (Semant.InvalidError ("print: wrong type " ^ Ast.string_of_typ ty)))
+      | SCall ("print", [e]) -> 
+        let e' = (expr builder e) in
+        (match (fst e) with 
+            Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
+            (* | Bool -> (match e' with 
+                        (L.const_int i32_type 0) -> (L.build_call printf_func [| string_format_str ; (L.build_global_stringptr "false" "string" builder) |] "printf" builder)
+                      | (L.const_int i32_type 1)-> (L.build_call printf_func [| string_format_str ; (L.build_global_stringptr "true" "string" builder) |] "printf" builder)) *)
+            | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
+            (* | Bit -> raise (Semant.InvalidError ("TODO"))
+            | Nibble -> raise (Semant.InvalidError ("TODO"))
+            | Byte -> raise (Semant.InvalidError ("TODO"))
+            | Word -> raise (Semant.InvalidError ("TODO")) *)
+            | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder
+            | _ -> raise (Semant.InvalidError ("print: wrong type " ^ Ast.string_of_typ ty)))
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
@@ -213,6 +186,8 @@ let translate (globals, functions) =
                         A.Void -> ""
                       | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
+
+      | _ -> raise (Semant.TypeError ("TODO : wildcard"))
     in
     
     (* Each basic block in a program ends with a "terminator" instruction i.e.
@@ -299,6 +274,7 @@ let translate (globals, functions) =
       (* Implement for loops as while loops! *)
       | SFor (e1, e2, e3, body) -> stmt builder
 	    ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )
+      | _ -> raise (Semant.TypeError ("TODO: rest of stmt")) 
     in
 
     (* Build the code for each statement in the function *)
@@ -307,7 +283,7 @@ let translate (globals, functions) =
     (* Add a return if the last block falls off the end *)
     add_terminal builder (match fdecl.styp with
         A.Void -> L.build_ret_void
-      | A.Float -> L.build_ret (L.const_float float_t 0.0)
+      (* | A.Float -> L.build_ret (L.const_float float_t 0.0) *)
       | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
   in
 

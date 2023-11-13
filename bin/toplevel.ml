@@ -1,4 +1,4 @@
-  (* let () =
+  let () =
     let usage_msg = "usage: dune exec --no-build toplevel [file.chomp]" in
     let channel = ref stdin in
     Arg.parse [] (fun file -> channel := open_in file) usage_msg;
@@ -7,13 +7,13 @@
     let sast = Semant.check ast in
     print_string(Llvm.string_of_llmodule (Codegen.translate sast))
     (* print_string (Sast.string_of_sprogram sast) *)
-    print_string (Ast.string_of_program ast) *)
+    (* print_string (Ast.string_of_program ast) *)
 
     (* Top-level of the MicroC compiler: scan & parse the input,
    check the resulting AST and generate an SAST from it, generate LLVM IR,
    and dump the module *)
 
-type action = Ast | Sast | LLVM_IR | Compile
+(* type action = Ast | Sast | LLVM_IR | Compile
 
 let () =
   let action = ref Compile in
@@ -25,7 +25,7 @@ let () =
     ("-c", Arg.Unit (set_action Compile),
       "Check and print the generated LLVM IR (default)");
   ] in  
-  let usage_msg = "usage: ./microc.native [-a|-s|-l|-c] [file.mc]" in
+  let usage_msg = "dune exec --no-build toplevel [-a|-s|-l|-c] [file.chomp]" in
   let channel = ref stdin in
   Arg.parse speclist (fun filename -> channel := open_in filename) usage_msg;
   
@@ -40,4 +40,4 @@ let () =
     | LLVM_IR -> print_string (Llvm.string_of_llmodule (Codegen.translate sast))
     | Compile -> let m = Codegen.translate sast in
 	Llvm_analysis.assert_valid_module m;
-	print_string (Llvm.string_of_llmodule m)
+	print_string (Llvm.string_of_llmodule m) *)

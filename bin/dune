@@ -17,4 +17,5 @@
 
 (executable
  (public_name toplevel)
- (name toplevel))
+ (name toplevel)
+ (libraries llvm.analysis))
