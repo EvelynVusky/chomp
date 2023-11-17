@@ -1,0 +1,7 @@
+/usr/local/opt/llvm/bin/lli
+
+###### Testing test-print
+dune exec --no-build toplevel tests/test-print.chomp > test-print.ll
+Fatal error: exception Dune__exe__Parser.MenhirBasics.Error
+./testall.sh: line 39: [: missing `]'
+###### SUCCESS

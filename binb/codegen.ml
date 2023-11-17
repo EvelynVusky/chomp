@@ -12,7 +12,10 @@ let translate ((globals : svdecl list), (functions : sfdecl list)) =
   and i1_t       = L.i1_type     context (* bool *)
   and void_t     = L.void_type   context (* void, polys *)
   and str_t      = L.pointer_type (L.i8_type context) (* string *)
-  and bin_t      = L.pointer_type (L.i1_type context) (* bin types *)
+  and bit_t      = L.i1_type      context (* bit *)
+  and nibble_t   = L.integer_type context 4 (* nibble *)
+  and byte_t     = L.i8_type      context (* byte *)
+  and word_t     = L.i16_type     context (* word *)
   and voidptr_t  = L.pointer_type (L.i8_type context)
   and nodeptr_t  = L.pointer_type (L.named_struct_type context "Node") 
   (* and list_t     = L.pointer_type (L.struct_type context [| voidptr_t; nodeptr_t |]) list *)
@@ -28,10 +31,10 @@ let translate ((globals : svdecl list), (functions : sfdecl list)) =
     | A.Void  -> void_t
     | A.Char -> i8_t
     | A.List ty -> raise (Semant.TypeError ("TODO: list typ"))
-    | A.Bit -> bin_t
-    | A.Nibble -> bin_t
-    | A.Byte  -> bin_t
-    | A.Word -> bin_t
+    | A.Bit -> bit_t
+    | A.Nibble -> nibble_t
+    | A.Byte  -> byte_t
+    | A.Word -> word_t
     | A.Func (ret, fs) -> raise (Semant.TypeError ("TODO: func typ"))
     | A.String -> str_t
     | A.Poly -> raise (Semant.TypeError ("Poly type isn't accessible by user"))
@@ -103,6 +106,13 @@ let translate ((globals : svdecl list), (functions : sfdecl list)) =
                    with Not_found -> StringMap.find n global_vars
     in
 
+    (* converts bin string to integer representation of value *)
+    let rec bin_to_int (acc : int) (c : char) =
+      if c = '0'
+        then acc * 2
+      else acc * 2 + 1
+    in
+
     (* Construct code for an expression; return its value *)
     let rec expr builder ((ty, e) : sexpr) = match e with
 	      SLiteral i -> L.const_int i32_t i
@@ -112,6 +122,10 @@ let translate ((globals : svdecl list), (functions : sfdecl list)) =
       | SId s -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = expr builder e in
                           let _  = L.build_store e' (lookup s) builder in e'
+      | SBitLit b -> L.const_int bit_t (if b = "0" then 0 else 1)
+      | SNibbleLit b -> L.const_int nibble_t (String.fold_left bin_to_int 0 b)
+      | SByteLit b -> L.const_int byte_t (String.fold_left bin_to_int 0 b)
+      | SWordLit b -> L.const_int word_t (String.fold_left bin_to_int 0 b)
       | SBinop (e1, op, e2) -> raise (Semant.TypeError ("TODO: Binop"))
 	  (* let (t, _) = e1s
 	  and e1' = expr builder e1
@@ -152,31 +166,27 @@ let translate ((globals : svdecl list), (functions : sfdecl list)) =
 	  | A.Neg                  -> L.build_neg 
           | A.Not                  -> L.build_not) e' "tmp" builder *)
     | SCall ("println", [e]) -> 
-        let e' = (expr builder e) in
-        (match (fst e) with 
-            Int -> L.build_call printf_func [| int_format_str_ln ; e' |] "printf" builder
-            (* | Bool -> (match e' with 
-                        (L.const_int i32_type 0) -> (L.build_call printf_func [| string_format_str ; (L.build_global_stringptr "false" "string" builder) |] "printf" builder)
-                      | (L.const_int i32_type 1)-> (L.build_call printf_func [| string_format_str ; (L.build_global_stringptr "true" "string" builder) |] "printf" builder)) *)
-            | Char -> L.build_call printf_func [| char_format_str_ln ; e' |] "printf" builder
-            (* | Bit -> raise (Semant.InvalidError ("TODO"))
-            | Nibble -> raise (Semant.InvalidError ("TODO"))
-            | Byte -> raise (Semant.InvalidError ("TODO"))
-            | Word -> raise (Semant.InvalidError ("TODO")) *)
-            | String -> L.build_call printf_func [| string_format_str_ln ; e' |] "printf" builder
-            | _ -> raise (Semant.InvalidError ("print: wrong type " ^ Ast.string_of_typ ty)))
+      let e' = (expr builder e) in
+      (match (fst e) with 
+          Int -> L.build_call printf_func [| int_format_str_ln ; e' |] "printf" builder
+          | Bool -> L.build_call printf_func [| int_format_str_ln ; e' |] "printf" builder
+          | Char -> L.build_call printf_func [| char_format_str_ln ; e' |] "printf" builder
+          | Bit -> L.build_call printf_func [| int_format_str_ln ; e' |] "printf" builder (* TODO *)
+          | Nibble -> L.build_call printf_func [| int_format_str_ln ; e' |] "printf" builder (* TODO *)
+          | Byte -> L.build_call printf_func [| int_format_str_ln ; e' |] "printf" builder (* TODO *)
+          | Word -> L.build_call printf_func [| int_format_str_ln ; e' |] "printf" builder (* TODO *)
+          | String -> L.build_call printf_func [| string_format_str_ln ; e' |] "printf" builder
+          | _ -> raise (Semant.InvalidError ("print: wrong type " ^ Ast.string_of_typ ty)))
       | SCall ("print", [e]) -> 
         let e' = (expr builder e) in
         (match (fst e) with 
             Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-            (* | Bool -> (match e' with 
-                        (L.const_int i32_type 0) -> (L.build_call printf_func [| string_format_str ; (L.build_global_stringptr "false" "string" builder) |] "printf" builder)
-                      | (L.const_int i32_type 1)-> (L.build_call printf_func [| string_format_str ; (L.build_global_stringptr "true" "string" builder) |] "printf" builder)) *)
+            | Bool -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
             | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
-            (* | Bit -> raise (Semant.InvalidError ("TODO"))
-            | Nibble -> raise (Semant.InvalidError ("TODO"))
-            | Byte -> raise (Semant.InvalidError ("TODO"))
-            | Word -> raise (Semant.InvalidError ("TODO")) *)
+            | Bit -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder (* TODO *)
+            | Nibble -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder (* TODO *)
+            | Byte -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder (* TODO *)
+            | Word -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder (* TODO *)
             | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder
             | _ -> raise (Semant.InvalidError ("print: wrong type " ^ Ast.string_of_typ ty)))
       | SCall (f, args) ->
@@ -283,7 +293,6 @@ let translate ((globals : svdecl list), (functions : sfdecl list)) =
     (* Add a return if the last block falls off the end *)
     add_terminal builder (match fdecl.styp with
         A.Void -> L.build_ret_void
-      (* | A.Float -> L.build_ret (L.const_float float_t 0.0) *)
       | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
   in
 
