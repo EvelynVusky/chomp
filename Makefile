@@ -2,13 +2,16 @@
 # "make all" builds the executable
 
 .PHONY : all
-all : ./_build/default/binb/toplevel.exe
+all : ./_build/default/binb/toplevel.exe printbin.o
 
 # "make test" Compiles everything and runs the regression tests
 
 .PHONY : test
-test : all testall.sh
+test : all run_pytest.py
 	./testall.sh
+	
+printbin : printbin.c
+	cc -o printbin -DBUILD_TEST printbin.c
 
 # "make" will just compile the MicroC compiler along with printbig.c
 
@@ -20,7 +23,7 @@ test : all testall.sh
 .PHONY : clean
 clean :
 	dune clean
-	rm -rf *.diff chomp.opam *.s *.out *.ll *.exe
+	rm -rf chomp.opam *.s *.out *.ll *.exe printbin.o
 
 
 # Building the zip

@@ -316,6 +316,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     let scope = ref scope_obj in
     (* load globals *)
     let _ = List.map (fun (x : svdecl) -> add_variable scope x.styp x.svname x.svalue builder) (vdecls : svdecl list) in
+
     (* Build the code for each statement in the function *)
     let builder = stmt builder scope (SBlock fdecl.sbody) in
 

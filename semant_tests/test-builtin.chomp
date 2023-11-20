@@ -1,0 +1,20 @@
+void main() {
+    ("toBit", [Bin], Bit);
+        ("toNibble", [Bin], Nibble);
+        ("toByte", [Bin], Byte);
+        ("toWord", [Bin], Word);
+        ("toChar", [Bin], Char);
+        ("toInt", [Bin], Int);
+        ("set", [Bin; Int; Bit], Bin); // to different bin
+        ("flipBit", [Bin; Int], Bin);
+        ("getBit", [Bit; Int], Bin);
+        ("print", [Poly], Void);
+        ("println", [Poly], Void);
+    bit a = toBit({{11}});
+    nibble b = toNibble({{001101}});
+    word c = toWord({{1011}});
+    char d = toChar({{1111000011110000}});
+    int e = toInt({{1}});
+    a = set(a, 0, {{0}});
+    
+}

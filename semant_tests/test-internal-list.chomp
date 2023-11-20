@@ -1,0 +1,7 @@
+void main() {
+    list int a = [4];
+    list list int list2 = a :: [[]];
+    list list int list3 = a :: [];
+    list list int list4 = [] :: [[]];
+    list list int b = a :: [[5]];    
+}

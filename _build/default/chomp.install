@@ -1,0 +1,11 @@
+lib: [
+  "_build/install/default/lib/chomp/META"
+  "_build/install/default/lib/chomp/dune-package"
+  "_build/install/default/lib/chomp/opam"
+]
+bin: [
+  "_build/install/default/bin/toplevel"
+]
+doc: [
+  "_build/install/default/doc/chomp/README.md"
+]
