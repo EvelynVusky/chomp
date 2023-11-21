@@ -35,9 +35,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
 
   (************************** Helper Functions **************************)
 
-  let scope_obj = {variables = StringMap.empty; parent = None;} in 
-  let scope = ref scope_obj in
-
   (* Convert CHOMP types to LLVM types *)
   let rec ltype_of_typ = function
       A.Int   -> i32_t
@@ -279,10 +276,13 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           variables = StringMap.empty;
           parent = Some(!scope);
         } in
-        let scope' = ref scope'_obj in
+        let scope' = ref scope'_obj in 
+        (* let _ = scope := scope'_obj in *)
         let build builder curr_stmt = stmt builder scope' curr_stmt in
-        let _ = List.fold_left build builder sl in
-        let scope = !scope.parent in builder
+        (* let _ =  *)
+          List.fold_left build builder sl
+        (* let _ = scope := !(scope.parent) in builder *)
+        (* let _ = List.fold_left build builder sl in builder *)
         (* Generate code for this expression, return resulting builder *)
       | SExpr e -> let _ = expr builder scope (snd e) in builder 
       | SVar (v) ->
@@ -355,6 +355,9 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     in
 
     (************************** Driver Code **************************)
+
+    let scope_obj = {variables = StringMap.empty; parent = None;} in 
+    let scope = ref scope_obj in
 
     (* load globals *)
     let _ = List.map (fun (x : svdecl) -> add_variable scope x.styp x.svname x.svalue builder) (vdecls : svdecl list) in
