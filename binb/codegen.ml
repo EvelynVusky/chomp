@@ -26,6 +26,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
   and word_t     = L.i16_type     context (* word *)
   and voidptr_t  = L.pointer_type (L.i8_type context)
   and nodeptr_t  = L.pointer_type (L.named_struct_type context "Node") 
+  and pointer_t  = L.pointer_type
   (* and list_t     = L.pointer_type (L.struct_type context [| voidptr_t; nodeptr_t |]) list *)
 
   (* Create an LLVM module -- this is a "container" into which we'll 
@@ -34,8 +35,11 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
 
   (************************** Helper Functions **************************)
 
+  let scope_obj = {variables = StringMap.empty; parent = None;} in 
+  let scope = ref scope_obj in
+
   (* Convert CHOMP types to LLVM types *)
-  let ltype_of_typ = function
+  let rec ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
     | A.Void  -> void_t
@@ -45,7 +49,11 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     | A.Nibble -> nibble_t
     | A.Byte  -> byte_t
     | A.Word -> word_t
-    | A.Func (ret, fs) -> raise (Semant.TypeError ("TODO: func typ"))
+    | A.Func (fs, ret) -> 
+      let func_t =
+        L.function_type (ltype_of_typ ret)
+        (Array.of_list (List.map ltype_of_typ fs))
+      in pointer_t func_t
     | A.String -> str_t
     | A.Poly -> raise (Semant.TypeError ("Poly type isn't accessible by user"))
     | A.Bin -> raise (Semant.TypeError ("Bin type isn't accessible by user"))
@@ -83,7 +91,30 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     with Not_found -> 
       match !scope.parent with 
         Some(parent) -> find_variable (ref parent) name
-        | _          -> raise (Semant.NotFoundError ("unidentified id " ^ name))
+        | _          -> raise (Semant.NotFoundError ("Find: unidentified id " ^ name))
+  in
+
+  (* ensure that the variable is not already in given scope *)
+  let rec dont_find_variable (scope: var_table ref) name = 
+    try
+      let _ = StringMap.find name !scope.variables in 
+      raise (Semant.DupError ("Can't redeclare id " ^ name))
+    with Not_found -> 
+      (match !scope.parent with 
+        Some(parent) -> dont_find_variable (ref parent) name
+        | _          -> true)
+    | Semant.DupError err -> raise (Semant.DupError err)
+  in
+
+  (* assign variable in given scope, only call if id is declared already *)
+  let rec assign_variable (scope: var_table ref) name exp = 
+    try
+      let _ = StringMap.find name !scope.variables in
+      StringMap.add name exp !scope.variables
+    with Not_found -> 
+      match !scope.parent with 
+        Some(parent) -> assign_variable (ref parent) name exp
+        | _          -> raise (Semant.NotFoundError ("Assign: unidentified id " ^ name))
   in
 
   (************************** Function Decls **************************)
@@ -135,14 +166,15 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     (************************** Convert exprs **************************)
 
     (* Construct code for an expression; return its value *)
-    let rec expr builder (scope: var_table ref) e (*(((ty, e) : sexpr)) *)= match e with
+    let rec expr builder (scope: var_table ref) e (*(((ty, e) : sexpr)) *) = match e with
 	      SLiteral i -> L.const_int i32_t i
       | SStringLit s -> L.build_global_stringptr s "string" builder
       | SBoolLit b -> L.const_int i1_t (if b then 1 else 0)
       | SNoexpr -> L.const_int i32_t 0
       | SId s -> L.build_load (find_variable scope s) s builder
       | SAssign (s, e) -> let e' = expr builder scope (snd e) in
-                          let _  = L.build_store e' (find_variable scope s) builder in e'
+                          let _ = assign_variable scope s e' in
+                          L.build_store e' (find_variable scope s) builder 
       | SBitLit b -> L.const_int bit_t (if b = "0" then 0 else 1)
       | SNibbleLit b -> 
         L.const_int nibble_t (String.fold_left bin_to_int 0 b)
@@ -156,7 +188,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         | A.Add     -> L.build_add
         | A.Sub     -> L.build_sub
         | A.Mult    -> L.build_mul
-              | A.Div     -> L.build_sdiv
+        | A.Div     -> L.build_sdiv
         | A.And     -> L.build_and
         | A.Or      -> L.build_or
         | A.Equal   -> L.build_icmp L.Icmp.Eq
@@ -206,8 +238,10 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       | _ -> raise (Semant.TypeError ("TODO : wildcard"))
     in
 
-    (* declare variable; remember its value in a map *)
+    (* declare variable; remember its value in a map, can only be called on 
+       variables that have not previously been defined in the scope *)
     let add_variable (scope: var_table ref) (t : A.typ) n e builder =
+      let _ = dont_find_variable scope n in
       let ltype = ltype_of_typ t in
       let e' = let (_, ex) = e in (match ex with
           SNoexpr -> L.const_null ltype
@@ -240,9 +274,19 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
        after the one generated by this call) *)
     (* Imperative nature of statement processing entails imperative OCaml *)
     let rec stmt builder scope = function
-	    SBlock sl -> List.fold_left (fun b -> stmt b scope) builder sl
+	    SBlock sl ->
+        let scope'_obj = {
+          variables = StringMap.empty;
+          parent = Some(!scope);
+        } in
+        let scope' = ref scope'_obj in
+        let build builder curr_stmt = stmt builder scope' curr_stmt in
+        let _ = List.fold_left build builder sl in
+        let scope = !scope.parent in builder
         (* Generate code for this expression, return resulting builder *)
       | SExpr e -> let _ = expr builder scope (snd e) in builder 
+      | SVar (v) ->
+        let _ = add_variable scope v.styp v.svname v.svalue builder in builder
       | SReturn e -> let _ = match fdecl.styp with
                               (* Special "return nothing" instr *)
                               A.Void -> L.build_ret_void builder 
@@ -312,8 +356,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
 
     (************************** Driver Code **************************)
 
-    let scope_obj = {variables = StringMap.empty; parent = None;} in 
-    let scope = ref scope_obj in
     (* load globals *)
     let _ = List.map (fun (x : svdecl) -> add_variable scope x.styp x.svname x.svalue builder) (vdecls : svdecl list) in
     (* Build the code for each statement in the function *)

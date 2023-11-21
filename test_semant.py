@@ -1,7 +1,7 @@
 import subprocess
 import pytest
 
-TESTS = ["print", "list", "return", "no-return", "scope", "main", "internal-list"]
+TESTS = ["print", "list", "return", "no-return", "scope", "main", "internal-list", "bit-length", "op-add"]
 
 @pytest.mark.parametrize("dune_command, succeed", [
     ("dune exec --no-build toplevel ./semant_tests/test-{}.chomp", True),

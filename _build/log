@@ -1,9 +1,9 @@
-# dune build
+# dune exec --no-build toplevel ./tests/test-globals.chomp
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: /Users/luellaoudille/cs/cs107/chomp
 # Auto-detected concurrency: 8
-$ /Users/luellaoudille/.opam/4.14.0/bin/ocamlc.opt -config > /var/folders/fv/dnm5xp0s6d5dfpn_1dw039m40000gq/T/dune_c00111_output
+$ /Users/luellaoudille/.opam/4.14.0/bin/ocamlc.opt -config > /var/folders/fv/dnm5xp0s6d5dfpn_1dw039m40000gq/T/dune_70c0b0_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -35,8 +35,6 @@ $ /Users/luellaoudille/.opam/4.14.0/bin/ocamlc.opt -config > /var/folders/fv/dnm
 #            "/Users/luellaoudille/cs/cs107/chomp/_build/install/default/lib"
 #        ; "OCAMLTOP_INCLUDE_PATH" :
 #            "/Users/luellaoudille/cs/cs107/chomp/_build/install/default/lib/toplevel"
-#        ; "OCAML_COLOR" : "always"
-#        ; "OPAMCOLOR" : "always"
 #        }
 #  ; findlib_paths = [ External "/Users/luellaoudille/.opam/4.14.0/lib" ]
 #  ; natdynlink_supported = true
@@ -112,170 +110,3 @@ $ /Users/luellaoudille/.opam/4.14.0/bin/ocamlc.opt -config > /var/folders/fv/dnm
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /Users/luellaoudille/.opam/4.14.0/bin/ocamldep.opt -modules -impl binb/codegen.ml) > _build/default/binb/.toplevel.eobjs/dune__exe__Codegen.impl.d
-$ (cd _build/default && /Users/luellaoudille/.opam/4.14.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -bin-annot -I binb/.toplevel.eobjs/byte -I /Users/luellaoudille/.opam/4.14.0/lib/llvm -no-alias-deps -opaque -open Dune__exe -o binb/.toplevel.eobjs/byte/dune__exe__Codegen.cmo -c -impl binb/codegen.ml)
-> File "binb/codegen.ml", line 73, characters 10-20:
-> 73 |   let rec bin_to_int (acc : int) (c : char) =
->                ^^^^^^^^^^
-> Warning 39 [unused-rec-flag]: unused rec flag.
-> File "binb/codegen.ml", lines 155-168, characters 8-9:
-> 155 | ........(match op with 
-> 156 |         | A.Add     -> L.build_add
-> 157 |         | A.Sub     -> L.build_sub
-> 158 |         | A.Mult    -> L.build_mul
-> 159 |               | A.Div     -> L.build_sdiv
-> ...
-> 165 |         | A.Leq     -> L.build_icmp L.Icmp.Sle
-> 166 |         | A.Greater -> L.build_icmp L.Icmp.Sgt
-> 167 |         | A.Geq     -> L.build_icmp L.Icmp.Sge
-> 168 |         )......................
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Binor|Binand|Lshift|Rshift|Concat|Binxor|Cons)
-> File "binb/codegen.ml", lines 178-186, characters 14-93:
-> 178 | ..............(match (fst e) with 
-> 179 |           Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-> 180 |           | Bool -> L.build_call printf_func [| int_format_str; e' |] "printf" builder
-> 181 |           | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
-> 182 |           | Bit -> L.build_call printbit_func [| e' |] "print_bit" builder
-> 183 |           | Nibble -> L.build_call printnibble_func [| e' |] "print_nibble" builder
-> 184 |           | Byte -> L.build_call printbyte_func [| e' |] "print_byte" builder
-> 185 |           | Word -> L.build_call printword_func [| e' |] "print_word" builder
-> 186 |           | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder)
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Void|Poly|Bin|List _|Func (_, _))
-> File "binb/codegen.ml", lines 190-198, characters 8-95:
-> 190 | ........(match (fst e) with 
-> 191 |             Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-> 192 |             | Bool -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-> 193 |             | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
-> 194 |             | Bit -> L.build_call printbit_func [| e' |] "print_bit" builder
-> 195 |             | Nibble -> L.build_call printnibble_func [| e' |] "print_nibble" builder
-> 196 |             | Byte -> L.build_call printbyte_func [| e' |] "print_byte" builder
-> 197 |             | Word -> L.build_call printword_func [| e' |] "print_word" builder
-> 198 |             | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder)
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Void|Poly|Bin|List _|Func (_, _))
-> File "binb/codegen.ml", line 27, characters 6-15:
-> 27 |   and voidptr_t  = L.pointer_type (L.i8_type context)
->            ^^^^^^^^^
-> Warning 26 [unused-var]: unused variable voidptr_t.
-> File "binb/codegen.ml", line 28, characters 6-15:
-> 28 |   and nodeptr_t  = L.pointer_type (L.named_struct_type context "Node") 
->            ^^^^^^^^^
-> Warning 26 [unused-var]: unused variable nodeptr_t.
-> File "binb/codegen.ml", line 43, characters 13-15:
-> 43 |     | A.List ty -> raise (Semant.TypeError ("TODO: list typ"))
->                   ^^
-> Warning 27 [unused-var-strict]: unused variable ty.
-> File "binb/codegen.ml", line 48, characters 14-17:
-> 48 |     | A.Func (ret, fs) -> raise (Semant.TypeError ("TODO: func typ"))
->                    ^^^
-> Warning 27 [unused-var-strict]: unused variable ret.
-> File "binb/codegen.ml", line 48, characters 19-21:
-> 48 |     | A.Func (ret, fs) -> raise (Semant.TypeError ("TODO: func typ"))
->                         ^^
-> Warning 27 [unused-var-strict]: unused variable fs.
-> File "binb/codegen.ml", line 115, characters 8-18:
-> 115 |     let local_vars =
->               ^^^^^^^^^^
-> Warning 26 [unused-var]: unused variable local_vars.
-> File "binb/codegen.ml", line 152, characters 13-14:
-> 152 |         let (t, _) = e1
->                    ^
-> Warning 26 [unused-var]: unused variable t.
-> File "binb/codegen.ml", line 169, characters 14-16:
-> 169 |       | SUnop(op, e) -> raise (Semant.TypeError ("TODO: Unop"))
->                     ^^
-> Warning 27 [unused-var-strict]: unused variable op.
-> File "binb/codegen.ml", line 169, characters 18-19:
-> 169 |       | SUnop(op, e) -> raise (Semant.TypeError ("TODO: Unop"))
->                         ^
-> Warning 27 [unused-var-strict]: unused variable e.
-$ (cd _build/default && /Users/luellaoudille/.opam/4.14.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -I binb/.toplevel.eobjs/byte -I binb/.toplevel.eobjs/native -I /Users/luellaoudille/.opam/4.14.0/lib/llvm -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o binb/.toplevel.eobjs/native/dune__exe__Toplevel.cmx -c -impl binb/toplevel.ml)
-$ (cd _build/default && /Users/luellaoudille/.opam/4.14.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -I binb/.toplevel.eobjs/byte -I binb/.toplevel.eobjs/native -I /Users/luellaoudille/.opam/4.14.0/lib/llvm -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o binb/.toplevel.eobjs/native/dune__exe__Codegen.cmx -c -impl binb/codegen.ml)
-> File "binb/codegen.ml", line 73, characters 10-20:
-> 73 |   let rec bin_to_int (acc : int) (c : char) =
->                ^^^^^^^^^^
-> Warning 39 [unused-rec-flag]: unused rec flag.
-> File "binb/codegen.ml", lines 155-168, characters 8-9:
-> 155 | ........(match op with 
-> 156 |         | A.Add     -> L.build_add
-> 157 |         | A.Sub     -> L.build_sub
-> 158 |         | A.Mult    -> L.build_mul
-> 159 |               | A.Div     -> L.build_sdiv
-> ...
-> 165 |         | A.Leq     -> L.build_icmp L.Icmp.Sle
-> 166 |         | A.Greater -> L.build_icmp L.Icmp.Sgt
-> 167 |         | A.Geq     -> L.build_icmp L.Icmp.Sge
-> 168 |         )......................
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Binor|Binand|Lshift|Rshift|Concat|Binxor|Cons)
-> File "binb/codegen.ml", lines 178-186, characters 14-93:
-> 178 | ..............(match (fst e) with 
-> 179 |           Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-> 180 |           | Bool -> L.build_call printf_func [| int_format_str; e' |] "printf" builder
-> 181 |           | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
-> 182 |           | Bit -> L.build_call printbit_func [| e' |] "print_bit" builder
-> 183 |           | Nibble -> L.build_call printnibble_func [| e' |] "print_nibble" builder
-> 184 |           | Byte -> L.build_call printbyte_func [| e' |] "print_byte" builder
-> 185 |           | Word -> L.build_call printword_func [| e' |] "print_word" builder
-> 186 |           | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder)
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Void|Poly|Bin|List _|Func (_, _))
-> File "binb/codegen.ml", lines 190-198, characters 8-95:
-> 190 | ........(match (fst e) with 
-> 191 |             Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-> 192 |             | Bool -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-> 193 |             | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
-> 194 |             | Bit -> L.build_call printbit_func [| e' |] "print_bit" builder
-> 195 |             | Nibble -> L.build_call printnibble_func [| e' |] "print_nibble" builder
-> 196 |             | Byte -> L.build_call printbyte_func [| e' |] "print_byte" builder
-> 197 |             | Word -> L.build_call printword_func [| e' |] "print_word" builder
-> 198 |             | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder)
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Void|Poly|Bin|List _|Func (_, _))
-> File "binb/codegen.ml", line 27, characters 6-15:
-> 27 |   and voidptr_t  = L.pointer_type (L.i8_type context)
->            ^^^^^^^^^
-> Warning 26 [unused-var]: unused variable voidptr_t.
-> File "binb/codegen.ml", line 28, characters 6-15:
-> 28 |   and nodeptr_t  = L.pointer_type (L.named_struct_type context "Node") 
->            ^^^^^^^^^
-> Warning 26 [unused-var]: unused variable nodeptr_t.
-> File "binb/codegen.ml", line 43, characters 13-15:
-> 43 |     | A.List ty -> raise (Semant.TypeError ("TODO: list typ"))
->                   ^^
-> Warning 27 [unused-var-strict]: unused variable ty.
-> File "binb/codegen.ml", line 48, characters 14-17:
-> 48 |     | A.Func (ret, fs) -> raise (Semant.TypeError ("TODO: func typ"))
->                    ^^^
-> Warning 27 [unused-var-strict]: unused variable ret.
-> File "binb/codegen.ml", line 48, characters 19-21:
-> 48 |     | A.Func (ret, fs) -> raise (Semant.TypeError ("TODO: func typ"))
->                         ^^
-> Warning 27 [unused-var-strict]: unused variable fs.
-> File "binb/codegen.ml", line 115, characters 8-18:
-> 115 |     let local_vars =
->               ^^^^^^^^^^
-> Warning 26 [unused-var]: unused variable local_vars.
-> File "binb/codegen.ml", line 152, characters 13-14:
-> 152 |         let (t, _) = e1
->                    ^
-> Warning 26 [unused-var]: unused variable t.
-> File "binb/codegen.ml", line 169, characters 14-16:
-> 169 |       | SUnop(op, e) -> raise (Semant.TypeError ("TODO: Unop"))
->                     ^^
-> Warning 27 [unused-var-strict]: unused variable op.
-> File "binb/codegen.ml", line 169, characters 18-19:
-> 169 |       | SUnop(op, e) -> raise (Semant.TypeError ("TODO: Unop"))
->                         ^
-> Warning 27 [unused-var-strict]: unused variable e.
-$ (cd _build/default && /Users/luellaoudille/.opam/4.14.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -o binb/toplevel.exe /Users/luellaoudille/.opam/4.14.0/lib/llvm/shared/llvm.cmxa -I /Users/luellaoudille/.opam/4.14.0/lib/llvm /Users/luellaoudille/.opam/4.14.0/lib/llvm/shared/llvm_analysis.cmxa -I /Users/luellaoudille/.opam/4.14.0/lib/llvm binb/.toplevel.eobjs/native/dune__exe.cmx binb/.toplevel.eobjs/native/dune__exe__Ast.cmx binb/.toplevel.eobjs/native/dune__exe__Sast.cmx binb/.toplevel.eobjs/native/dune__exe__Semant.cmx binb/.toplevel.eobjs/native/dune__exe__Codegen.cmx binb/.toplevel.eobjs/native/dune__exe__Parser.cmx binb/.toplevel.eobjs/native/dune__exe__Scanner.cmx binb/.toplevel.eobjs/native/dune__exe__Toplevel.cmx)
-> ld: warning: duplicate -rpath '/Users/luellaoudille/.opam/4.14.0/lib/llvm/shared/../..' ignored
-> ld: warning: ignoring duplicate libraries: '-lLLVM-14', '-lc++', '-lcurses', '-lm', '-lz'

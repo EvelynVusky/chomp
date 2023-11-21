@@ -1,0 +1,5 @@
+void main() {
+    bit a = {0};
+    bit b = {1};
+    bit c = a + b;
+}

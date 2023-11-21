@@ -1,7 +1,7 @@
 import subprocess
 import pytest
 
-FILES = ["test-print"]
+FILES = ["test-print", "hello_world", "test-globals"]
 
 @pytest.mark.parametrize("dune_command, one, check", [
     ("dune exec --no-build toplevel ./tests/{}.chomp > {}.ll", False, True),
