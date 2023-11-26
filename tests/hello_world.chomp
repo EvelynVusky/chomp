@@ -1,3 +1,4 @@
-void main () {
-    println("hello");
+int main () {
+    println("hello world");
+    return 0;
 }
