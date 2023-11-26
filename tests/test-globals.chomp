@@ -1,13 +1,17 @@
-int a = 3;
+void main () {
+    int b = 3;
+    print(b);
+}
+
+/*int a = 3;
 void main () {
     println(a);
     a = 2;
     println(a);
-    int b = 4;
-    println(b);
+    int b = 3;
     {
-        b = 5;
-        println(b);
+        a = 5;    
+        println(a);
     }
-    println(b);
-}
+    println(a);
+}*/

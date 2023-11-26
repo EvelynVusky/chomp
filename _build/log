@@ -1,9 +1,9 @@
-# dune build
+# dune exec --no-build toplevel tests/test-globals.chomp
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: /Users/luellaoudille/cs/cs107/chomp
 # Auto-detected concurrency: 8
-$ /Users/luellaoudille/.opam/4.14.0/bin/ocamlc.opt -config > /var/folders/fv/dnm5xp0s6d5dfpn_1dw039m40000gq/T/dune_922063_output
+$ /Users/luellaoudille/.opam/4.14.0/bin/ocamlc.opt -config > /var/folders/fv/dnm5xp0s6d5dfpn_1dw039m40000gq/T/dune_5ca7c8_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -112,55 +112,3 @@ $ /Users/luellaoudille/.opam/4.14.0/bin/ocamlc.opt -config > /var/folders/fv/dnm
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /Users/luellaoudille/.opam/4.14.0/bin/ocamldep.opt -modules -impl binb/codegen.ml) > _build/default/binb/.toplevel.eobjs/dune__exe__Codegen.impl.d
-$ (cd _build/default && /Users/luellaoudille/.opam/4.14.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -bin-annot -I binb/.toplevel.eobjs/byte -I /Users/luellaoudille/.opam/4.14.0/lib/llvm -no-alias-deps -opaque -open Dune__exe -o binb/.toplevel.eobjs/byte/dune__exe__Codegen.cmo -c -impl binb/codegen.ml)
-> File "binb/codegen.ml", line 78, characters 10-20:
-> 78 |   let rec bin_to_int (acc : int) (c : char) =
->                ^^^^^^^^^^
-> Warning 39 [unused-rec-flag]: unused rec flag.
-> File "binb/codegen.ml", lines 184-197, characters 8-9:
-> 184 | ........(match op with 
-> 185 |         | A.Add     -> L.build_add
-> 186 |         | A.Sub     -> L.build_sub
-> 187 |         | A.Mult    -> L.build_mul
-> 188 |         | A.Div     -> L.build_sdiv
-> ...
-> 194 |         | A.Leq     -> L.build_icmp L.Icmp.Sle
-> 195 |         | A.Greater -> L.build_icmp L.Icmp.Sgt
-> 196 |         | A.Geq     -> L.build_icmp L.Icmp.Sge
-> 197 |         )......................
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Binor|Binand|Lshift|Rshift|Concat|Binxor|Cons)
-> File "binb/codegen.ml", lines 207-215, characters 14-93:
-> 207 | ..............(match (fst e) with 
-> 208 |           Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-> 209 |           | Bool -> L.build_call printf_func [| int_format_str; e' |] "printf" builder
-> 210 |           | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
-> 211 |           | Bit -> L.build_call printbit_func [| e' |] "print_bit" builder
-> 212 |           | Nibble -> L.build_call printnibble_func [| e' |] "print_nibble" builder
-> 213 |           | Byte -> L.build_call printbyte_func [| e' |] "print_byte" builder
-> 214 |           | Word -> L.build_call printword_func [| e' |] "print_word" builder
-> 215 |           | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder)
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Void|Poly|Bin|List _|Func (_, _))
-> File "binb/codegen.ml", lines 219-227, characters 8-95:
-> 219 | ........(match (fst e) with 
-> 220 |             Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-> 221 |             | Bool -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-> 222 |             | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
-> 223 |             | Bit -> L.build_call printbit_func [| e' |] "print_bit" builder
-> 224 |             | Nibble -> L.build_call printnibble_func [| e' |] "print_nibble" builder
-> 225 |             | Byte -> L.build_call printbyte_func [| e' |] "print_byte" builder
-> 226 |             | Word -> L.build_call printword_func [| e' |] "print_word" builder
-> 227 |             | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder)
-> Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-> Here is an example of a case that is not matched:
-> (Void|Poly|Bin|List _|Func (_, _))
-> File "binb/codegen.ml", line 284, characters 33-39:
-> 284 |         let _ = scope := !(scope.parent) in builder
->                                        ^^^^^^
-> Error: This expression has type var_table ref
->        There is no field parent within type ref
-[2]

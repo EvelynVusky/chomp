@@ -82,35 +82,35 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
   in
 
   (* finds variable in given scope *)
-  let rec find_variable (scope: var_table ref) name = 
+  let rec find_variable (scope: var_table) name = 
     try
-      StringMap.find name !scope.variables
+      StringMap.find name scope.variables
     with Not_found -> 
-      match !scope.parent with 
-        Some(parent) -> find_variable (ref parent) name
+      match scope.parent with 
+        Some(parent) -> find_variable (parent) name
         | _          -> raise (Semant.NotFoundError ("Find: unidentified id " ^ name))
   in
 
   (* ensure that the variable is not already in given scope *)
-  let rec dont_find_variable (scope: var_table ref) name = 
+  let rec dont_find_variable (scope: var_table) name = 
     try
-      let _ = StringMap.find name !scope.variables in 
+      let _ = StringMap.find name scope.variables in 
       raise (Semant.DupError ("Can't redeclare id " ^ name))
     with Not_found -> 
-      (match !scope.parent with 
-        Some(parent) -> dont_find_variable (ref parent) name
+      (match scope.parent with 
+        Some(parent) -> dont_find_variable (parent) name
         | _          -> true)
     | Semant.DupError err -> raise (Semant.DupError err)
   in
 
   (* assign variable in given scope, only call if id is declared already *)
-  let rec assign_variable (scope: var_table ref) name exp = 
+  let rec assign_variable (scope: var_table) name exp = 
     try
-      let _ = StringMap.find name !scope.variables in
-      StringMap.add name exp !scope.variables
+      let _ = StringMap.find name scope.variables in
+      {variables = StringMap.add name exp scope.variables; parent = scope.parent;}
     with Not_found -> 
-      match !scope.parent with 
-        Some(parent) -> assign_variable (ref parent) name exp
+      match scope.parent with 
+        Some(parent) -> {variables = scope.variables; parent = Some(assign_variable parent name exp);}
         | _          -> raise (Semant.NotFoundError ("Assign: unidentified id " ^ name))
   in
 
@@ -140,7 +140,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
        value, if appropriate, and remember their values in the "locals" map *)
-    let local_vars =
+    (* let local_vars =
       let add_formal m (t, n) p = 
         let () = L.set_value_name n p in
 	      let local = L.build_alloca (ltype_of_typ t) n builder in
@@ -158,31 +158,31 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
           (Array.to_list (L.params the_function)) 
       in List.fold_left add_local formals fdecl.sformals
-    in
+    in *)
 
     (************************** Convert exprs **************************)
 
     (* Construct code for an expression; return its value *)
-    let rec expr builder (scope: var_table ref) e (*(((ty, e) : sexpr)) *) = match e with
-	      SLiteral i -> L.const_int i32_t i
-      | SStringLit s -> L.build_global_stringptr s "string" builder
-      | SBoolLit b -> L.const_int i1_t (if b then 1 else 0)
-      | SNoexpr -> L.const_int i32_t 0
-      | SId s -> L.build_load (find_variable scope s) s builder
-      | SAssign (s, e) -> let e' = expr builder scope (snd e) in
-                          let _ = assign_variable scope s e' in
-                          L.build_store e' (find_variable scope s) builder 
-      | SBitLit b -> L.const_int bit_t (if b = "0" then 0 else 1)
+    let rec expr builder (scope: var_table) e (*(((ty, e) : sexpr)) *) = match e with
+	      SLiteral i -> (scope, L.const_int i32_t i)
+      | SStringLit s -> (scope, L.build_global_stringptr s "string" builder)
+      | SBoolLit b -> (scope, L.const_int i1_t (if b then 1 else 0))
+      | SNoexpr -> (scope, L.const_int i32_t 0)
+      | SId s -> (scope, L.build_load (find_variable scope s) s builder)
+      | SAssign (s, e) -> let (scope, e') = expr builder scope (snd e) in
+                          (* let scope = assign_variable scope s e' in *)
+                          (scope, L.build_store e' (find_variable scope s) builder)
+      | SBitLit b -> (scope, L.const_int bit_t (if b = "0" then 0 else 1))
       | SNibbleLit b -> 
-        L.const_int nibble_t (String.fold_left bin_to_int 0 b)
-      | SByteLit b -> L.const_int byte_t (String.fold_left bin_to_int 0 b)
-      | SWordLit b -> L.const_int word_t (String.fold_left bin_to_int 0 b)
+        (scope, L.const_int nibble_t (String.fold_left bin_to_int 0 b))
+      | SByteLit b -> (scope, L.const_int byte_t (String.fold_left bin_to_int 0 b))
+      | SWordLit b -> (scope, L.const_int word_t (String.fold_left bin_to_int 0 b))
       | SBinop (e1, op, e2) -> (*raise (Semant.TypeError ("TODO: Binop"))*)
-        let (t, _) = e1
-        and e1' = expr builder scope (snd e1)
-        and e2' = expr builder scope (snd e2) in
-        (match op with 
-        | A.Add     -> L.build_add
+        let (t, _) = e1 in 
+        let (scope, e1') = expr builder scope (snd e1) in 
+        let (scope, e2') = expr builder scope (snd e2) in
+        (scope, (match op with
+        | A.Add     -> L.build_add 
         | A.Sub     -> L.build_sub
         | A.Mult    -> L.build_mul
         | A.Div     -> L.build_sdiv
@@ -194,7 +194,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         | A.Leq     -> L.build_icmp L.Icmp.Sle
         | A.Greater -> L.build_icmp L.Icmp.Sgt
         | A.Geq     -> L.build_icmp L.Icmp.Sge
-        ) e1' e2' "tmp" builder
+        ) e1' e2' "tmp" builder)
       | SUnop(op, e) -> raise (Semant.TypeError ("TODO: Unop"))
 	  (* let (t, _) = e in
           let e' = expr builder e in
@@ -203,20 +203,20 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
 	  | A.Neg                  -> L.build_neg 
           | A.Not                  -> L.build_not) e' "tmp" builder *)
     | SCall ("println", [e]) -> 
-      let e' = (expr builder scope (snd e)) in
-      let _ = (match (fst e) with 
+      let (scope, e') = (expr builder scope (snd e)) in
+      let _ = (match (fst e) with
           Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-          | Bool -> L.build_call printf_func [| int_format_str; e' |] "printf" builder
+          | Bool -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
           | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
           | Bit -> L.build_call printbit_func [| e' |] "print_bit" builder
           | Nibble -> L.build_call printnibble_func [| e' |] "print_nibble" builder
           | Byte -> L.build_call printbyte_func [| e' |] "print_byte" builder
           | Word -> L.build_call printword_func [| e' |] "print_word" builder
           | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder)
-    in L.build_call printf_func [| string_format_ln |] "printf" builder
+      in (scope, L.build_call printf_func [| string_format_ln |] "printf" builder)
       | SCall ("print", [e]) -> 
-        let e' = (expr builder scope (snd e)) in
-        (match (fst e) with 
+        let (scope, e') = (expr builder scope (snd e)) in
+        (scope, (match (fst e) with 
             Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
             | Bool -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
             | Char -> L.build_call printf_func [| char_format_str ; e' |] "printf" builder
@@ -224,32 +224,33 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             | Nibble -> L.build_call printnibble_func [| e' |] "print_nibble" builder
             | Byte -> L.build_call printbyte_func [| e' |] "print_byte" builder
             | Word -> L.build_call printword_func [| e' |] "print_word" builder
-            | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder)
-      | SCall (f, args) ->
+            | String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder))
+      (* | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (expr builder scope) (List.map snd (List.rev args))) in
         let result = (match fdecl.styp with 
                         A.Void -> ""
                       | _ -> f ^ "_result") 
-        in L.build_call fdef (Array.of_list llargs) result builder
+        in (scope, L.build_call fdef (Array.of_list llargs) result builder) *)
       | _ -> raise (Semant.TypeError ("TODO : wildcard"))
     in
 
     (* declare variable; remember its value in a map, can only be called on 
        variables that have not previously been defined in the scope *)
-    let add_variable (scope: var_table ref) (t : A.typ) n e builder =
+    let add_variable (scope: var_table) (t : A.typ) n e builder =
       let _ = dont_find_variable scope n in
       let ltype = ltype_of_typ t in
       let e' = let (_, ex) = e in (match ex with
           SNoexpr -> L.const_null ltype
-        | _ -> expr builder scope (snd e))
+        | _ -> 
+          let (scope, e) = expr builder scope (snd e) in e)
       in L.set_value_name n e';
       let l_var = L.build_alloca ltype n builder in
       let _ = L.build_store e' l_var builder in
-      scope := {
-        variables = StringMap.add n l_var !scope.variables;
-        parent = !scope.parent;
-      }
+      ({
+        variables = StringMap.add n l_var scope.variables;
+        parent = scope.parent;
+      }, builder)
     in
     
     (* Each basic block in a program ends with a "terminator" instruction i.e.
@@ -261,7 +262,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     let add_terminal builder instr =
                            (* The current block where we're inserting instr *)
       match L.block_terminator (L.insertion_block builder) with
-	Some _ -> ()
+	      Some _ -> ()
       | None -> ignore (instr builder) in
 
     (************************** Convert Statements **************************)
@@ -272,81 +273,79 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     (* Imperative nature of statement processing entails imperative OCaml *)
     let rec stmt builder scope = function
 	    SBlock sl ->
-        let scope'_obj = {
+        let scope' = {
           variables = StringMap.empty;
-          parent = Some(!scope);
+          parent = Some(scope);
         } in
-        let scope' = ref scope'_obj in 
-        (* let _ = scope := scope'_obj in *)
-        let build builder curr_stmt = stmt builder scope' curr_stmt in
-        (* let _ =  *)
-          List.fold_left build builder sl
-        (* let _ = scope := !(scope.parent) in builder *)
-        (* let _ = List.fold_left build builder sl in builder *)
+        (* let build (scope'', builder) curr_stmt = stmt builder scope' curr_stmt in *)
+        let (_, builder) = List.fold_left (fun (s, b) curr -> (stmt b scope' curr)) (scope', builder) sl in (scope, builder)
+        (* let build (scope, builder) curr_stmt = stmt builder scope curr_stmt in
+        let (scope, builder) = List.fold_left build (scope, builder) sl in (scope, builder) *)
         (* Generate code for this expression, return resulting builder *)
-      | SExpr e -> let _ = expr builder scope (snd e) in builder 
-      | SVar (v) ->
-        let _ = add_variable scope v.styp v.svname v.svalue builder in builder
+      | SExpr e -> let (scope, _) = expr builder scope (snd e) in (scope, builder) 
+      | SVar (v) -> add_variable scope v.styp v.svname v.svalue builder
       | SReturn e -> let _ = match fdecl.styp with
                               (* Special "return nothing" instr *)
-                              A.Void -> L.build_ret_void builder 
+                              A.Void -> L.build_ret_void builder
                               (* Build return statement *)
-                            | _ -> L.build_ret (expr builder scope (snd e)) builder 
-                     in builder
+                            | _ ->
+                              let (scope, e') = expr builder scope (snd e) in
+                              L.build_ret e' builder 
+                     in (scope, builder)
       (* The order that we create and add the basic blocks for an If statement
       doesnt 'really' matter (seemingly). What hooks them up in the right order
       are the build_br functions used at the end of the then and else blocks (if
       they don't already have a terminator) and the build_cond_br function at
       the end, which adds jump instructions to the "then" and "else" basic blocks *)
       | SIf (predicate, then_stmt, else_stmt) ->
-         let bool_val = expr builder scope (snd predicate) in
+        let (scope, bool_val) = expr builder scope (snd predicate) in
          (* Add "merge" basic block to our function's list of blocks *)
-	 let merge_bb = L.append_block context "merge" the_function in
+	      let merge_bb = L.append_block context "merge" the_function in
          (* Partial function used to generate branch to merge block *) 
-         let branch_instr = L.build_br merge_bb in
+        let branch_instr = L.build_br merge_bb in
 
          (* Same for "then" basic block *)
-	 let then_bb = L.append_block context "then" the_function in
+	      let then_bb = L.append_block context "then" the_function in
          (* Position builder in "then" block and build the statement *)
-         let then_builder = stmt (L.builder_at_end context then_bb) scope then_stmt in
+        let (scope, then_builder) = stmt (L.builder_at_end context then_bb) scope then_stmt in
          (* Add a branch to the "then" block (to the merge block) 
            if a terminator doesn't already exist for the "then" block *)
-	 let () = add_terminal then_builder branch_instr in
+	      let () = add_terminal then_builder branch_instr in
 
          (* Identical to stuff we did for "then" *)
-	 let else_bb = L.append_block context "else" the_function in
-         let else_builder = stmt (L.builder_at_end context else_bb) scope else_stmt in
-	 let () = add_terminal else_builder branch_instr in
+	      let else_bb = L.append_block context "else" the_function in
+        let (scope, else_builder) = stmt (L.builder_at_end context else_bb) scope else_stmt in
+	      let () = add_terminal else_builder branch_instr in
 
          (* Generate initial branch instruction perform the selection of "then"
          or "else". Note we're using the builder we had access to at the start
          of this alternative. *)
-	 let _ = L.build_cond_br bool_val then_bb else_bb builder in
+	      let _ = L.build_cond_br bool_val then_bb else_bb builder in
          (* Move to the merge block for further instruction building *)
-	 L.builder_at_end context merge_bb
+	 (scope, L.builder_at_end context merge_bb)
 
       | SWhile (predicate, body) ->
-          (* First create basic block for condition instructions -- this will
-          serve as destination in the case of a loop *)
-	  let pred_bb = L.append_block context "while" the_function in
-          (* In current block, branch to predicate to execute the condition *)
-	  let _ = L.build_br pred_bb builder in
+        (* First create basic block for condition instructions -- this will
+        serve as destination in the case of a loop *)
+        let pred_bb = L.append_block context "while" the_function in
+        (* In current block, branch to predicate to execute the condition *)
+        let _ = L.build_br pred_bb builder in
 
-          (* Create the body's block, generate the code for it, and add a branch
-          back to the predicate block (we always jump back at the end of a while
-          loop's body, unless we returned or something) *)
-	  let body_bb = L.append_block context "while_body" the_function in
-          let while_builder = stmt (L.builder_at_end context body_bb) scope body in
-	  let () = add_terminal while_builder (L.build_br pred_bb) in
+        (* Create the body's block, generate the code for it, and add a branch
+        back to the predicate block (we always jump back at the end of a while
+        loop's body, unless we returned or something) *)
+        let body_bb = L.append_block context "while_body" the_function in
+        let (scope, while_builder) = stmt (L.builder_at_end context body_bb) scope body in
+        let () = add_terminal while_builder (L.build_br pred_bb) in
 
-          (* Generate the predicate code in the predicate block *)
-	  let pred_builder = L.builder_at_end context pred_bb in
-	  let bool_val = expr pred_builder scope (snd predicate) in
+        (* Generate the predicate code in the predicate block *)
+        let pred_builder = L.builder_at_end context pred_bb in
+        let (scope, bool_val) = expr pred_builder scope (snd predicate) in
 
-          (* Hook everything up *)
-	  let merge_bb = L.append_block context "merge" the_function in
-	  let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
-	  L.builder_at_end context merge_bb
+        (* Hook everything up *)
+        let merge_bb = L.append_block context "merge" the_function in
+        let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
+        (scope, L.builder_at_end context merge_bb)
 
       (* Implement for loops as while loops! *)
       | SFor (e1, e2, e3, body) -> stmt builder scope
@@ -354,21 +353,41 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       | _ -> raise (Semant.TypeError ("TODO: rest of stmt")) 
     in
 
-    (************************** Driver Code **************************)
+    (* Build the code for each statement in the function *)
+    (* let (scope, builder) = stmt builder scope (SBlock fdecl.sbody) in
 
-    let scope_obj = {variables = StringMap.empty; parent = None;} in 
-    let scope = ref scope_obj in
+    (* Add a return if the last block falls off the end *)
+      add_terminal builder (match fdecl.styp with
+        A.Void -> L.build_ret_void
+      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0)) *)
+
+    (* i think this is in build_function_body, so our scope is disconnected,
+       also we need to add formals in here *)
+
+  
+    let scope = {variables = StringMap.empty; parent = None;} in 
 
     (* load globals *)
-    let _ = List.map (fun (x : svdecl) -> add_variable scope x.styp x.svname x.svalue builder) (vdecls : svdecl list) in
+    let (scope, builder) = List.fold_left 
+        (fun (scope, builder) (x : svdecl) -> add_variable scope x.styp x.svname x.svalue builder) 
+        (scope, builder) (vdecls : svdecl list) in
     (* Build the code for each statement in the function *)
-    let builder = stmt builder scope (SBlock fdecl.sbody) in
+    let (scope, builder) = stmt builder scope (SBlock fdecl.sbody) in
 
     (* Add a return if the last block falls off the end *)
     add_terminal builder (match fdecl.styp with
         A.Void -> L.build_ret_void
       | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
   in
+
+  (************************** Driver Code **************************)
+
+  (* let scope = {variables = StringMap.empty; parent = None;} in 
+
+    (* load globals *)
+  let (scope, builder) = List.fold_left 
+      (fun (scope, builder) (x : svdecl) -> add_variable scope x.styp x.svname x.svalue builder) 
+      (scope, builder) (vdecls : svdecl list) in *)
 
   List.iter build_function_body fdecls;
   the_module
