@@ -1,0 +1,11 @@
+int a = 4;
+void main () {
+    println(a);
+    int b = 3;
+    println(b);
+    {
+        a = 1;
+        println(a);
+    }
+    println(a);
+}

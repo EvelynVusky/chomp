@@ -1,0 +1,4 @@
+void main() {
+    list int a = [];
+    car a;
+}

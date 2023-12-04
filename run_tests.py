@@ -1,14 +1,15 @@
 import subprocess
 import pytest
 
-FILES = ["test-print", "hello_world", "test-globals"]
+FILES = ["test-print", "test-hello-world", "test-scope", "test-if", \
+         "test-formals", "test-globals", "test-fib"]
 
 @pytest.mark.parametrize("dune_command, one, check", [
     ("dune exec --no-build toplevel ./tests/{}.chomp > {}.ll", False, True),
     ("llc -relocation-model=pic {}.ll", True, True),
     ("gcc {}.s -o {}.exe printbin.o", False, True),
-    ("./{}.exe > {}_result.out", False, False),
-    ("diff {}_result.out ./tests/{}.out", False, True),
+    ("./{}.exe > {}-result.out", False, False),
+    ("diff {}-result.out ./tests/{}.out", False, True),
 ])
 
 def test_dune_commands(dune_command, one, check):

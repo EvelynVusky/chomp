@@ -1,0 +1,15 @@
+int i = 0;
+int main() {
+    bool b = true;
+    if (i == 0) {
+        println("yes");
+        if (b) {
+            println("true");
+        } else {
+            println("false");
+        }
+    } else {
+        println("no");
+    }
+    return 0;
+}

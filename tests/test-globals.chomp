@@ -1,22 +1,7 @@
-int a = 4;
-int c = 4;
-int main () {
-    print(a);
-    int b = 3;
-    /* scope lost here */
-    /*print(b);*/
-    return 0;
-}
+string a = "Hello, ";
+string b = "World";
 
-/*int a = 3;
-void main () {
-    println(a);
-    a = 2;
-    println(a);
-    int b = 3;
-    {
-        a = 5;    
-        println(a);
-    }
-    println(a);
-}*/
+void main() {
+    print(a);
+    println(b);
+}

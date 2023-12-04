@@ -1,0 +1,8 @@
+int main() {
+    bool b = true;
+    while (b) {
+        print("hi!");
+        b = false;
+    }
+    return 0;
+}

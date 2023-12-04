@@ -1,0 +1,10 @@
+/* lists */
+
+/* missing comma in list */
+list nibble n = [{{1000}} {{1110}}];
+
+/* missing brackets */
+list int i = 1, 2, 3, 4;
+
+/* missing type */
+list b = [true, false];

@@ -255,6 +255,8 @@ let check (vdecls, fdecls) =
 
     (* check type equality *) 
     let _ = if (fst sexpr) <> Void then eq_type_err2 typ (fst sexpr) else true in
+
+    (* let sexpr = if (fst sexpr) = List(Poly) then (typ, snd sexpr) else sexpr in *)
     
     (* add to scope *)
     let new_var = {
@@ -389,7 +391,11 @@ let check (vdecls, fdecls) =
   (* adds user defined functions to scope *)
   let scope, functions' = List.fold_left check_fdecls (scope, []) fdecls in
 
-  (* check main *)
-  let _ = find_variable scope "main" in
+  (* validate main *)
+  let main_fdecl = find_variable scope "main" in
+  let _ = match main_fdecl with
+    Func([], _) -> true
+    | _ -> raise (InvalidError ("main function should take no formals"))
+  in
 
 (List.rev globals', List.rev functions') 

@@ -1,0 +1,19 @@
+void main() {
+    int n = 10;
+
+    int tmp1 = 0; /* base case n = 0 */
+    int tmp2 = 1; /* base case n = 1 */
+    int sum = 0;
+
+    int i;
+    for (i = 2; i <= n; i = i + 1) {
+        sum = tmp1 + tmp2;
+        tmp1 = tmp2;
+        tmp2 = sum;
+    }
+    
+    print("Fib of ");
+    print(n);
+    print(" is: ");
+    println(sum);
+}

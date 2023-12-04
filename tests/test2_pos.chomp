@@ -1,0 +1,32 @@
+bool arith (int a, int b) {
+    c = a > b;
+    if (c == true)  {
+        int d = a - b;
+        return c;
+    }
+    int d = b - a;
+    return d;
+}
+
+void noBody () {}
+
+list int concat (list int lst, int i) {
+    return i :: lst;
+}
+
+int first (list int lst) {
+    return car lst;
+}
+
+list int rest (list int lst) {
+    return cdr lst;
+}
+
+void call(bool arith) {
+    int d = arith(5, 3);
+}
+
+int call2() {
+    list int lst = [1,2];
+    return first(lst);
+}

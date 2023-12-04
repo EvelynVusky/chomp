@@ -1,3 +1,7 @@
-void main () {
+int main () {
     println({{1010}});
+    println({{10101010}});
+    println(1);
+    println("hi");
+    return 0;
 }
