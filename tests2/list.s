@@ -5,27 +5,41 @@
 _main:                                  ## @main
 	.cfi_startproc
 ## %bb.0:                               ## %entry
-	subq	$56, %rsp
+	pushq	%rbx
+	.cfi_def_cfa_offset 16
+	subq	$48, %rsp
 	.cfi_def_cfa_offset 64
-	movq	$0, 12(%rsp)
-	movb	$0, 20(%rsp)
-	movl	$2, 8(%rsp)
-	movb	$1, 24(%rsp)
-	movl	$0, 12(%rsp)
-	movq	$0, 16(%rsp)
-	movl	$1, 24(%rsp)
-	movb	$0, 36(%rsp)
-	leaq	8(%rsp), %rax
-	movq	%rax, 28(%rsp)
-	leaq	24(%rsp), %rax
-	movq	%rax, 48(%rsp)
-	movl	$1, 44(%rsp)
+	.cfi_offset %rbx, -16
+	movl	$0, 24(%rsp)
+	movq	$0, 28(%rsp)
+	movb	$1, 36(%rsp)
+	movq	$0, 4(%rsp)
+	movb	$0, 12(%rsp)
+	movl	$1, (%rsp)
+	movq	$0, 8(%rsp)
+	movb	$1, 16(%rsp)
+	movl	$0, 4(%rsp)
+	movq	%rsp, %rbx
+	movq	%rbx, 40(%rsp)
+	movl	$0, 20(%rsp)
+	cmpb	$1, 12(%rsp)
+	jne	LBB0_2
+## %bb.1:                               ## %then
+	leaq	L_fmt.4(%rip), %rdi
+	xorl	%eax, %eax
+	callq	_printf
+	movl	$1, %edi
+	xorl	%eax, %eax
+	callq	_exit
+LBB0_2:                                 ## %merge
+	movl	(%rbx), %esi
+	movl	%esi, 20(%rsp)
 	leaq	L_fmt(%rip), %rdi
-	movl	$1, %esi
 	xorl	%eax, %eax
 	callq	_printf
 	xorl	%eax, %eax
-	addq	$56, %rsp
+	addq	$48, %rsp
+	popq	%rbx
 	retq
 	.cfi_endproc
                                         ## -- End function

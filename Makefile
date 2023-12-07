@@ -21,7 +21,7 @@ run: all
 	dune exec --no-build toplevel $(FILENAME).chomp > $(FILENAME).ll
 	llc -relocation-model=pic $(FILENAME).ll
 	gcc $(FILENAME).s -o $(FILENAME).exe printbin.o
-	-./$(FILENAME).exe
+	./$(FILENAME).exe
 	
 printbin : printbin.c
 	cc -o printbin -DBUILD_TEST printbin.c

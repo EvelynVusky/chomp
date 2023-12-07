@@ -1,6 +1,17 @@
 int main() {
-    list int a = [1, 2];
+    list int a = [1];
     int b = car a;
     print(b);
+
+    /*
+    list int c = [1];
+    int d;
+    d = car c;
+    print(d);
+    */
+
+    /* int b = car 1 segfaults */
+    /* int b = car a; */
+    /* print car a; */ /*WORKS*/
     return 0;
 }

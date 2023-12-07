@@ -80,6 +80,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     | A.Byte -> byte_node_struct
     | A.Word -> word_node_struct
     | A.Char -> char_node_struct
+    | A.Poly -> int_node_struct
     (*A.List TODO*)
     | _ -> raise (Semant.TypeError ("Invalid list type: " ^ A.string_of_typ ty))
   in
@@ -93,6 +94,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     | A.Byte -> byte_node_pointer
     | A.Word -> word_node_pointer
     | A.Char -> char_node_pointer
+    | A.Poly -> int_node_pointer
   (*A.List TODO*)
     | _ -> raise (Semant.TypeError ("Invalid list pointer type: " ^ A.string_of_typ ty)))
   in
@@ -105,7 +107,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     | A.Bool  -> i1_t
     | A.Void  -> void_t
     | A.Char -> i8_t
-    (* | A.List(Poly) -> empty_list_t *)
     | A.List ty -> get_node_ptr_ty ty
     | A.Bit -> bit_t
     | A.Nibble -> nibble_t
@@ -139,10 +140,10 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
   let printword_t = L.function_type i32_t [| word_t |] in
   let printword_func = L.declare_function "print_word" printword_t the_module in
 
-  (* let exit_t : L.lltype = 
+  let exit_t : L.lltype = 
     L.var_arg_function_type i32_t [| i32_t |] in
   let exit_func : L.llvalue = 
-    L.declare_function "exit" exit_t the_module in *)
+    L.declare_function "exit" exit_t the_module in
 
   (* converts bin string to integer representation of value *)
   let bin_to_int (acc : int) (c : char) =
@@ -217,8 +218,8 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     let int_format_str = L.build_global_stringptr "%d" "fmt" builder
     and string_format_str = L.build_global_stringptr "%s" "fmt" builder 
     and char_format_str = L.build_global_stringptr "%c" "fmt" builder
-    and string_format_ln = L.build_global_stringptr "\n" "fmt" builder in
-    (* and err_format_str = L.build_global_stringptr "cannot call car on empty list" "fmt" builder in *)
+    and string_format_ln = L.build_global_stringptr "\n" "fmt" builder 
+    and err_format_str = L.build_global_stringptr "cannot call car on empty list" "fmt" builder in
 
 
     (************************** Convert exprs **************************)
@@ -242,9 +243,15 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       | SByteLit b -> (scope, L.const_int byte_t (String.fold_left bin_to_int 0 b))
       | SWordLit b -> (scope, L.const_int word_t (String.fold_left bin_to_int 0 b))
       | SList lst -> 
-        if (fst e) = List(Poly) then (scope, L.const_named_struct int_node_struct
-          (Array.of_list [L.const_null i32_t; 
-          L.const_pointer_null (L.pointer_type int_node_struct); L.const_int i1_t 1])) else
+        if (fst e) = List(Poly) then 
+          let node_struct = L.const_named_struct int_node_struct
+                                (Array.of_list [(L.const_int i32_t 1); 
+                                (L.const_pointer_null (L.pointer_type int_node_struct)); 
+                                (L.const_int i1_t 1)]) in
+          let node_var = L.build_alloca int_node_struct "front_node_var" builder in
+          let _ = ignore(L.build_store node_struct node_var builder) in
+          (scope, node_var)
+         else
         (let list_ty = match (fst e) with 
           | List ty -> ty
           | _ -> raise (Semant.InvalidError "Not a list")
@@ -269,6 +276,8 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           (Array.of_list [L.const_null (ltype_of_typ list_ty); 
           L.const_pointer_null (L.pointer_type list_node_ty); L.const_int i1_t 1])
         in
+        let last_node_var = L.build_alloca list_node_ty "last_node_var" builder in
+        let _ = ignore(L.build_store last_node last_node_var builder) in
         (scope, List.fold_left build_list last_node lst))
       | SBinop (e1, op, e2) ->
         let (scope, e1') = expr builder scope e1 in 
@@ -301,33 +310,9 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
               let e1' = L.build_shl e1' (L.const_int i32_t 8) "tmp" builder in
               let e2' = L.build_and e2' (L.const_int i32_t 255) "tmp" builder in
               L.build_or e1' e2' "tmp" builder
-            (* | (Nibble, Bit) ->   (*byte*)  
-              let e1' = L.build_shl e1' (L.const_int i32_t 1) "tmp" builder in
-              let e2' = L.build_and e2' (L.const_int i32_t 1) "tmp" builder in
-              L.build_or e1' e2' "tmp" builder
-            | (Nibble, Nibble) ->  (*byte*)
-              let e1' = L.build_shl e1' (L.const_int i32_t 4) "tmp" builder in
-              let e2' = L.build_and e2' (L.const_int i32_t 15) "tmp" builder in
-              L.build_or e1' e2' "tmp" builder
-            | (Nibble, Byte) ->
-              let e1' = L.build_shl e1' (L.const_int i32_t 8) "tmp" builder in
-              let e2' = L.build_and e2' (L.const_int i32_t 255) "tmp" builder in
-              L.build_or e1' e2' "tmp" builder
-            | (Byte, Bit) ->      
-              let e1' = L.build_shl e1' (L.const_int i32_t 1) "tmp" builder in
-              let e2' = L.build_and e2' (L.const_int i32_t 1) "tmp" builder in
-              L.build_or e1' e2' "tmp" builder
-            | (Byte, Nibble) -> 
-              let e1' = L.build_shl e1' (L.const_int i32_t 4) "tmp" builder in
-              let e2' = L.build_and e2' (L.const_int i32_t 15) "tmp" builder in
-              L.build_or e1' e2' "tmp" builder
-            | (Byte, Byte) -> 
-              let e1' = L.build_shl e1' (L.const_int i32_t 8) "tmp" builder in
-              let e2' = L.build_and e2' (L.const_int i32_t 255) "tmp" builder in
-              L.build_or e1' e2' "tmp" builder   *)
             | (Word, _) -> e1'
             | (_, Word) -> e2'
-            | _ -> raise (Semant.TypeError ("TODO: rest of concat")))
+            | _ -> raise (Semant.InvalidError ("Concat is only applicable to Bin types")))
         | A.Binxor  -> L.build_xor e1' e2' "tmp" builder
         | A.Cons    -> raise (Semant.TypeError ("TODO: cons"))
         (* Cons: if empty, remake whole list *)
@@ -338,38 +323,36 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           A.Neg     -> (scope, L.build_neg e' "tmp" builder)
           | A.Not | A.Binnot     -> (scope, L.build_not e' "tmp" builder)
           | A.Car     ->
-            (* let merge_bb = L.append_block context "merge" the_function in
-            let branch_instr = L.build_br merge_bb in
-            
-            (*conditional*)
+            (* conditional *)
             let list_ptr = L.build_struct_gep e' 2 "tmp" builder in
             let list_val = L.build_load list_ptr "tmp" builder in
             let cond = L.build_icmp L.Icmp.Eq list_val (L.const_int i1_t 1) "cond" builder in
+            let merge_bb = L.append_block context "merge" the_function in
+            let branch_instr = L.build_br merge_bb in
             
             (*then block*)
             let then_bb = L.append_block context "then" the_function in
             let then_builder = L.builder_at_end context then_bb in
             let print_err = L.build_call printf_func [| err_format_str |] "printf" then_builder in
-            (* let call_exit = L.build_call exit_func [| L.const_int i32_t 1 |] "exit" then_builder in *)
+            let call_exit = L.build_call exit_func [| L.const_int i32_t 1 |] "exit" then_builder in
             let _ = add_terminal then_builder branch_instr in
-
+           
             (*else block*)
             let else_bb = L.append_block context "else" the_function in
             let else_builder = L.builder_at_end context else_bb in
-            let value_ptr = L.build_struct_gep e' 0 "tmp" else_builder in
+            (* let value_ptr = L.build_struct_gep e' 0 "tmp" else_builder in *)
             (* let else_res = L.build_load value_ptr "tmp" builder in *)
             let _ = add_terminal else_builder branch_instr in
-            
-            (*put together if statement*)  
+
+            (*put together if statement*)  (*put the next lines in the merge block*)
             let _ = L.build_cond_br cond then_bb else_bb builder in
-            let merge_builder = (L.builder_at_end context merge_bb) in
-            let _ = add_terminal merge_builder in
-            (scope, L.build_load value_ptr "tmp" merge_builder) *)
-            let value_ptr = L.build_struct_gep e' 0 "tmp" builder in
-            (scope, L.build_load value_ptr "tmp" builder)
+            let merge_builder = (L.position_at_end merge_bb builder) in
+            let value_ptr = L.build_struct_gep e' 0 "tmp" builder in (*notes for OH: we printed out value_ptr and it has an address*)
+            (scope, L.build_load value_ptr "tmp" builder) (* PROBLEM LINE *)
+            (* (scope, L.const_int i32_t 1) *)
           | A.Cdr     -> 
             let list_ptr = L.build_struct_gep e' 1 "tmp" builder in
-            (scope, L.build_load list_ptr "tmp" builder))
+            (scope, (L.const_int i32_t 1)))
           (* | A.Binnot  -> raise (Semant.TypeError ("binnot"))) *)
       | SCall ("println", [e]) -> 
         let (scope, e') = (expr builder scope e) in
@@ -413,7 +396,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       let (scope, e') = let (_, ex) = e in (match ex with
           SNoexpr -> (scope, L.const_null ltype)
         | _ -> expr builder scope e)
-      in L.set_value_name n e';
+      in (* L.set_value_name n e';*)
       let l_var = L.build_alloca ltype n builder in
       let _ = L.build_store e' l_var builder in
       ({ scope with variables = StringMap.add n l_var scope.variables }, builder)
@@ -436,7 +419,8 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         (* Generate code for this expression, return resulting builder *)
       | SExpr e -> let (scope, _) = expr builder scope e in (scope, builder) 
       | SVar (v) -> 
-        add_variable scope v.styp v.svname v.svalue builder
+        let (scope, builder) = add_variable scope v.styp v.svname (v.styp, SNoexpr) builder in
+        let (scope, _) = expr builder scope (v.styp, SAssign(v.svname, v.svalue)) in (scope, builder)
         (* let (s, b) = add_variable scope v.styp v.svname v.svalue builder in
         dump_scope s ("<var>") *)
       | SReturn e -> 
