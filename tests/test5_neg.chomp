@@ -1,5 +1,0 @@
-/*Trying to do something that isn't a declaration outside of a function*/
-for (i = 0; i < 5; i = i + 1) {}
-
-/*Declaration where id starts with a number*/
-int 123 = 3;

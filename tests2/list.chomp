@@ -1,4 +1,6 @@
-void main() {
-    list int a = [];
-    car a;
+int main() {
+    list int a = [1, 2];
+    int b = car a;
+    print(b);
+    return 0;
 }

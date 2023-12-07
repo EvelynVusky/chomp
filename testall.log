@@ -1,0 +1,88 @@
+/usr/local/opt/llvm/bin/lli
+
+###### Testing test-fib
+dune exec toplevel tests/test-fib.chomp > test-fib.ll
+llc -relocation-model=pic test-fib.ll > test-fib.s
+cc -o test-fib.exe test-fib.s printbin.o
+./test-fib.exe
+diff -b test-fib.out tests/test-fib.out > test-fib.diff
+###### SUCCESS
+
+###### Testing test-for
+dune exec toplevel tests/test-for.chomp > test-for.ll
+llc -relocation-model=pic test-for.ll > test-for.s
+cc -o test-for.exe test-for.s printbin.o
+./test-for.exe
+diff -b test-for.out tests/test-for.out > test-for.diff
+###### SUCCESS
+
+###### Testing test-formals
+dune exec toplevel tests/test-formals.chomp > test-formals.ll
+llc -relocation-model=pic test-formals.ll > test-formals.s
+cc -o test-formals.exe test-formals.s printbin.o
+./test-formals.exe
+diff -b test-formals.out tests/test-formals.out > test-formals.diff
+###### SUCCESS
+
+###### Testing test-globals
+dune exec toplevel tests/test-globals.chomp > test-globals.ll
+llc -relocation-model=pic test-globals.ll > test-globals.s
+cc -o test-globals.exe test-globals.s printbin.o
+./test-globals.exe
+diff -b test-globals.out tests/test-globals.out > test-globals.diff
+###### SUCCESS
+
+###### Testing test-hello-world
+dune exec toplevel tests/test-hello-world.chomp > test-hello-world.ll
+llc -relocation-model=pic test-hello-world.ll > test-hello-world.s
+cc -o test-hello-world.exe test-hello-world.s printbin.o
+./test-hello-world.exe
+diff -b test-hello-world.out tests/test-hello-world.out > test-hello-world.diff
+###### SUCCESS
+
+###### Testing test-if
+dune exec toplevel tests/test-if.chomp > test-if.ll
+llc -relocation-model=pic test-if.ll > test-if.s
+cc -o test-if.exe test-if.s printbin.o
+./test-if.exe
+diff -b test-if.out tests/test-if.out > test-if.diff
+###### SUCCESS
+
+###### Testing test-print
+dune exec toplevel tests/test-print.chomp > test-print.ll
+llc -relocation-model=pic test-print.ll > test-print.s
+cc -o test-print.exe test-print.s printbin.o
+./test-print.exe
+diff -b test-print.out tests/test-print.out > test-print.diff
+###### SUCCESS
+
+###### Testing test-scope
+dune exec toplevel tests/test-scope.chomp > test-scope.ll
+llc -relocation-model=pic test-scope.ll > test-scope.s
+cc -o test-scope.exe test-scope.s printbin.o
+./test-scope.exe
+diff -b test-scope.out tests/test-scope.out > test-scope.diff
+###### SUCCESS
+
+###### Testing test-while
+dune exec toplevel tests/test-while.chomp > test-while.ll
+llc -relocation-model=pic test-while.ll > test-while.s
+cc -o test-while.exe test-while.s printbin.o
+./test-while.exe
+diff -b test-while.out tests/test-while.out > test-while.diff
+###### SUCCESS
+
+###### Testing fail-bit-length
+dune exec toplevel < tests/fail-bit-length.chomp 2> fail-bit-length.err >> testall.log
+diff -b fail-bit-length.err tests/fail-bit-length.err > fail-bit-length.diff
+###### SUCCESS
+
+###### Testing fail-list
+dune exec toplevel < tests/fail-list.chomp 2> fail-list.err >> testall.log
+diff -b fail-list.err tests/fail-list.err > fail-list.diff
+###### SUCCESS
+
+###### Testing fail-scope
+dune exec toplevel < tests/fail-scope.chomp 2> fail-scope.err >> testall.log
+diff -b fail-scope.err tests/fail-scope.err > fail-scope.diff
+###### SUCCESS

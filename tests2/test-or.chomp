@@ -1,0 +1,7 @@
+int main() {
+    nibble a = {{1001}};
+    byte b = {{11010101}};
+    word c = a >< b;
+    println(c);
+    return 0;
+}

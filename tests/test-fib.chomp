@@ -1,4 +1,4 @@
-void main() {
+int main() {
     int n = 10;
 
     int tmp1 = 0; /* base case n = 0 */
@@ -16,4 +16,5 @@ void main() {
     print(n);
     print(" is: ");
     println(sum);
+    return 0;
 }

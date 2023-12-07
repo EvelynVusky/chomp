@@ -1,4 +1,3 @@
-
 MAKEFLAGS += --silent
 
 # "make all" builds the executable
@@ -22,6 +21,7 @@ run: all
 	dune exec --no-build toplevel $(FILENAME).chomp > $(FILENAME).ll
 	llc -relocation-model=pic $(FILENAME).ll
 	gcc $(FILENAME).s -o $(FILENAME).exe printbin.o
+	-./$(FILENAME).exe
 	
 printbin : printbin.c
 	cc -o printbin -DBUILD_TEST printbin.c
@@ -35,4 +35,4 @@ printbin : printbin.c
 .PHONY : clean
 clean :
 	dune clean
-	rm -rf chomp.opam *.s *.out *.ll *.exe tests/*.s tests/*.ll tests/*.exe printbin.o
+	rm -rf chomp.opam *.s *.out *.ll *.exe tests/*.s tests/*.ll tests2/*.exe test2s/*.s tests2/*.ll tests2/*.exe printbin.o
