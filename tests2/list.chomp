@@ -1,14 +1,18 @@
 int main() {
-    list int a = [1];
-    int b = car a;
-    print(b);
+    list int a = 1 :: [2];
+    println(car a);
+    println(car (cdr a));
+    /*list int a = [1, 2];
+    int b = car a;*/
 
-    /*
-    list int c = [1];
-    int d;
-    d = car c;
-    print(d);
-    */
+    /* all segfaults */
+
+    /*string s = "hi";
+    print(s);*/
+
+    /*list int c = [];
+    list int d = cdr c;
+    print(car d);*/
 
     /* int b = car 1 segfaults */
     /* int b = car a; */

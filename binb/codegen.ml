@@ -219,12 +219,13 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     and string_format_str = L.build_global_stringptr "%s" "fmt" builder 
     and char_format_str = L.build_global_stringptr "%c" "fmt" builder
     and string_format_ln = L.build_global_stringptr "\n" "fmt" builder 
-    and err_format_str = L.build_global_stringptr "cannot call car on empty list" "fmt" builder in
+    and car_err_format_str = L.build_global_stringptr "Error: cannot call car on empty list" "fmt" builder
+    and cdr_err_format_str = L.build_global_stringptr "Error: cannot call cdr on empty list" "fmt" builder in
 
 
     (************************** Convert exprs **************************)
 
-    (* TODO: binop, unop, call (built-ins), list *)
+    (* TODO: cons, cdr, call (built-ins) *)
     (* Construct code for an expression; return its value *)
     let rec expr builder (scope: var_table) (e: sexpr) = match (snd e) with
 	      SLiteral i -> (scope, L.const_int i32_t i)
@@ -278,7 +279,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         in
         let last_node_var = L.build_alloca list_node_ty "last_node_var" builder in
         let _ = ignore(L.build_store last_node last_node_var builder) in
-        (scope, List.fold_left build_list last_node lst))
+        (scope, List.fold_left build_list last_node_var lst))
       | SBinop (e1, op, e2) ->
         let (scope, e1') = expr builder scope e1 in 
         let (scope, e2') = expr builder scope e2 in
@@ -314,8 +315,50 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             | (_, Word) -> e2'
             | _ -> raise (Semant.InvalidError ("Concat is only applicable to Bin types")))
         | A.Binxor  -> L.build_xor e1' e2' "tmp" builder
-        | A.Cons    -> raise (Semant.TypeError ("TODO: cons"))
-        (* Cons: if empty, remake whole list *)
+        | A.Cons    -> 
+          (* make e1 node *)
+          let (scope, e1') = expr builder scope e1 in
+          let list_node_ty = get_node_ty (fst e1) in
+          let e1_node =  L.const_named_struct list_node_ty
+          (Array.of_list [e1'; 
+            L.const_pointer_null (L.pointer_type list_node_ty); L.const_int i1_t 0]) in
+          let e1_node_var = L.build_alloca list_node_ty "e1_node_var" builder in
+          let _ = ignore(L.build_store e1_node e1_node_var builder) in
+
+          (* conditional *)
+          let (scope, e2') = expr builder scope e2 in
+          let list_ptr = L.build_struct_gep e2' 2 "tmp" builder in
+          let list_val = L.build_load list_ptr "tmp" builder in
+          let cond = L.build_icmp L.Icmp.Eq list_val (L.const_int i1_t 1) "cond" builder in
+          let merge_bb = L.append_block context "merge" the_function in
+          let branch_instr = L.build_br merge_bb in
+          
+          (*then block*)
+          let then_bb = L.append_block context "then" the_function in
+          let then_builder = L.builder_at_end context then_bb in
+          (* build new list with e1 *)
+          let last_node = L.const_named_struct list_node_ty
+          (Array.of_list [L.const_null (ltype_of_typ (fst e1)); 
+            L.const_pointer_null (L.pointer_type list_node_ty); L.const_int i1_t 1])
+          in
+          let last_node_var = L.build_alloca list_node_ty "last_node_var" builder in
+          let _ = ignore(L.build_store last_node last_node_var builder) in
+          let e1_next_ptr = L.build_struct_gep e1_node_var 1 "e1_node_next" builder in
+          let _ = ignore(L.build_store last_node_var e1_next_ptr builder) in
+          let _ = add_terminal then_builder branch_instr in
+         
+          (*else block*)
+          let else_bb = L.append_block context "else" the_function in
+          let else_builder = L.builder_at_end context else_bb in
+          (* add e1 node to e2 *)
+          let e1_next_ptr = L.build_struct_gep e1_node_var 1 "e1_node_next" builder in
+          let _ = ignore(L.build_store e2' e1_next_ptr builder) in
+          let _ = add_terminal else_builder branch_instr in
+
+          (*put together if statement*)  (*put the next lines in the merge block*)
+          let _ = L.build_cond_br cond then_bb else_bb builder in
+          let merge_builder = (L.position_at_end merge_bb builder) in
+          e1_node_var
         ))
       | SUnop(op, e) ->
         let (scope, e') = expr builder scope e in
@@ -333,7 +376,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             (*then block*)
             let then_bb = L.append_block context "then" the_function in
             let then_builder = L.builder_at_end context then_bb in
-            let print_err = L.build_call printf_func [| err_format_str |] "printf" then_builder in
+            let print_err = L.build_call printf_func [| car_err_format_str |] "printf" then_builder in
             let call_exit = L.build_call exit_func [| L.const_int i32_t 1 |] "exit" then_builder in
             let _ = add_terminal then_builder branch_instr in
            
@@ -349,11 +392,31 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             let merge_builder = (L.position_at_end merge_bb builder) in
             let value_ptr = L.build_struct_gep e' 0 "tmp" builder in (*notes for OH: we printed out value_ptr and it has an address*)
             (scope, L.build_load value_ptr "tmp" builder) (* PROBLEM LINE *)
-            (* (scope, L.const_int i32_t 1) *)
           | A.Cdr     -> 
+            (* conditional *)
+            let list_ptr = L.build_struct_gep e' 2 "tmp" builder in
+            let list_val = L.build_load list_ptr "tmp" builder in
+            let cond = L.build_icmp L.Icmp.Eq list_val (L.const_int i1_t 1) "cond" builder in
+            let merge_bb = L.append_block context "merge" the_function in
+            let branch_instr = L.build_br merge_bb in
+            
+            (*then block*)
+            let then_bb = L.append_block context "then" the_function in
+            let then_builder = L.builder_at_end context then_bb in
+            let print_err = L.build_call printf_func [| cdr_err_format_str |] "printf" then_builder in
+            let call_exit = L.build_call exit_func [| L.const_int i32_t 1 |] "exit" then_builder in
+            let _ = add_terminal then_builder branch_instr in
+           
+            (*else block*)
+            let else_bb = L.append_block context "else" the_function in
+            let else_builder = L.builder_at_end context else_bb in
+            let _ = add_terminal else_builder branch_instr in
+
+            (*put together if statement*)  (*put the next lines in the merge block*)
+            let _ = L.build_cond_br cond then_bb else_bb builder in
+            let merge_builder = (L.position_at_end merge_bb builder) in
             let list_ptr = L.build_struct_gep e' 1 "tmp" builder in
-            (scope, (L.const_int i32_t 1)))
-          (* | A.Binnot  -> raise (Semant.TypeError ("binnot"))) *)
+            (scope, L.build_load list_ptr "tmp" builder))
       | SCall ("println", [e]) -> 
         let (scope, e') = (expr builder scope e) in
         let _ = (match (fst e) with
@@ -390,13 +453,13 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
 
     (* declare variable; remember its value in a map, can only be called on 
        variables that have not previously been defined in the scope *)
-    let add_variable (scope: var_table) (t : A.typ) n e builder =
+      let add_variable (scope: var_table) (t : A.typ) n e builder =
       let _ = dont_find_variable scope n in
       let ltype = ltype_of_typ t in
       let (scope, e') = let (_, ex) = e in (match ex with
           SNoexpr -> (scope, L.const_null ltype)
         | _ -> expr builder scope e)
-      in (* L.set_value_name n e';*)
+      in L.set_value_name n e';
       let l_var = L.build_alloca ltype n builder in
       let _ = L.build_store e' l_var builder in
       ({ scope with variables = StringMap.add n l_var scope.variables }, builder)
@@ -418,9 +481,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         (* let (_, builder) = List.fold_left stmt (scope', builder, fdecl) sl in (scope, builder) *)
         (* Generate code for this expression, return resulting builder *)
       | SExpr e -> let (scope, _) = expr builder scope e in (scope, builder) 
-      | SVar (v) -> 
-        let (scope, builder) = add_variable scope v.styp v.svname (v.styp, SNoexpr) builder in
-        let (scope, _) = expr builder scope (v.styp, SAssign(v.svname, v.svalue)) in (scope, builder)
+      | SVar (v) -> add_variable scope v.styp v.svname v.svalue builder
         (* let (s, b) = add_variable scope v.styp v.svname v.svalue builder in
         dump_scope s ("<var>") *)
       | SReturn e -> 

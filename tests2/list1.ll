@@ -31,8 +31,8 @@ entry:
   store %int_node <{ i32 0, %int_node* null, i1 true }>, %int_node** %front_node_next, align 1
   %a1 = alloca %int_node*, align 8
   store %int_node* %a, %int_node** %a1, align 8
-  %b = alloca i32, align 4
-  store i32 0, i32* %b, align 4
+ - %b = alloca i32, align 4
+ - store i32 0, i32* %b, align 4
   %a2 = load %int_node*, %int_node** %a1, align 8
   %tmp = getelementptr inbounds %int_node, %int_node* %a2, i32 0, i32 2
   %tmp3 = load i1, i1* %tmp, align 1
@@ -41,7 +41,7 @@ entry:
 
 merge:                                            ; preds = %else, %then
   %tmp4 = getelementptr inbounds %int_node, %int_node* %a2, i32 0, i32 0
-  %tmp5 = load i32, i32* %tmp4, align 4
+ - %tmp5 = load i32, i32* %tmp4, align 4
   store i32 %tmp5, i32* %b, align 4
   %b6 = load i32, i32* %b, align 4
   %printf7 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @fmt, i32 0, i32 0), i32 %b6)

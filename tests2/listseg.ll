@@ -25,26 +25,29 @@ define i32 @main() {
 entry:
   %last_node_var = alloca %int_node, align 8
   store %int_node <{ i32 0, %int_node* null, i1 true }>, %int_node* %last_node_var, align 1
+  %front_node_var = alloca %int_node, align 8
+  store %int_node <{ i32 2, %int_node* null, i1 false }>, %int_node* %front_node_var, align 1
+  %front_node_next = getelementptr inbounds %int_node, %int_node* %front_node_var, i32 0, i32 1
+  store %int_node <{ i32 0, %int_node* null, i1 true }>, %int_node** %front_node_next, align 1
   %a = alloca %int_node, align 8
   store %int_node <{ i32 1, %int_node* null, i1 false }>, %int_node* %a, align 1
-  %front_node_next = getelementptr inbounds %int_node, %int_node* %a, i32 0, i32 1
-  store %int_node <{ i32 0, %int_node* null, i1 true }>, %int_node** %front_node_next, align 1
-  %a1 = alloca %int_node*, align 8
-  store %int_node* %a, %int_node** %a1, align 8
- ---
-  %a2 = load %int_node*, %int_node** %a1, align 8
-  %tmp = getelementptr inbounds %int_node, %int_node* %a2, i32 0, i32 2
-  %tmp3 = load i1, i1* %tmp, align 1
-  %cond = icmp eq i1 %tmp3, true
+  %front_node_next2 = getelementptr inbounds %int_node, %int_node* %a, i32 0, i32 1
+  store %int_node* %front_node_var, %int_node** %front_node_next2, align 8
+  %a3 = alloca %int_node*, align 8
+  store %int_node* %a, %int_node** %a3, align 8
+  %a4 = load %int_node*, %int_node** %a3, align 8
+  %tmp = getelementptr inbounds %int_node, %int_node* %a4, i32 0, i32 2
+  %tmp5 = load i1, i1* %tmp, align 1
+  %cond = icmp eq i1 %tmp5, true
   br i1 %cond, label %then, label %else
 
 merge:                                            ; preds = %else, %then
-  %tmp4 = getelementptr inbounds %int_node, %int_node* %a2, i32 0, i32 0
- - %b = load i32, i32* %tmp4, align 4
- - %b6 = alloca i32, align 4
-  store i32 %b, i32* %b6, align 4
-  %b7 = load i32, i32* %b6, align 4
-  %printf8 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @fmt, i32 0, i32 0), i32 %b7)
+  %tmp6 = getelementptr inbounds %int_node, %int_node* %a4, i32 0, i32 0
+  %b = load i32, i32* %tmp6, align 4
+  %b8 = alloca i32, align 4
+  store i32 %b, i32* %b8, align 4
+  %b9 = load i32, i32* %b8, align 4
+  %printf10 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @fmt, i32 0, i32 0), i32 %b9)
   ret i32 0
 
 then:                                             ; preds = %entry

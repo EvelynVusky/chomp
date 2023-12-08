@@ -7,38 +7,81 @@ _main:                                  ## @main
 ## %bb.0:                               ## %entry
 	pushq	%rbx
 	.cfi_def_cfa_offset 16
-	subq	$48, %rsp
-	.cfi_def_cfa_offset 64
+	subq	$112, %rsp
+	.cfi_def_cfa_offset 128
 	.cfi_offset %rbx, -16
-	movl	$0, 24(%rsp)
-	movq	$0, 28(%rsp)
-	movb	$1, 36(%rsp)
-	movq	$0, 4(%rsp)
-	movb	$0, 12(%rsp)
-	movl	$1, (%rsp)
-	movq	$0, 8(%rsp)
-	movb	$1, 16(%rsp)
-	movl	$0, 4(%rsp)
-	movq	%rsp, %rbx
-	movq	%rbx, 40(%rsp)
-	movl	$0, 20(%rsp)
-	cmpb	$1, 12(%rsp)
-	jne	LBB0_2
-## %bb.1:                               ## %then
+	movb	$1, 68(%rsp)
+	movq	$0, 60(%rsp)
+	movl	$0, 56(%rsp)
+	movl	$2, 96(%rsp)
+	movb	$0, 108(%rsp)
+	leaq	56(%rsp), %rax
+	movq	%rax, 100(%rsp)
+	movl	$1, 8(%rsp)
+	movq	$0, 12(%rsp)
+	movb	$0, 20(%rsp)
+	movl	$0, 40(%rsp)
+	movq	$0, 44(%rsp)
+	movb	$1, 52(%rsp)
+	movl	$2, 24(%rsp)
+	movb	$0, 36(%rsp)
+	leaq	40(%rsp), %rax
+	movq	%rax, 28(%rsp)
+	movb	$1, 92(%rsp)
+	movq	$0, 84(%rsp)
+	movl	$0, 80(%rsp)
+	leaq	24(%rsp), %rax
+	movq	%rax, 12(%rsp)
+	leaq	8(%rsp), %rbx
+	movq	%rbx, 72(%rsp)
+	cmpb	$1, 20(%rsp)
+	jne	LBB0_1
+## %bb.5:                               ## %then13
 	leaq	L_fmt.4(%rip), %rdi
 	xorl	%eax, %eax
 	callq	_printf
 	movl	$1, %edi
 	xorl	%eax, %eax
 	callq	_exit
-LBB0_2:                                 ## %merge
+LBB0_1:                                 ## %merge12
 	movl	(%rbx), %esi
-	movl	%esi, 20(%rsp)
 	leaq	L_fmt(%rip), %rdi
 	xorl	%eax, %eax
 	callq	_printf
+	leaq	L_fmt.3(%rip), %rdi
 	xorl	%eax, %eax
-	addq	$48, %rsp
+	callq	_printf
+	movq	72(%rsp), %rbx
+	cmpb	$1, 12(%rbx)
+	jne	LBB0_2
+## %bb.6:                               ## %then24
+	leaq	L_fmt.5(%rip), %rdi
+	xorl	%eax, %eax
+	callq	_printf
+	movl	$1, %edi
+	xorl	%eax, %eax
+	callq	_exit
+LBB0_2:                                 ## %merge23
+	movq	4(%rbx), %rbx
+	cmpb	$1, 12(%rbx)
+	jne	LBB0_4
+## %bb.3:                               ## %then34
+	leaq	L_fmt.4(%rip), %rdi
+	xorl	%eax, %eax
+	callq	_printf
+	movl	$1, %edi
+	xorl	%eax, %eax
+	callq	_exit
+LBB0_4:                                 ## %merge33
+	movl	(%rbx), %esi
+	leaq	L_fmt(%rip), %rdi
+	xorl	%eax, %eax
+	callq	_printf
+	leaq	L_fmt.3(%rip), %rdi
+	xorl	%eax, %eax
+	callq	_printf
+	xorl	%eax, %eax
+	addq	$112, %rsp
 	popq	%rbx
 	retq
 	.cfi_endproc
@@ -57,6 +100,9 @@ L_fmt.3:                                ## @fmt.3
 	.asciz	"\n"
 
 L_fmt.4:                                ## @fmt.4
-	.asciz	"cannot call car on empty list"
+	.asciz	"Error: cannot call car on empty list"
+
+L_fmt.5:                                ## @fmt.5
+	.asciz	"Error: cannot call cdr on empty list"
 
 .subsections_via_symbols
