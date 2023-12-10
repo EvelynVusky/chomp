@@ -33,11 +33,10 @@ let check (vdecls, fdecls) =
         ("toNibble", [Bin], Nibble);
         ("toByte", [Bin], Byte);
         ("toWord", [Bin], Word);
-        ("toChar", [Bin], Char);
         ("toInt", [Bin], Int);
         ("set", [Bin; Int; Bit], Bin);
         ("flipBit", [Bin; Int], Bin);
-        ("getBit", [Bit; Int], Bin);
+        ("getBit", [Bin; Int], Bin);
         ("print", [Poly], Void);
         ("println", [Poly], Void);
       ]
@@ -133,14 +132,6 @@ let check (vdecls, fdecls) =
       | (_, Word) -> false
       | _ -> raise (TypeError ((string_of_typ ty1) ^ " or " ^ (string_of_typ ty2) ^ "not Bin types"))
   in
-
-  (* returns the larger of 2 bin types *)
-  let get_larger_bin ty1 ty2 =
-    if ty1 = ty2 then ty1
-    else
-      if is_larger_bin ty1 ty2 then ty1
-      else ty2
-  in
     
   (* returns the smaller of 2 bin types *)
   let get_smaller_bin ty1 ty2 =
@@ -199,7 +190,8 @@ let check (vdecls, fdecls) =
             | (Byte, Nibble) -> Word
             | (Byte, Byte) -> Word
             | (Word, _) -> Word
-            | (_, Word) -> Word) 
+            | (_, Word) -> Word
+            | _ -> raise (TypeError "Concat only applicatble to Bin types"))
           | Cons -> (match ty2 with
               List ty2' -> if is_primitive_and_not_void ty1 && eq_type2 ty1 ty2' then List ty1
                             else raise (TypeError ("Cons types " ^ string_of_typ ty1 ^ " and " ^ string_of_typ ty2 ^ " don't match"))

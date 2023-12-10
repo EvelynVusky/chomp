@@ -14,7 +14,7 @@ _main:                                  ## @main
 	testb	%al, %al
 	jne	LBB0_1
 ## %bb.5:                               ## %else10
-	leaq	L_string.7(%rip), %rsi
+	leaq	L_string.8(%rip), %rsi
 	jmp	LBB0_3
 LBB0_1:                                 ## %then
 	leaq	L_string(%rip), %rsi
@@ -27,11 +27,11 @@ LBB0_1:                                 ## %then
 	jne	LBB0_4
 ## %bb.2:                               ## %then5
 	leaq	L_fmt.1(%rip), %rdi
-	leaq	L_string.5(%rip), %rsi
+	leaq	L_string.6(%rip), %rsi
 	jmp	LBB0_3
 LBB0_4:                                 ## %else
 	leaq	L_fmt.1(%rip), %rdi
-	leaq	L_string.6(%rip), %rsi
+	leaq	L_string.7(%rip), %rsi
 LBB0_3:                                 ## %merge
 	xorl	%eax, %eax
 	callq	_printf
@@ -57,18 +57,21 @@ L_fmt.3:                                ## @fmt.3
 	.asciz	"\n"
 
 L_fmt.4:                                ## @fmt.4
-	.asciz	"cannot call car on empty list"
+	.asciz	"Error: cannot call car on empty list"
+
+L_fmt.5:                                ## @fmt.5
+	.asciz	"Error: cannot call cdr on empty list"
 
 L_string:                               ## @string
 	.asciz	"yes"
 
-L_string.5:                             ## @string.5
+L_string.6:                             ## @string.6
 	.asciz	"true"
 
-L_string.6:                             ## @string.6
+L_string.7:                             ## @string.7
 	.asciz	"false"
 
-L_string.7:                             ## @string.7
+L_string.8:                             ## @string.8
 	.asciz	"no"
 
 .subsections_via_symbols

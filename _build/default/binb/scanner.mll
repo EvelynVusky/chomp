@@ -4,7 +4,7 @@ let digit = ['0' - '9']
 let digits = digit+
 let bin = ['0' - '1']
 let bins = bin+
-let char = [' ' - '~']
+let char = [' ' - '!']|['#' - '~']
 let chars = char*
 
 rule token = parse

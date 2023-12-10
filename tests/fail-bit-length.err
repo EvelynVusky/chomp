@@ -1,1 +1,1 @@
-Fatal error: exception Dune__exe__Semant.TypeError("Types nibble and byte don't match")
+Fatal error: exception Dune__exe__TypeError("Types nibble and byte don't match")

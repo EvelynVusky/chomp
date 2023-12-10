@@ -5,9 +5,10 @@ source_filename = "Chomp"
 @fmt.1 = private unnamed_addr constant [3 x i8] c"%s\00", align 1
 @fmt.2 = private unnamed_addr constant [3 x i8] c"%c\00", align 1
 @fmt.3 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
-@fmt.4 = private unnamed_addr constant [30 x i8] c"cannot call car on empty list\00", align 1
+@fmt.4 = private unnamed_addr constant [37 x i8] c"Error: cannot call car on empty list\00", align 1
+@fmt.5 = private unnamed_addr constant [37 x i8] c"Error: cannot call cdr on empty list\00", align 1
 @string = private unnamed_addr constant [8 x i8] c"Fib of \00", align 1
-@string.5 = private unnamed_addr constant [6 x i8] c" is: \00", align 1
+@string.6 = private unnamed_addr constant [6 x i8] c" is: \00", align 1
 
 declare i32 @printf(i8*, ...)
 
@@ -60,7 +61,7 @@ merge:                                            ; preds = %while
   %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @fmt.1, i32 0, i32 0), i8* getelementptr inbounds ([8 x i8], [8 x i8]* @string, i32 0, i32 0))
   %n10 = load i32, i32* %n, align 4
   %printf11 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @fmt, i32 0, i32 0), i32 %n10)
-  %printf12 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @fmt.1, i32 0, i32 0), i8* getelementptr inbounds ([6 x i8], [6 x i8]* @string.5, i32 0, i32 0))
+  %printf12 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @fmt.1, i32 0, i32 0), i8* getelementptr inbounds ([6 x i8], [6 x i8]* @string.6, i32 0, i32 0))
   %sum13 = load i32, i32* %sum, align 4
   %printf14 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @fmt, i32 0, i32 0), i32 %sum13)
   %printf15 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @fmt.3, i32 0, i32 0))

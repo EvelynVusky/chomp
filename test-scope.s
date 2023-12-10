@@ -67,6 +67,9 @@ L_fmt.3:                                ## @fmt.3
 	.asciz	"\n"
 
 L_fmt.4:                                ## @fmt.4
-	.asciz	"cannot call car on empty list"
+	.asciz	"Error: cannot call car on empty list"
+
+L_fmt.5:                                ## @fmt.5
+	.asciz	"Error: cannot call cdr on empty list"
 
 .subsections_via_symbols

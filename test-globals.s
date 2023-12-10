@@ -12,7 +12,7 @@ _main:                                  ## @main
 	.cfi_offset %rbx, -16
 	leaq	L_string(%rip), %rsi
 	movq	%rsi, 8(%rsp)
-	leaq	L_string.5(%rip), %rax
+	leaq	L_string.6(%rip), %rax
 	movq	%rax, (%rsp)
 	leaq	L_fmt.1(%rip), %rbx
 	movq	%rbx, %rdi
@@ -45,12 +45,15 @@ L_fmt.3:                                ## @fmt.3
 	.asciz	"\n"
 
 L_fmt.4:                                ## @fmt.4
-	.asciz	"cannot call car on empty list"
+	.asciz	"Error: cannot call car on empty list"
+
+L_fmt.5:                                ## @fmt.5
+	.asciz	"Error: cannot call cdr on empty list"
 
 L_string:                               ## @string
 	.asciz	"Hello, "
 
-L_string.5:                             ## @string.5
+L_string.6:                             ## @string.6
 	.asciz	"World"
 
 .subsections_via_symbols

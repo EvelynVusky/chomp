@@ -1,21 +1,13 @@
 int main() {
-    list int a = 1 :: [2];
-    println(car a);
-    println(car (cdr a));
-    /*list int a = [1, 2];
-    int b = car a;*/
+    println([]);
 
-    /* all segfaults */
+    list string a = ["a", "b"];
+    println (a);
 
-    /*string s = "hi";
-    print(s);*/
+    list bit bit_list = [{{1}}, {{0}}, {{0}}, {{1}}];
+    println(bit_list);
 
-    /*list int c = [];
-    list int d = cdr c;
-    print(car d);*/
+    print({{10101}});
 
-    /* int b = car 1 segfaults */
-    /* int b = car a; */
-    /* print car a; */ /*WORKS*/
     return 0;
 }

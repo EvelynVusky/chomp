@@ -5,7 +5,8 @@ source_filename = "Chomp"
 @fmt.1 = private unnamed_addr constant [3 x i8] c"%s\00", align 1
 @fmt.2 = private unnamed_addr constant [3 x i8] c"%c\00", align 1
 @fmt.3 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
-@fmt.4 = private unnamed_addr constant [30 x i8] c"cannot call car on empty list\00", align 1
+@fmt.4 = private unnamed_addr constant [37 x i8] c"Error: cannot call car on empty list\00", align 1
+@fmt.5 = private unnamed_addr constant [37 x i8] c"Error: cannot call cdr on empty list\00", align 1
 @string = private unnamed_addr constant [12 x i8] c"hello world\00", align 1
 
 declare i32 @printf(i8*, ...)

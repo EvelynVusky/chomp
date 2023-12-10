@@ -23,7 +23,7 @@ void print_byte(int n) {
 }
 
 void print_word(int n) {
-    // Assuming 15-bit binary representation
+    // Assuming 16-bit binary representation
     for (int i = 15; i >= 0; i--) {
         printf("%d", (n & (1 << i)) ? 1 : 0);
     }
