@@ -1,5 +1,7 @@
-void main() {
+int main() {
     list int a = [4];
-    list int list4 = [] :: [[]];
-    list list int b = a :: [5];    
+    list list int a;
+    print([[1], [2]]);
+    list int list4 = [1] :: [1];  
+    return 0;
 }

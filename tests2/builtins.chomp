@@ -1,5 +1,22 @@
 int main() {
-    bit b = {{1}};
+    nibble n = {{1111}};
+    bit b = {{0}};
+    bit c = getBit(n, 0);
+    println(c);
+
+    nibble z = {{0000}};
+    nibble n1 = flipBit(z, 0);
+    println(n1);
+
+    nibble n2 = setBit(n, 2, b);
+    println(n2);
+    
+    word w2 = {{0000000001100001}};
+    char packed = toChar(w2);
+    println(packed);
+    println(toChar(n >< n));
+    
+   /* bit b = {{1}};
     println(toBit(b));
     println(toNibble (b));
     println(toByte(b));
@@ -8,7 +25,7 @@ int main() {
 
     nibble c = {{0101}};
     println(toBit(c));
-    println(toNibble (c));
+    println(toNibble(c));
     println(toByte(c));
     println(toWord(c));
     println(toInt(c));
@@ -23,7 +40,7 @@ int main() {
     println(toBit(w));
     println(toNibble(w));
     println(toByte(w));
-    println(toWord(w));
+    println(toWord(w)); */
 
     return 0;
 }

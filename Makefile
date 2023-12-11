@@ -2,7 +2,7 @@ MAKEFLAGS += --silent
 
 # "make all" builds the executable
 .PHONY : all
-all : ./_build/default/binb/toplevel.exe printbin.o
+all : ./_build/default/binb/toplevel.exe linked_funcs.o
 
 # "make test" Compiles everything and runs the regression tests
 .PHONY : test
@@ -20,11 +20,11 @@ run: all
 	make all
 	dune exec --no-build toplevel $(FILENAME).chomp > $(FILENAME).ll
 	llc -relocation-model=pic $(FILENAME).ll
-	gcc $(FILENAME).s -o $(FILENAME).exe printbin.o
+	gcc $(FILENAME).s -o $(FILENAME).exe linked_funcs.o
 	./$(FILENAME).exe
 	
-printbin : printbin.c
-	cc -o printbin -DBUILD_TEST printbin.c
+linked_funcs : linked_funcs.c
+	cc -o linked_funcs -DBUILD_TEST linked_funcs.c
 
 # "make" will just compile the chomp compiler along with printbig.c
 
@@ -35,4 +35,4 @@ printbin : printbin.c
 .PHONY : clean
 clean :
 	dune clean
-	rm -rf chomp.opam *.s *.out *.ll *.exe tests/*.s tests/*.ll tests2/*.exe test2s/*.s tests2/*.ll tests2/*.exe printbin.o
+	rm -rf chomp.opam *.s *.out *.ll *.exe tests/*.s tests/*.ll tests2/*.exe test2s/*.s tests2/*.ll tests2/*.exe linked_funcs.o

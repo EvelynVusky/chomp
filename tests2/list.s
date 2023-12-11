@@ -12,183 +12,147 @@ _main:                                  ## @main
 	.cfi_def_cfa_register %rbp
 	pushq	%r15
 	pushq	%r14
+	pushq	%r12
 	pushq	%rbx
-	subq	$24, %rsp
-	.cfi_offset %rbx, -40
+	subq	$128, %rsp
+	.cfi_offset %rbx, -48
+	.cfi_offset %r12, -40
 	.cfi_offset %r14, -32
 	.cfi_offset %r15, -24
-	movb	$1, -36(%rbp)
-	movq	$0, -44(%rbp)
-	movl	$1, -48(%rbp)
-	leaq	-48(%rbp), %rax
-	movq	%rax, -32(%rbp)
+	movb	$1, -84(%rbp)
+	movq	$0, -92(%rbp)
+	movl	$1, -96(%rbp)
+	leaq	-96(%rbp), %rax
+	movq	%rax, -48(%rbp)
+	movb	$0, -148(%rbp)
+	movl	$3, -160(%rbp)
+	movl	$0, -144(%rbp)
+	movq	$0, -140(%rbp)
+	movb	$1, -132(%rbp)
+	movq	%rax, -156(%rbp)
+	movq	$0, -76(%rbp)
+	movb	$0, -68(%rbp)
+	movl	$4, -80(%rbp)
+	movb	$0, -52(%rbp)
+	movq	$0, -60(%rbp)
+	movl	$3, -64(%rbp)
+	movb	$1, -116(%rbp)
+	movq	$0, -124(%rbp)
+	movl	$0, -128(%rbp)
+	movq	%rax, -60(%rbp)
+	movb	$1, -100(%rbp)
+	movq	$0, -108(%rbp)
+	movl	$0, -112(%rbp)
+	leaq	-64(%rbp), %rax
+	movq	%rax, -76(%rbp)
+	leaq	-80(%rbp), %rax
+	movq	%rax, -48(%rbp)
+	movq	%rax, -40(%rbp)
 	leaq	L_fmt.1(%rip), %rbx
 	leaq	L_string(%rip), %rsi
 	movq	%rbx, %rdi
 	xorl	%eax, %eax
 	callq	_printf
-	leaq	L_string.7(%rip), %r14
+	leaq	L_fmt(%rip), %r14
+	leaq	L_string.6(%rip), %r15
 	.p2align	4, 0x90
 LBB0_1:                                 ## %pred
                                         ## =>This Inner Loop Header: Depth=1
-	movq	-32(%rbp), %rax
+	movq	-40(%rbp), %rax
 	cmpb	$1, 12(%rax)
 	je	LBB0_3
 ## %bb.2:                               ## %while_body
                                         ##   in Loop: Header=BB0_1 Depth=1
-	movq	%rbx, %rdi
-	movq	%r14, %rsi
+	movq	-40(%rbp), %rax
+	movl	(%rax), %esi
+	movq	%r14, %rdi
 	xorl	%eax, %eax
 	callq	_printf
-	movq	-32(%rbp), %rax
+	movq	%rbx, %rdi
+	movq	%r15, %rsi
+	xorl	%eax, %eax
+	callq	_printf
+	movq	-40(%rbp), %rax
 	movq	4(%rax), %rax
-	movq	%rax, -32(%rbp)
+	movq	%rax, -40(%rbp)
 	jmp	LBB0_1
-LBB0_3:                                 ## %merge
+LBB0_3:                                 ## %merge42
+	leaq	L_fmt.1(%rip), %rdi
+	leaq	L_string.7(%rip), %rsi
+	xorl	%eax, %eax
+	callq	_printf
+	leaq	L_fmt.3(%rip), %rdi
+	xorl	%eax, %eax
+	callq	_printf
+	movq	-48(%rbp), %rbx
+	cmpb	$1, 12(%rbx)
+	jne	LBB0_4
+## %bb.9:                               ## %then50
+	leaq	L_fmt.5(%rip), %rdi
+	xorl	%eax, %eax
+	callq	_printf
+	movl	$1, %edi
+	xorl	%eax, %eax
+	callq	_exit
+LBB0_4:                                 ## %merge49
+	movq	4(%rbx), %rbx
+	movq	%rbx, -48(%rbp)
+	cmpb	$1, 12(%rbx)
+	jne	LBB0_5
+## %bb.10:                              ## %then60
+	leaq	L_fmt.5(%rip), %rdi
+	xorl	%eax, %eax
+	callq	_printf
+	movl	$1, %edi
+	xorl	%eax, %eax
+	callq	_exit
+LBB0_5:                                 ## %merge59
+	movq	4(%rbx), %rax
+	movq	%rax, -48(%rbp)
+	movq	%rsp, %rcx
+	leaq	-16(%rcx), %r12
+	movq	%r12, %rsp
+	movq	%rax, -16(%rcx)
 	leaq	L_fmt.1(%rip), %rbx
 	leaq	L_string.8(%rip), %rsi
 	movq	%rbx, %rdi
 	xorl	%eax, %eax
 	callq	_printf
-	leaq	L_fmt.3(%rip), %rdi
-	xorl	%eax, %eax
-	callq	_printf
-	movq	%rsp, %rax
-	leaq	-32(%rax), %rcx
-	movq	%rcx, %rsp
-	movb	$1, -16(%rax)
-	movq	$0, -24(%rax)
-	movq	$0, -32(%rax)
-	movq	%rsp, %rax
-	leaq	-32(%rax), %rdx
-	movq	%rdx, %rsp
-	leaq	L_string.9(%rip), %rsi
-	movq	%rsi, -32(%rax)
-	movb	$0, -16(%rax)
-	movq	%rcx, -24(%rax)
-	movq	%rsp, %rax
-	leaq	-32(%rax), %rcx
-	movq	%rcx, %rsp
-	leaq	L_string.10(%rip), %rsi
-	movq	%rsi, -32(%rax)
-	movb	$0, -16(%rax)
-	movq	%rdx, -24(%rax)
-	movq	%rsp, %rax
-	leaq	-16(%rax), %rsp
-	movq	%rcx, -16(%rax)
-	movq	%rsp, %rax
-	leaq	-16(%rax), %r15
-	movq	%r15, %rsp
-	movq	%rcx, -16(%rax)
-	leaq	L_string.11(%rip), %rsi
-	movq	%rbx, %rdi
-	xorl	%eax, %eax
-	callq	_printf
-	leaq	L_string.12(%rip), %r14
+	leaq	L_fmt(%rip), %r14
+	leaq	L_string.9(%rip), %r15
 	.p2align	4, 0x90
-LBB0_4:                                 ## %pred19
+LBB0_6:                                 ## %pred69
                                         ## =>This Inner Loop Header: Depth=1
-	movq	(%r15), %rax
-	cmpb	$1, 16(%rax)
-	je	LBB0_6
-## %bb.5:                               ## %while_body20
-                                        ##   in Loop: Header=BB0_4 Depth=1
-	movq	(%r15), %rax
-	movq	(%rax), %rsi
-	movq	%rbx, %rdi
-	xorl	%eax, %eax
-	callq	_printf
-	movq	%rbx, %rdi
-	movq	%r14, %rsi
-	xorl	%eax, %eax
-	callq	_printf
-	movq	(%r15), %rax
-	movq	8(%rax), %rax
-	movq	%rax, (%r15)
-	jmp	LBB0_4
-LBB0_6:                                 ## %merge33
-	leaq	L_fmt.1(%rip), %rbx
-	leaq	L_string.13(%rip), %rsi
-	movq	%rbx, %rdi
-	xorl	%eax, %eax
-	callq	_printf
-	leaq	L_fmt.3(%rip), %rdi
-	xorl	%eax, %eax
-	callq	_printf
-	movq	%rsp, %rax
-	leaq	-16(%rax), %rcx
-	movq	%rcx, %rsp
-	movb	$1, -4(%rax)
-	movq	$0, -12(%rax)
-	movl	$0, -16(%rax)
-	movq	%rsp, %rax
-	leaq	-16(%rax), %rdx
-	movq	%rdx, %rsp
-	movb	$0, -4(%rax)
-	movl	$1, -16(%rax)
-	movq	%rcx, -12(%rax)
-	movq	%rsp, %rax
-	leaq	-16(%rax), %rcx
-	movq	%rcx, %rsp
-	movb	$0, -4(%rax)
-	movl	$0, -16(%rax)
-	movq	%rdx, -12(%rax)
-	movq	%rsp, %rax
-	leaq	-16(%rax), %rdx
-	movq	%rdx, %rsp
-	movb	$0, -4(%rax)
-	movl	$0, -16(%rax)
-	movq	%rcx, -12(%rax)
-	movq	%rsp, %rax
-	leaq	-16(%rax), %rcx
-	movq	%rcx, %rsp
-	movb	$0, -4(%rax)
-	movl	$1, -16(%rax)
-	movq	%rdx, -12(%rax)
-	movq	%rsp, %rax
-	leaq	-16(%rax), %rsp
-	movq	%rcx, -16(%rax)
-	movq	%rsp, %rax
-	leaq	-16(%rax), %r15
-	movq	%r15, %rsp
-	movq	%rcx, -16(%rax)
-	leaq	L_string.14(%rip), %rsi
-	movq	%rbx, %rdi
-	xorl	%eax, %eax
-	callq	_printf
-	leaq	L_string.15(%rip), %r14
-	.p2align	4, 0x90
-LBB0_7:                                 ## %pred49
-                                        ## =>This Inner Loop Header: Depth=1
-	movq	(%r15), %rax
+	movq	(%r12), %rax
 	cmpb	$1, 12(%rax)
-	je	LBB0_9
-## %bb.8:                               ## %while_body50
-                                        ##   in Loop: Header=BB0_7 Depth=1
-	movq	(%r15), %rax
-	movl	(%rax), %edi
-	callq	_print_bit
-	movq	%rbx, %rdi
-	movq	%r14, %rsi
+	je	LBB0_8
+## %bb.7:                               ## %while_body70
+                                        ##   in Loop: Header=BB0_6 Depth=1
+	movq	(%r12), %rax
+	movl	(%rax), %esi
+	movq	%r14, %rdi
 	xorl	%eax, %eax
 	callq	_printf
-	movq	(%r15), %rax
+	movq	%rbx, %rdi
+	movq	%r15, %rsi
+	xorl	%eax, %eax
+	callq	_printf
+	movq	(%r12), %rax
 	movq	4(%rax), %rax
-	movq	%rax, (%r15)
-	jmp	LBB0_7
-LBB0_9:                                 ## %merge62
+	movq	%rax, (%r12)
+	jmp	LBB0_6
+LBB0_8:                                 ## %merge83
 	leaq	L_fmt.1(%rip), %rdi
-	leaq	L_string.16(%rip), %rsi
+	leaq	L_string.10(%rip), %rsi
 	xorl	%eax, %eax
 	callq	_printf
 	leaq	L_fmt.3(%rip), %rdi
 	xorl	%eax, %eax
 	callq	_printf
-	movl	$21, %edi
-	callq	_print_byte
 	xorl	%eax, %eax
-	leaq	-24(%rbp), %rsp
+	leaq	-32(%rbp), %rsp
 	popq	%rbx
+	popq	%r12
 	popq	%r14
 	popq	%r15
 	popq	%rbp
@@ -218,36 +182,18 @@ L_string:                               ## @string
 	.asciz	"[ "
 
 L_string.6:                             ## @string.6
-	.space	1
+	.asciz	" "
 
 L_string.7:                             ## @string.7
-	.asciz	" "
+	.asciz	"]"
 
 L_string.8:                             ## @string.8
-	.asciz	"]"
+	.asciz	"[ "
 
 L_string.9:                             ## @string.9
-	.asciz	"b"
+	.asciz	" "
 
 L_string.10:                            ## @string.10
-	.asciz	"a"
-
-L_string.11:                            ## @string.11
-	.asciz	"[ "
-
-L_string.12:                            ## @string.12
-	.asciz	" "
-
-L_string.13:                            ## @string.13
-	.asciz	"]"
-
-L_string.14:                            ## @string.14
-	.asciz	"[ "
-
-L_string.15:                            ## @string.15
-	.asciz	" "
-
-L_string.16:                            ## @string.16
 	.asciz	"]"
 
 .subsections_via_symbols

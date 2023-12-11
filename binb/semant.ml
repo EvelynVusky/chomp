@@ -34,9 +34,10 @@ let check (vdecls, fdecls) =
         ("toByte", [Bin], Byte);
         ("toWord", [Bin], Word);
         ("toInt", [Bin], Int);
-        ("set", [Bin; Int; Bit], Bin);
+        ("setBit", [Bin; Int; Bit], Bin);
         ("flipBit", [Bin; Int], Bin);
-        ("getBit", [Bin; Int], Bin);
+        ("getBit", [Bin; Int], Bit);
+        ("toChar", [Bin], Char);
         ("print", [Poly], Void);
         ("println", [Poly], Void);
       ]
@@ -79,7 +80,7 @@ let check (vdecls, fdecls) =
   in
 
   (* returns true if 2 types are equal, and false if not. only ty2 can be Poly or Bin. *)
-  let rec eq_type2 ty1 ty2 = match ty1 with
+  let rec eq_type ty1 ty2 = match ty1 with
     (* only ty2 can be a Poly or Bin type (not usable by user) *)
     Poly -> if ty2 = Poly then true else false
     | Bin -> false
@@ -93,13 +94,17 @@ let check (vdecls, fdecls) =
           | Byte -> true
           | Word -> true
           | _ -> false)
+      
       | List ty2' -> (match ty1 with
           (* if both are lists, recurse on internal type of list. else, they don't match *)
-          List ty1' -> eq_type2 ty1' ty2'
+          List ty1' -> (match (ty2', ty1') with 
+                        (List _, _) -> false
+                        | (_, List _) -> false
+                        |  _ -> eq_type ty1' ty2')
           | _ -> false)
-      | Func (fsty1, retty1) -> (match ty1 with
+      (* | Func (fsty1, retty1) -> (match ty1 with
           Func (fsty2, retty2) -> (eq_type2 retty1 retty2) && (List.fold_left2 (fun acc x y -> acc && (eq_type2 x y)) true fsty1 fsty2)
-          | _ -> false)
+          | _ -> false) *)
       | _ -> 
         if ty1 <> ty2 
           then false
@@ -107,8 +112,8 @@ let check (vdecls, fdecls) =
     in
 
   (* returns true if 2 types are equal, and raises an error if not. only ty2 can be Poly or Bin. *)
-  let eq_type_err2 ty1 ty2 = 
-    if eq_type2 ty1 ty2 then true
+  let eq_type_err ty1 ty2 = 
+    if eq_type ty1 ty2 then true
     else raise (TypeError ("Types " ^ string_of_typ ty1 ^ " and " ^ string_of_typ ty2 ^ " don't match"))
   in
 
@@ -144,7 +149,7 @@ let check (vdecls, fdecls) =
   let rec eq_types = function
       []             -> true
     | [_]            -> true
-    | ty1 :: ty2 :: tys -> (eq_type2 ty1 ty2) && (eq_types(ty2 :: tys)) in
+    | ty1 :: ty2 :: tys -> (eq_type ty1 ty2) && (eq_types(ty2 :: tys)) in
 
   (************************** Convert Exprs **************************)
   
@@ -171,7 +176,7 @@ let check (vdecls, fdecls) =
     | Binop (e1, op, e2) -> 
         let (scope, (ty1, e1')) = convert_expr scope e1 in
         let (scope, (ty2, e2')) = convert_expr scope e2 in
-        let same = eq_type2 ty1 ty2 in
+        let same = eq_type ty1 ty2 in
         let both_bin = is_bin ty1 && is_bin ty2 in
         let ty = match op with
             Add | Sub | Mult | Div when same && ty1 = Int     -> Int
@@ -193,7 +198,7 @@ let check (vdecls, fdecls) =
             | (_, Word) -> Word
             | _ -> raise (TypeError "Concat only applicatble to Bin types"))
           | Cons -> (match ty2 with
-              List ty2' -> if is_primitive_and_not_void ty1 && eq_type2 ty1 ty2' then List ty1
+              List ty2' -> if is_primitive_and_not_void ty1 && eq_type ty1 ty2' then List ty1
                             else raise (TypeError ("Cons types " ^ string_of_typ ty1 ^ " and " ^ string_of_typ ty2 ^ " don't match"))
               | _ -> raise (TypeError ("Expecting a list, got " ^ string_of_typ ty2)))
           | Lshift | Rshift when is_bin ty1 && ty2 = Int -> ty1
@@ -218,7 +223,7 @@ let check (vdecls, fdecls) =
     | Assign (var, e)-> 
       let lty = find_variable scope var in
       let (scope, (rty, e')) = convert_expr scope e in
-      let _ = eq_type_err2 lty rty in
+      let _ = eq_type_err lty rty in
       (scope, (lty, SAssign(var, (rty, e'))))
     | Call (name, es) -> 
       (* find name in scope, match formals length & type *)
@@ -229,7 +234,7 @@ let check (vdecls, fdecls) =
       in
         let check_call ft e = 
         let (_, (et, e')) = convert_expr scope e in
-        let _ = eq_type_err2 et ft
+        let _ = eq_type_err et ft
         in (et, e')
       in 
       let args' = List.map2 check_call formals es in
@@ -257,7 +262,7 @@ let check (vdecls, fdecls) =
     let scope, sexpr = convert_expr scope value in
 
     (* check type equality *) 
-    let _ = if (fst sexpr) <> Void then eq_type_err2 typ (fst sexpr) else true in
+    let _ = if (fst sexpr) <> Void then eq_type_err typ (fst sexpr) else true in
 
     (* let sexpr = if (fst sexpr) = List(Poly) then (typ, snd sexpr) else sexpr in *)
     
@@ -363,10 +368,10 @@ let check (vdecls, fdecls) =
     (* check return type of function *)
     let _ = (match typ with
         Void -> (match List.rev(sstmt_list') with
-                SReturn((ret_typ, _)) :: _ -> eq_type_err2 ret_typ Void 
+                SReturn((ret_typ, _)) :: _ -> eq_type_err ret_typ Void 
                 | _ -> true)
         | _ -> (match List.rev(sstmt_list') with
-              SReturn((ret_typ, _)) :: _ -> eq_type_err2 ret_typ typ
+              SReturn((ret_typ, _)) :: _ -> eq_type_err ret_typ typ
               | _ -> (raise (ReturnError ("No return statement found")))))
     in
 
@@ -397,8 +402,8 @@ let check (vdecls, fdecls) =
   (* validate main *)
   let main_fdecl = find_variable scope "main" in
   let _ = match main_fdecl with
-    Func([], _) -> true
-    | _ -> raise (InvalidError ("main function should take no formals"))
+    Func([], Int) -> true
+    | _ -> raise (InvalidError ("Main function should return an Integer & take no formals"))
   in
 
 (List.rev globals', List.rev functions') 

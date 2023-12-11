@@ -1,3 +1,4 @@
-void main() {
+int main() {
     nibble b = {{0111}};
+    return 0;
 }

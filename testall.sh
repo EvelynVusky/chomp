@@ -94,7 +94,7 @@ Check() {
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
     Run "dune exec $MICROC" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
-    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbin.o" &&
+    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "linked_funcs.o" &&
     Run "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
@@ -165,10 +165,10 @@ LLIFail() {
 
 which "$LLI" >> $globallog || LLIFail
 
-if [ ! -f printbin.o ]
+if [ ! -f linked_funcs.o ]
 then
-    echo "Could not find printbin.o"
-    echo "Try \"make printbin.o\""
+    echo "Could not find linked_funcs.o"
+    echo "Try \"make linked_funcs.o\""
     exit 1
 fi
 

@@ -1,7 +1,8 @@
-void main() {
+int main() {
     int c  = 1;
     int d = 2;
     int e = add(c, d);
+    return 0;
 }
 
 int add (int a, int b) {

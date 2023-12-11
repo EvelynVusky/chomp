@@ -99,7 +99,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     | A.Word -> word_node_pointer
     | A.Char -> char_node_pointer
     | A.Poly -> int_node_pointer
-  (*A.List TODO*)
     | _ -> raise (TypeError ("Invalid list pointer type: " ^ A.string_of_typ ty)))
   in
 
@@ -127,8 +126,17 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
   in
     
   (* define C linked functions *)
+  let get_bit_t = L.function_type i32_t [| i32_t ; i32_t ; i32_t  |] in
+  let get_bit_func = L.declare_function "get_bit" get_bit_t the_module in
+
+  let flip_bit_t = L.function_type i32_t [| i32_t ; i32_t ; i32_t  |] in
+  let flip_bit_func = L.declare_function "flip_bit" flip_bit_t the_module in
+
+  let set_bit_t = L.function_type i32_t [| i32_t ; i32_t ; i32_t ; i32_t |] in
+  let set_bit_func = L.declare_function "set_bit" set_bit_t the_module in
+
   let printf_t : L.lltype = 
-      L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
+    L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue = 
      L.declare_function "printf" printf_t the_module in
 
@@ -190,18 +198,14 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       Some _ -> ()
       | None -> ignore (instr builder) in
 
-    (* let validate_idx e idx = 
-      let idx' = match (snd idx)
-      let inbounds =
-        (match (fst e) with 
-          A.Bit -> if (idx = 0) then true else false
-          | A.Nibble -> if (idx >= 0 && idx < 4) then true else false
-          | A.Byte -> if (idx >= 0 && idx < 8)then true else false
-          | A.Word -> if (idx >= 0 && idx < 16) then true else false
-          | _ -> raise (TypeError ("Expected bin type")))
-      in
-      if inbounds then true else raise (InvalidError ("Index out of bounds"))
-    in *)
+    (* returns size of Bin type in bits *)
+    let size_of ty = (match ty with 
+      A.Bit -> (L.const_int i32_t 1)
+      | A.Nibble -> (L.const_int i32_t 4)
+      | A.Byte -> (L.const_int i32_t 8)
+      | A.Word -> (L.const_int i32_t 16)
+      | _ -> raise (TypeError "Bin type expected"))
+    in
 
   (* let dump_scope scope acc = 
     let lst = ref [] in
@@ -279,12 +283,14 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           let (_, e1) = (expr builder scope curr) in
           (* make & populate struct node with curr's value *)
           let front_node_struct = L.const_named_struct list_node_ty
-                           (Array.of_list [e1; 
+                           (Array.of_list [L.const_null (ltype_of_typ list_ty); 
                             L.const_pointer_null (L.pointer_type list_node_ty);
                             L.const_int i1_t 0]) in
           (* save current node *)
           let front_node_var = L.build_alloca list_node_ty "front_node_var" builder in
           let _ = ignore(L.build_store front_node_struct front_node_var builder) in
+          let front_val = L.build_struct_gep front_node_var 0 "front_val" builder in
+          let _ = ignore(L.build_store e1 front_val builder) in
           (* set prev's next to current *)
           let front_node_next = L.build_struct_gep front_node_var 1 "front_node_next" builder in
           let _ = ignore(L.build_store acc front_node_next builder) in
@@ -335,13 +341,15 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             | _ -> raise (InvalidError ("Concat is only applicable to Bin types"))))
         | A.Cons    -> 
           (* make e1 node *)
-          let (scope, e1') = expr builder scope e1 in
+          let (scope, e1') = expr builder scope e1 in 
           let list_node_ty = get_node_ty (fst e1) in
           let e1_node =  L.const_named_struct list_node_ty
-          (Array.of_list [e1'; 
+          (Array.of_list [(L.const_null (ltype_of_typ (fst e1))); 
             L.const_pointer_null (L.pointer_type list_node_ty); L.const_int i1_t 0]) in
           let e1_node_var = L.build_alloca list_node_ty "e1_node_var" builder in
           let _ = ignore(L.build_store e1_node e1_node_var builder) in
+          let e1_val = L.build_struct_gep e1_node_var 0 "front_val" builder in
+          let _ = ignore(L.build_store e1' e1_val builder) in
 
           (* conditional *)
           let (scope, e2') = expr builder scope e2 in
@@ -435,36 +443,30 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             let _ = (L.position_at_end merge_bb builder) in
             let list_ptr = L.build_struct_gep e' 1 "tmp" builder in
             (scope, L.build_load list_ptr "tmp" builder))
+            
       | SCall ("toBit", [e]) | SCall ("toNibble", [e]) | SCall ("toByte", [e]) | SCall ("toWord", [e]) -> (expr builder scope e)
-      | SCall ("toInt", [e]) -> (expr builder scope e)
+      | SCall ("toInt", [e]) | SCall ("toChar", [e]) -> (expr builder scope e)
+    
+      | SCall ("setBit", [e; idx; bit]) -> 
+        let (scope, e') = (expr builder scope e) in 
+        let (scope, idx') = (expr builder scope idx) in 
+        let (scope, bit') = (expr builder scope bit) in 
+        let size = size_of (fst e) in
+        (scope, L.build_call set_bit_func [| e'; size; idx'; bit' |] "set_Bit" builder)
 
-      
-      
-        
-(* 
-      | SCall ("setBit", [e; idx]) -> 
-        let (scope, e') = (expr builder scope e) in
-        let _ =  validate_idx e idx in
-        idx
-          
       | SCall ("flipBit", [e; idx]) ->
-        let (scope, e') = (expr builder scope e) in
-        let _ = validate_idx e idx in
-        idx *)
-      
-      (* | SCall ("getBit", [e; idx]) ->
-        let getBit ty e' idx builder =
-          L.build_ashr (L.build_and (L.build_shl (L.const_int (ltype_of_typ ty) 1) 
-          (L.const_int (ltype_of_typ ty) idx) "tmp" builder) e' "tmp" builder) 
-          (L.const_int (ltype_of_typ ty) idx) "tmp" builder
-          
-        in
-        let (scope, e') = (expr builder scope e) in
-        let (scope, idx') = (expr builder scope idx) in
-        let _ = validate_idx e idx' in
-        (scope, (getBit (fst e) e' idx' builder)) *)
+        let (scope, e') = (expr builder scope e) in 
+        let (scope, idx') = (expr builder scope idx) in 
+        let size = size_of (fst e) in
+        (scope, L.build_call flip_bit_func [| e'; size; idx' |] "flip_Bit" builder)
 
-      | SCall ("println", [e]) -> 
+      | SCall ("getBit", [e; idx]) ->
+        let (scope, e') = (expr builder scope e) in 
+        let (scope, idx') = (expr builder scope idx) in 
+        let size = size_of (fst e) in
+        (scope, L.build_call get_bit_func [| e'; size; idx' |] "get_Bit" builder)
+      
+        | SCall ("println", [e]) -> 
         let (scope, _) = (expr builder scope (fst e, SCall("print", [e]))) in
         (scope, L.build_call printf_func [| string_format_ln |] "printf" builder)
 
@@ -652,8 +654,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       (global_scope, builder) vdecls
     in
 
-    (* let _ = dump_scope global_scope "<global scope>" in *)
-
     (* wrapper function for build_program, creates global scope *)
     let build_function_body fdecl = 
       let (the_function, _) = StringMap.find fdecl.sfname function_decls in
@@ -677,18 +677,8 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             (Array.to_list (L.params the_function)) 
       in
 
-      (* let _ = dump_scope scope fdecl.sfname in *)
-
       (* build function body from statements *)
       let (_, func_builder) = stmt func_builder scope fdecl (SBlock fdecl.sbody) in 
-
-      (* let parent = match scope.parent with
-        Some(parent) -> parent
-        | _ -> raise (InvalidError "")
-      in *)
-
-      (* let _ = dump_scope scope "<main scope>" in
-      let _ = dump_scope global_scope "<global scope>" in *)
 
       add_terminal func_builder 
       (match fdecl.styp with
@@ -701,9 +691,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     let _ = 
       List.iter build_function_body fdecls
     in
-
-    (* build the code for each statement in the main function body *)
-    (* let (scope, builder) = stmt builder scope fdecls (SBlock fdecl.sbody) in *)
 
     (* add a return if the last block falls off the end *)
     add_terminal builder (L.build_ret (L.const_int i32_t 0))

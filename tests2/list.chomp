@@ -1,13 +1,41 @@
 int main() {
-    println([]);
+    list int a = [];
+    a = 4 :: (3 :: a);
+    println(a);
+    a = cdr a;
+    a = cdr a;
+    println(a);
 
-    list string a = ["a", "b"];
-    println (a);
+ /*
+    int a = 4;
+    list int b = [a];
+    println (b);
+    list int d = a :: b;
+    println(car d);
+    println(cdr d);
+
+   
+ 
+    string c = "c";
+    list string wha = ["a", "b", c];
+    list string newList = c :: wha;
+    println (newList);
 
     list bit bit_list = [{{1}}, {{0}}, {{0}}, {{1}}];
     println(bit_list);
 
-    print({{10101}});
+    int i = 0;
+    int b = 1;
+    for (i = 0; i < 2; i = i + 1) {
+        println(car bit_list);
+        b = b + 1;
+    }
+
+    println(car bit_list);
+    println(b);
+    println (a);
+    println(car a);
+    */
 
     return 0;
 }

@@ -1,3 +1,6 @@
-void main() {
-    list int a = 3;
+int main() {
+    list int a = [1];
+    /*car returns an int not a list*/
+    list int b = car a;
+    return 0;
 }

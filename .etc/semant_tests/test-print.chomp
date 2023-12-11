@@ -1,3 +1,4 @@
-void main () {
+int main () {
     print({{0101011111}});
+    return 0;
 }

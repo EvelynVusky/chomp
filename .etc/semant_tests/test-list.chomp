@@ -2,7 +2,7 @@ int add (int a, int b) {
     return a + b;
 }
 
-void main() {
+int main() {
     list int lst;
     lst = [];
     list int lst2 = 2 :: lst;
@@ -15,4 +15,5 @@ void main() {
     for (i = 0; i < 5; i = i + 1) {
         print(i);
     }
+    return 0;
 }

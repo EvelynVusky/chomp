@@ -64,7 +64,6 @@ rule token = parse
 | "nibble" { NIBBLE  }
 | "byte"   { BYTE  }
 | "word"   { WORD  }
-| "->"     { FUNC }
 | "string" { STRING }
 
 (* literals *)
