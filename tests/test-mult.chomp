@@ -1,0 +1,6 @@
+int main() {
+    println(12*12);
+    int a = -131;
+    println(a*a);
+    return 0;
+}

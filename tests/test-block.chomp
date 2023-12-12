@@ -1,0 +1,13 @@
+int main() {
+    int a = 4;
+    int b = 5;
+    println(a);
+    {
+        a = a + b;
+        int c = 6;
+        c = c * 7 + 3;
+        println(c);
+    }
+    println(a);
+    return 0;
+}

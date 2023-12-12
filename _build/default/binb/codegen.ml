@@ -240,8 +240,9 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     and string_format_str = L.build_global_stringptr "%s" "fmt" builder 
     and char_format_str = L.build_global_stringptr "%c" "fmt" builder
     and string_format_ln = L.build_global_stringptr "\n" "fmt" builder 
-    and car_err_format_str = L.build_global_stringptr "Error: cannot call car on empty list" "fmt" builder
-    and cdr_err_format_str = L.build_global_stringptr "Error: cannot call cdr on empty list" "fmt" builder in
+    and div_err_format_str = L.build_global_stringptr "Error: cannot call div with divisor of 0\n" "fmt" builder
+    and car_err_format_str = L.build_global_stringptr "Error: cannot call car on empty list\n" "fmt" builder
+    and cdr_err_format_str = L.build_global_stringptr "Error: cannot call cdr on empty list\n" "fmt" builder in
 
 
     (************************** Convert exprs **************************)
@@ -311,7 +312,28 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         | A.Add     -> (scope, L.build_add e1' e2' "tmp" builder)
         | A.Sub     -> (scope, L.build_sub e1' e2' "tmp" builder)
         | A.Mult    -> (scope, L.build_mul e1' e2' "tmp" builder)
-        | A.Div     -> (scope, L.build_sdiv e1' e2' "tmp" builder)
+        | A.Div     -> 
+          (* conditional *)
+          let cond = L.build_icmp L.Icmp.Eq e2' (L.const_int i32_t 0) "cond" builder in
+          let merge_bb = L.append_block context "merge" the_function in
+          let branch_instr = L.build_br merge_bb in
+          
+          (*then block*)
+          let then_bb = L.append_block context "then" the_function in
+          let then_builder = L.builder_at_end context then_bb in
+          let _ = L.build_call printf_func [| div_err_format_str |] "printf" then_builder in
+          let _ = L.build_call exit_func [| L.const_int i32_t 1 |] "exit" then_builder in
+          let _ = add_terminal then_builder branch_instr in
+         
+          (*else block*)
+          let else_bb = L.append_block context "else" the_function in
+          let else_builder = L.builder_at_end context else_bb in
+          let _ = add_terminal else_builder branch_instr in
+
+          (*put together if statement*)
+          let _ = L.build_cond_br cond then_bb else_bb builder in
+          let _ = (L.position_at_end merge_bb builder) in
+          (scope, L.build_sdiv e1' e2' "tmp" builder)
         | A.And | A.Binand -> (scope, L.build_and e1' e2' "tmp" builder)
         | A.Or | A.Binor -> (scope, L.build_or e1' e2' "tmp" builder)
         | A.Equal   -> (scope, L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder)
@@ -409,8 +431,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             (*else block*)
             let else_bb = L.append_block context "else" the_function in
             let else_builder = L.builder_at_end context else_bb in
-            (* let value_ptr = L.build_struct_gep e' 0 "tmp" else_builder in *)
-            (* let else_res = L.build_load value_ptr "tmp" builder in *)
             let _ = add_terminal else_builder branch_instr in
 
             (*put together if statement*)

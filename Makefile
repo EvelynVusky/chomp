@@ -1,7 +1,7 @@
 MAKEFLAGS += --silent
 
 # "make all" builds the executable
-.PHONY : all
+.PHONY : all linked_funcs
 all : ./_build/default/binb/toplevel.exe linked_funcs.o
 
 # "make test" Compiles everything and runs the regression tests

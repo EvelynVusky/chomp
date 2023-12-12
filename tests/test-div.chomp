@@ -1,0 +1,6 @@
+int main() {
+	list int a = [42, 6, 77];
+    list int b = [4, 5];
+    println((car a) / (car b));
+	return 0;
+}

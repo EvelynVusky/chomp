@@ -1,0 +1,8 @@
+1,5c1
+< File "binb/codegen.ml", line 328, characters 46-67:
+< 328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+<                                                     ^^^^^^^^^^^^^^^^^^^^^
+< Error: Unbound value divcar_err_format_str
+< Hint: Did you mean car_err_format_str?
+---
+> Fatal error: exception Dune__exe__Semant.NotFoundError("unidentified id c")

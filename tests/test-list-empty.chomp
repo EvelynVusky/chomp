@@ -1,0 +1,11 @@
+int main () {
+    println([]);
+    list char a = [];
+    println(a);
+    println ('a' :: a);
+    list char b = 'b' :: a;
+    println(b);
+    println(car b);
+    println(cdr b);
+    return 0;
+}

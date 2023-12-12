@@ -1,0 +1,15 @@
+int main() {
+    println([1, 2, 3]);
+    println(car [1, 2, 3]);
+    println(cdr [1, 2, 3]);
+    println(1 :: [2, 3]);
+    list string s = ["hello", "hi", "chomp"];
+    println(["hello", "hi", "chomp"]);
+    println(s);
+    println(car s);
+    println(cdr s);
+    println("no" :: s);
+    println(['a','b','c']);
+    println([{{0}}, {{1}}]);
+    return 0;
+}

@@ -2,58 +2,147 @@
 
 ###### Testing test-add
 dune exec toplevel tests/test-add.chomp > test-add.ll
-llc -relocation-model=pic test-add.ll > test-add.s
-cc -o test-add.exe test-add.s linked_funcs.o
-./test-add.exe
-diff -b test-add.out tests/test-add.out > test-add.diff
-###### SUCCESS
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
+
+###### Testing test-block
+dune exec toplevel tests/test-block.chomp > test-block.ll
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
 
 ###### Testing test-builtins
 dune exec toplevel tests/test-builtins.chomp > test-builtins.ll
-llc -relocation-model=pic test-builtins.ll > test-builtins.s
-cc -o test-builtins.exe test-builtins.s linked_funcs.o
-./test-builtins.exe
-diff -b test-builtins.out tests/test-builtins.out > test-builtins.diff
-###### SUCCESS
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
+
+###### Testing test-div
+dune exec toplevel tests/test-div.chomp > test-div.ll
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
 
 ###### Testing test-for
 dune exec toplevel tests/test-for.chomp > test-for.ll
-llc -relocation-model=pic test-for.ll > test-for.s
-cc -o test-for.exe test-for.s linked_funcs.o
-./test-for.exe
-diff -b test-for.out tests/test-for.out > test-for.diff
-###### SUCCESS
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
+
+###### Testing test-list-empty
+dune exec toplevel tests/test-list-empty.chomp > test-list-empty.ll
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
+
+###### Testing test-list-literals
+dune exec toplevel tests/test-list-literals.chomp > test-list-literals.ll
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
 
 ###### Testing test-list-scope
 dune exec toplevel tests/test-list-scope.chomp > test-list-scope.ll
-llc -relocation-model=pic test-list-scope.ll > test-list-scope.s
-cc -o test-list-scope.exe test-list-scope.s linked_funcs.o
-./test-list-scope.exe
-diff -b test-list-scope.out tests/test-list-scope.out > test-list-scope.diff
-###### SUCCESS
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
 
 ###### Testing test-list
 dune exec toplevel tests/test-list.chomp > test-list.ll
-llc -relocation-model=pic test-list.ll > test-list.s
-cc -o test-list.exe test-list.s linked_funcs.o
-./test-list.exe
-diff -b test-list.out tests/test-list.out > test-list.diff
-###### SUCCESS
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
 
-###### Testing test-scope
-dune exec toplevel tests/test-scope.chomp > test-scope.ll
-llc -relocation-model=pic test-scope.ll > test-scope.s
-cc -o test-scope.exe test-scope.s linked_funcs.o
-./test-scope.exe
-diff -b test-scope.out tests/test-scope.out > test-scope.diff
-###### SUCCESS
+###### Testing test-mult
+dune exec toplevel tests/test-mult.chomp > test-mult.ll
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
+
+###### Testing test-sub
+dune exec toplevel tests/test-sub.chomp > test-sub.ll
+File "binb/codegen.ml", line 328, characters 46-67:
+328 |           let _ = L.build_call printf_func [| divcar_err_format_str |] "printf" then_builder in
+                                                    ^^^^^^^^^^^^^^^^^^^^^
+Error: Unbound value divcar_err_format_str
+Hint: Did you mean car_err_format_str?
+###### FAILED
 
 ###### Testing fail-add
 dune exec toplevel < tests/fail-add.chomp 2> fail-add.err >> testall.log
 diff -b fail-add.err tests/fail-add.err > fail-add.diff
-###### SUCCESS
+FAILED fail-add.err differs from tests/fail-add.err
+###### FAILED
+
+###### Testing fail-block
+dune exec toplevel < tests/fail-block.chomp 2> fail-block.err >> testall.log
+diff -b fail-block.err tests/fail-block.err > fail-block.diff
+FAILED fail-block.err differs from tests/fail-block.err
+###### FAILED
+
+###### Testing fail-div
+dune exec toplevel < tests/fail-div.chomp 2> fail-div.err >> testall.log
+diff -b fail-div.err tests/fail-div.err > fail-div.diff
+FAILED fail-div.err differs from tests/fail-div.err
+###### FAILED
+
+###### Testing fail-list-list
+dune exec toplevel < tests/fail-list-list.chomp 2> fail-list-list.err >> testall.log
+diff -b fail-list-list.err tests/fail-list-list.err > fail-list-list.diff
+FAILED fail-list-list.err differs from tests/fail-list-list.err
+###### FAILED
+
+###### Testing fail-list-scope
+dune exec toplevel < tests/fail-list-scope.chomp 2> fail-list-scope.err >> testall.log
+diff -b fail-list-scope.err tests/fail-list-scope.err > fail-list-scope.diff
+FAILED fail-list-scope.err differs from tests/fail-list-scope.err
+###### FAILED
 
 ###### Testing fail-list
 dune exec toplevel < tests/fail-list.chomp 2> fail-list.err >> testall.log
 diff -b fail-list.err tests/fail-list.err > fail-list.diff
-###### SUCCESS
+FAILED fail-list.err differs from tests/fail-list.err
+###### FAILED
+
+###### Testing fail-mult
+dune exec toplevel < tests/fail-mult.chomp 2> fail-mult.err >> testall.log
+diff -b fail-mult.err tests/fail-mult.err > fail-mult.diff
+FAILED fail-mult.err differs from tests/fail-mult.err
+###### FAILED
+
+###### Testing fail-sub
+dune exec toplevel < tests/fail-sub.chomp 2> fail-sub.err >> testall.log
+diff -b fail-sub.err tests/fail-sub.err > fail-sub.diff
+FAILED fail-sub.err differs from tests/fail-sub.err
+###### FAILED

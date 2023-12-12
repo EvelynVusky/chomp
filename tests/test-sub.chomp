@@ -1,0 +1,6 @@
+int main() {
+    println(4 - 1);
+    int a = 320;
+    println(142 - a);
+    return 0;
+}

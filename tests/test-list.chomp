@@ -1,9 +1,16 @@
 int main() {
     int a = 1;
     int b = 2;
-    list int l1 = a :: (b :: []);
+    list int c = [3];
+    list int l1 = a :: (b :: c);
     println(l1);
-    println(car l1);
-    println(cdr l1);
+    int d = car l1;
+    list int e = cdr l1;
+    println(d);
+    println(e);
+    list int f = cdr e;
+    println(f);
+    list int g = cdr f;
+    println(g);
     return 0;
 }

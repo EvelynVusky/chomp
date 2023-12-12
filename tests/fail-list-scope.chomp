@@ -1,0 +1,11 @@
+list int get_list() {
+    int c = 10;
+    int d = 20;
+    return [c, d];
+}
+
+int main() {
+    list int a = get_list();
+    list int b = [c, 5];
+    return 0;
+}
