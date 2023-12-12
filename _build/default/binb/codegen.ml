@@ -270,7 +270,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
                                 (Array.of_list [(L.const_int i32_t 1); 
                                 (L.const_pointer_null (L.pointer_type int_node_struct)); 
                                 (L.const_int i1_t 1)]) in
-          let node_var = L.build_alloca int_node_struct "front_node_var" builder in
+          let node_var = L.build_malloc int_node_struct "front_node_var" builder in
           let _ = ignore(L.build_store node_struct node_var builder) in
           (scope, node_var)
          else
@@ -287,7 +287,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
                             L.const_pointer_null (L.pointer_type list_node_ty);
                             L.const_int i1_t 0]) in
           (* save current node *)
-          let front_node_var = L.build_alloca list_node_ty "front_node_var" builder in
+          let front_node_var = L.build_malloc list_node_ty "front_node_var" builder in
           let _ = ignore(L.build_store front_node_struct front_node_var builder) in
           let front_val = L.build_struct_gep front_node_var 0 "front_val" builder in
           let _ = ignore(L.build_store e1 front_val builder) in
@@ -300,7 +300,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           (Array.of_list [L.const_null (ltype_of_typ list_ty); 
           L.const_pointer_null (L.pointer_type list_node_ty); L.const_int i1_t 1])
         in
-        let last_node_var = L.build_alloca list_node_ty "last_node_var" builder in
+        let last_node_var = L.build_malloc list_node_ty "last_node_var" builder in
         let _ = ignore(L.build_store last_node last_node_var builder) in
         (scope, List.fold_left build_list last_node_var lst))
         
@@ -346,7 +346,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           let e1_node =  L.const_named_struct list_node_ty
           (Array.of_list [(L.const_null (ltype_of_typ (fst e1))); 
             L.const_pointer_null (L.pointer_type list_node_ty); L.const_int i1_t 0]) in
-          let e1_node_var = L.build_alloca list_node_ty "e1_node_var" builder in
+          let e1_node_var = L.build_malloc list_node_ty "e1_node_var" builder in
           let _ = ignore(L.build_store e1_node e1_node_var builder) in
           let e1_val = L.build_struct_gep e1_node_var 0 "front_val" builder in
           let _ = ignore(L.build_store e1' e1_val builder) in
@@ -367,7 +367,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           (Array.of_list [L.const_null (ltype_of_typ (fst e1)); 
             L.const_pointer_null (L.pointer_type list_node_ty); L.const_int i1_t 1])
           in
-          let last_node_var = L.build_alloca list_node_ty "last_node_var" builder in
+          let last_node_var = L.build_malloc list_node_ty "last_node_var" builder in
           let _ = ignore(L.build_store last_node last_node_var builder) in
           let e1_next_ptr = L.build_struct_gep e1_node_var 1 "e1_node_next" builder in
           let _ = ignore(L.build_store last_node_var e1_next_ptr builder) in
@@ -488,7 +488,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
                 List ty -> ty
                 | _ -> raise (TypeError ("Expected list")))
               in
-              let rest_list = L.build_alloca (ltype_of_typ (fst e)) "rest_list" builder' in
+              let rest_list = L.build_malloc (ltype_of_typ (fst e)) "rest_list" builder' in
               let _ = ignore(L.build_store e' rest_list builder') in
               (* print "[" *)
               let _ = L.build_call printf_func 

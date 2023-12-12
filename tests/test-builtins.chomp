@@ -1,0 +1,30 @@
+int main() {
+    bit b = {{1}};
+    println(toBit(b));
+    println(toNibble (b));
+    println(toByte(b));
+    println(toWord(b));
+    println(toInt(b));
+
+    nibble c = {{0101}};
+    println(toBit(c));
+    println(toNibble(c));
+    println(toByte(c));
+    println(toWord(c));
+    println(toInt(c));
+
+    byte d = {{01100001}};
+    println(toBit(d));
+    println(toNibble (d));
+    println(toByte(d));
+    println(toWord(d));
+    println(toChar(d));
+
+    word w = {{1010101010101010}};
+    println(toBit(w));
+    println(toNibble(w));
+    println(toByte(w));
+    println(toWord(w)); 
+
+    return 0;
+}

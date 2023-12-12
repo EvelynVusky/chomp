@@ -1,4 +1,7 @@
 (lang dune 3.10)
 (name chomp)
 (sections (lib .) (bin ../../bin) (doc ../../doc/chomp))
-(files (lib (META dune-package opam)) (bin (toplevel)) (doc (README.md)))
+(files
+ (lib (META dune-package opam))
+ (bin (toplevel))
+ (doc ("README copy.md" README.md)))

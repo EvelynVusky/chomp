@@ -1,0 +1,11 @@
+int main(){
+    int i = 0;
+    int b = 100;
+
+    for (i = 0; i < 10; i = i + 1) {
+        b = b + 2;
+        println(b);
+    }
+
+    return 0;
+}

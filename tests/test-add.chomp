@@ -1,0 +1,7 @@
+int main() {
+    println(1 + 2);
+    int a = 4;
+    int b = 5 + a;
+    println(b);
+    return 0;
+}

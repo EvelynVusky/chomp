@@ -1,2 +1,1 @@
-1d0
-< Fatal error: exception Dune__exe__Semant.TypeError("Types list int and int don't match")
+Fatal error: exception Dune__exe__Semant.TypeError("Types list int and int don't match")

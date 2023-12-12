@@ -1,5 +1,37 @@
 /usr/local/opt/llvm/bin/lli
 
+###### Testing test-add
+dune exec toplevel tests/test-add.chomp > test-add.ll
+llc -relocation-model=pic test-add.ll > test-add.s
+cc -o test-add.exe test-add.s linked_funcs.o
+./test-add.exe
+diff -b test-add.out tests/test-add.out > test-add.diff
+###### SUCCESS
+
+###### Testing test-builtins
+dune exec toplevel tests/test-builtins.chomp > test-builtins.ll
+llc -relocation-model=pic test-builtins.ll > test-builtins.s
+cc -o test-builtins.exe test-builtins.s linked_funcs.o
+./test-builtins.exe
+diff -b test-builtins.out tests/test-builtins.out > test-builtins.diff
+###### SUCCESS
+
+###### Testing test-for
+dune exec toplevel tests/test-for.chomp > test-for.ll
+llc -relocation-model=pic test-for.ll > test-for.s
+cc -o test-for.exe test-for.s linked_funcs.o
+./test-for.exe
+diff -b test-for.out tests/test-for.out > test-for.diff
+###### SUCCESS
+
+###### Testing test-list-scope
+dune exec toplevel tests/test-list-scope.chomp > test-list-scope.ll
+llc -relocation-model=pic test-list-scope.ll > test-list-scope.s
+cc -o test-list-scope.exe test-list-scope.s linked_funcs.o
+./test-list-scope.exe
+diff -b test-list-scope.out tests/test-list-scope.out > test-list-scope.diff
+###### SUCCESS
+
 ###### Testing test-list
 dune exec toplevel tests/test-list.chomp > test-list.ll
 llc -relocation-model=pic test-list.ll > test-list.s
@@ -8,88 +40,20 @@ cc -o test-list.exe test-list.s linked_funcs.o
 diff -b test-list.out tests/test-list.out > test-list.diff
 ###### SUCCESS
 
+###### Testing test-scope
+dune exec toplevel tests/test-scope.chomp > test-scope.ll
+llc -relocation-model=pic test-scope.ll > test-scope.s
+cc -o test-scope.exe test-scope.s linked_funcs.o
+./test-scope.exe
+diff -b test-scope.out tests/test-scope.out > test-scope.diff
+###### SUCCESS
+
+###### Testing fail-add
+dune exec toplevel < tests/fail-add.chomp 2> fail-add.err >> testall.log
+diff -b fail-add.err tests/fail-add.err > fail-add.diff
+###### SUCCESS
+
 ###### Testing fail-list
 dune exec toplevel < tests/fail-list.chomp 2> fail-list.err >> testall.log
-; ModuleID = 'Chomp'
-source_filename = "Chomp"
-
-%int_node = type <{ i32, %int_node*, i1 }>
-
-@fmt = private unnamed_addr constant [3 x i8] c"%d\00", align 1
-@fmt.1 = private unnamed_addr constant [3 x i8] c"%s\00", align 1
-@fmt.2 = private unnamed_addr constant [3 x i8] c"%c\00", align 1
-@fmt.3 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
-@fmt.4 = private unnamed_addr constant [37 x i8] c"Error: cannot call car on empty list\00", align 1
-@fmt.5 = private unnamed_addr constant [37 x i8] c"Error: cannot call cdr on empty list\00", align 1
-
-declare i32 @get_bit(i32, i32, i32)
-
-declare i32 @flip_bit(i32, i32, i32)
-
-declare i32 @set_bit(i32, i32, i32, i32)
-
-declare i32 @printf(i8*, ...)
-
-declare i32 @print_bit(i32)
-
-declare i32 @print_nibble(i32)
-
-declare i32 @print_byte(i32)
-
-declare i32 @print_word(i32)
-
-declare i32 @exit(i32, ...)
-
-define i32 @main() {
-entry:
-  %last_node_var = alloca %int_node, align 8
-  store %int_node <{ i32 0, %int_node* null, i1 true }>, %int_node* %last_node_var, align 1
-  %a = alloca %int_node, align 8
-  store %int_node zeroinitializer, %int_node* %a, align 1
-  %front_val = getelementptr inbounds %int_node, %int_node* %a, i32 0, i32 0
-  store i32 1, i32* %front_val, align 4
-  %front_node_next = getelementptr inbounds %int_node, %int_node* %a, i32 0, i32 1
-  store %int_node* %last_node_var, %int_node** %front_node_next, align 8
-  %a1 = alloca %int_node*, align 8
-  store %int_node* %a, %int_node** %a1, align 8
-  %a2 = load %int_node*, %int_node** %a1, align 8
-  %tmp = getelementptr inbounds %int_node, %int_node* %a2, i32 0, i32 2
-  %tmp3 = load i1, i1* %tmp, align 1
-  %cond = icmp eq i1 %tmp3, true
-  br i1 %cond, label %then, label %else
-
-merge:                                            ; preds = %else, %then
-  %tmp4 = getelementptr inbounds %int_node, %int_node* %a2, i32 0, i32 1
-  %b = load %int_node*, %int_node** %tmp4, align 8
-  %b6 = alloca %int_node*, align 8
-  store %int_node* %b, %int_node** %b6, align 8
-  %b7 = load %int_node*, %int_node** %b6, align 8
-  %tmp8 = getelementptr inbounds %int_node, %int_node* %b7, i32 0, i32 2
-  %tmp9 = load i1, i1* %tmp8, align 1
-  %cond10 = icmp eq i1 %tmp9, true
-  br i1 %cond10, label %then12, label %else15
-
-then:                                             ; preds = %entry
-  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([37 x i8], [37 x i8]* @fmt.5, i32 0, i32 0))
-  %exit = call i32 (i32, ...) @exit(i32 1)
-  br label %merge
-
-else:                                             ; preds = %entry
-  br label %merge
-
-merge11:                                          ; preds = %else15, %then12
-  %tmp16 = getelementptr inbounds %int_node, %int_node* %b7, i32 0, i32 0
-  %tmp17 = load i32, i32* %tmp16, align 4
-  %printf18 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @fmt, i32 0, i32 0), i32 %tmp17)
-  %printf19 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @fmt.3, i32 0, i32 0))
-  ret i32 0
-
-then12:                                           ; preds = %merge
-  %printf13 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([37 x i8], [37 x i8]* @fmt.4, i32 0, i32 0))
-  %exit14 = call i32 (i32, ...) @exit(i32 1)
-  br label %merge11
-
-else15:                                           ; preds = %merge
-  br label %merge11
-}
-###### FAILED
+diff -b fail-list.err tests/fail-list.err > fail-list.diff
+###### SUCCESS
