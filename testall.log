@@ -128,6 +128,14 @@ cc -o test-function-formals.exe test-function-formals.s linked_funcs.o
 diff -b test-function-formals.out tests/test-function-formals.out > test-function-formals.diff
 ###### SUCCESS
 
+###### Testing test-function-function
+dune exec toplevel tests/test-function-function.chomp > test-function-function.ll
+llc -relocation-model=pic test-function-function.ll > test-function-function.s
+cc -o test-function-function.exe test-function-function.s linked_funcs.o
+./test-function-function.exe
+diff -b test-function-function.out tests/test-function-function.out > test-function-function.diff
+###### SUCCESS
+
 ###### Testing test-function-list-ret
 dune exec toplevel tests/test-function-list-ret.chomp > test-function-list-ret.ll
 llc -relocation-model=pic test-function-list-ret.ll > test-function-list-ret.s
@@ -158,6 +166,14 @@ llc -relocation-model=pic test-function-while.ll > test-function-while.s
 cc -o test-function-while.exe test-function-while.s linked_funcs.o
 ./test-function-while.exe
 diff -b test-function-while.out tests/test-function-while.out > test-function-while.diff
+###### SUCCESS
+
+###### Testing test-global-vars
+dune exec toplevel tests/test-global-vars.chomp > test-global-vars.ll
+llc -relocation-model=pic test-global-vars.ll > test-global-vars.s
+cc -o test-global-vars.exe test-global-vars.s linked_funcs.o
+./test-global-vars.exe
+diff -b test-global-vars.out tests/test-global-vars.out > test-global-vars.diff
 ###### SUCCESS
 
 ###### Testing test-id-scope

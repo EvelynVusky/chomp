@@ -692,10 +692,25 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       parent = None;
     } in
 
-    let (global_scope, program_builder) = List.fold_left 
+    (* add globals to scope *)
+    let global_scope = 
+      let add_globals scope builder (vdecl : svdecl) =
+        let (scope, e') = (match (snd vdecl.svalue) with
+          SNoexpr -> (scope, L.const_null (ltype_of_typ vdecl.styp))
+          | _ -> expr builder scope vdecl.svalue the_function) in
+        (* let (scope, e') = (expr builder scope vdecl.svalue the_function) in *)
+        let global = L.define_global vdecl.svname e' the_module
+        in { scope with variables = StringMap.add vdecl.svname global scope.variables }
+      in
+      List.fold_left 
+      (fun global_scope' (x : svdecl) -> add_globals global_scope' program_builder x) 
+      global_scope vdecls
+    in
+
+    (* let (global_scope, program_builder) = List.fold_left 
       (fun (global_scope', program_builder') (x : svdecl) -> add_variable global_scope' x.styp x.svname x.svalue program_builder' the_function) 
       (global_scope, program_builder) vdecls
-    in
+    in *)
 
     (* wrapper function for build_program, creates global scope *)
     let build_function_body fdecl = 
