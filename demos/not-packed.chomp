@@ -2,23 +2,15 @@ int main() {
     char first_initial = 'a';
     char last_initial = 'd';
     int age = 23;
-    int id = 125; 
-    int gpa = 98;
-    char class_standing_fst = 'S';
-    char class_standing_snd = 'E';
+    int grade = 14;
+    int credits = 15;
     
     /* around 14,000 undergrad students at Tufts */
-    int i;
-    for (i = 0; i < 14000; i = i + 1) {
-        /* print unpacked student info*/
-        print(first_initial);
-        print(last_initial);
-        print(age);
-        print(id);
-        print(gpa);
-        print(class_standing_fst);
-        print(class_standing_snd);
-    }
+    print(first_initial);
+    print(last_initial);
+    print(age);
+    print(grade);
+    print(credits);
     
     return 0;
 }

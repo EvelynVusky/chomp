@@ -85,7 +85,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     | A.Word -> word_node_struct
     | A.Char -> char_node_struct
     | A.Poly -> int_node_struct
-    (*A.List TODO*)
     | _ -> raise (TypeError ("Invalid list type: " ^ A.string_of_typ ty))
   in
 
@@ -207,13 +206,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       | _ -> raise (TypeError "Bin type expected"))
     in
 
-  (* let dump_scope scope acc = 
-    let lst = ref [] in
-    let _ = StringMap.iter (fun key _ -> ignore (lst := List.cons key !lst)) scope.variables in
-    let str = List.fold_left (fun s acc -> acc ^ " " ^ s) acc !lst in
-    raise (TypeError str)
-  in *)
-
   (************************** Function Decls **************************)
 
   (* Define each function (arguments and return type) so we can 
@@ -255,46 +247,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       | SNoexpr -> (scope, L.const_int i32_t 0)
       | SCharLit c -> (scope, L.const_int i32_t (Char.code c))
       | SId s -> (scope, L.build_load (find_variable scope s) s builder)
-        (* let llvalue = L.build_load (find_variable scope s) s builder in
-        (match (fst e) with
-          List ty -> (*check if llvalue is empty node, if so give it type node of ty*)
-            (* conditional *)
-            let list_ptr = L.build_struct_gep llvalue 2 "tmp" builder in
-            let list_val = L.build_load list_ptr "tmp" builder in
-            let cond = L.build_icmp L.Icmp.Eq list_val (L.const_int i1_t 1) "cond" builder in
-            let merge_bb = L.append_block context "merge" the_function in
-            let branch_instr = L.build_br merge_bb in
-            
-            (*then block*)
-            let then_bb = L.append_block context "then" the_function in
-            let then_builder = L.builder_at_end context then_bb in
-            (* make empty list with appropriate type *)
-            let list_node_ty = get_node_ty ty in
-            let node_struct = L.const_named_struct list_node_ty
-              (Array.of_list [L.const_null (ltype_of_typ ty); 
-              L.const_pointer_null (L.pointer_type list_node_ty);
-              L.const_int i1_t 1]) in
-            let _ = L.set_value_name s llvalue in
-            let node_var = L.build_malloc list_node_ty "node_var" builder in
-            let _ = ignore(L.build_store node_struct node_var builder) in
-            (* let _ = L.build_store node_struct llvalue builder in *)
-            let _ = add_terminal then_builder branch_instr in
-           
-            (* else block *)
-            let else_bb = L.append_block context "else" the_function in
-            let else_builder = L.builder_at_end context else_bb in
-            (* let node_var = L.build_malloc list_node_ty "node_var" builder in
-            let _ = ignore(L.build_store llvalue node_var builder) in *)
-            let node_var = (find_variable scope s) in
-            let _ = add_terminal else_builder branch_instr in
-
-            (*put together if statement*)
-            let _ = L.build_cond_br cond then_bb else_bb builder in
-            let _ = (L.position_at_end merge_bb builder) in
-            ({ scope with variables = StringMap.add s node_var scope.variables },
-             L.build_load node_var s builder)
-             (* (scope, llvalue) *)
-          | _ -> (scope, llvalue)) *)
       | SAssign (s, e) -> let (scope, e') = expr builder scope e the_function in
                           (scope, L.build_store e' (find_variable scope s) builder)
       | SBitLit b -> (scope, L.const_int bit_t (if b = "0" then 0 else 1))
@@ -343,7 +295,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         (scope, List.fold_left build_list last_node_var lst))
         
       | SBinop (e1, op, e2) ->
-        (* let (the_function, _) = StringMap.find fdecl.sfname function_decls in *)
         let (scope, e1') = expr builder scope e1 the_function in 
         let (scope, e2') = expr builder scope e2 the_function in
         (match op with
@@ -449,7 +400,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           (scope, e1_node_var))
           
       | SUnop(op, e) ->
-        (* let (the_function, _) = StringMap.find fdecl.sfname function_decls in *)
         let (scope, e') = expr builder scope e the_function in
         (match op with
           A.Neg     -> (scope, L.build_neg e' "tmp" builder)
@@ -506,7 +456,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             (scope, L.build_load list_ptr "tmp" builder))
 
       | SCall ("isEmpty", [e]) ->
-        (* let (the_function, _) = StringMap.find fdecl.sfname function_decls in *)
         let (scope, e') = (expr builder scope e the_function) in 
         let bool_var = L.build_malloc i1_t "bool_var" builder in
         let _ = ignore(L.build_store (L.const_int i1_t 0) bool_var builder) in
@@ -540,28 +489,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       | SCall("intToNibble", [e]) | SCall("charToNibble", [e])
       | SCall("intToByte", [e]) | SCall("charToByte", [e])
       | SCall("intToWord", [e]) | SCall("charToWord", [e]) -> (expr builder scope e the_function)
-    
-      (* "toBit", [Bin], Bit);
-        ("intToBit", [Int], Bit);
-        ("charToBit", [Char], Bit);
-        ("toNibble", [Bin], Nibble);
-        ("intToNibble", [Int], Nibble);
-        ("charToNibble", [Char], Nibble);
-        ("toByte", [Bin], Byte);
-        ("intToByte", [Int], Byte);
-        ("charToByte", [Char], Byte);
-        ("toWord", [Bin], Word);
-        ("intToWord", [Int], Word);
-        ("charToWord", [Char], Word); *)
-      (* | SCall ("bitPack", [e1; e2]) -> 
-          let e1' = (expr builder scope e1 the_function) in 
-          let e2' = (expr builder scope e2 the_function) in 
-          (*shift e1 16 to the left, mask e2, and them*)
-          let e1' = L.build_shl e1' (L.const_int i32_t 1) "tmp" builder in
-              let e2' = L.build_and e2' (L.const_int i32_t 1) "tmp" builder in
-              L.build_or e1' e2' "tmp" builder
-          e1'' = L.build 
-          (scope, L.build_call ) *)
 
       | SCall ("setBit", [e; idx; bit]) -> 
         let (scope, e') = (expr builder scope e the_function) in 
@@ -587,7 +514,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         (scope, L.build_call printf_func [| string_format_ln |] "printf" builder)
 
       | SCall ("print", [e]) -> 
-        (* let (the_function, _) = StringMap.find fdecl.sfname function_decls in *)
         let (scope, e') = (expr builder scope e the_function) in
         let rec print_helper ty e' builder' = 
         (match ty with 

@@ -1,0 +1,10 @@
+string s = "hi";
+
+void foo() {
+    println(s);    
+}
+
+int main() {
+    println(s);
+    return 0;
+}
