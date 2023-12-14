@@ -1,0 +1,36 @@
+int main() {
+    int i = 0;
+    int j = 0;
+    int idx = 0;
+
+    list int l1 = [1, 2, 3, 4];
+    list string l2 = ["hi", "hello"];
+    list char l3 = [];
+    nibble n = {{0101}};
+
+    for (i = 20; i > 2; i = i / 2) {
+        l1 = 5 :: l1;
+    }
+
+    for (j = 0; j < 5; j = j + 1) {
+        l2 = "bye" :: l2;
+    }
+
+    for (idx = 0; idx < 4; idx = idx + 1) {
+        bit b = getBit(n, idx);
+        if (b == {{0}}) {
+            n = setBit(n, idx, {{1}});
+        }
+    }
+
+    for (i = 10; i >= 0; i = i - 1) {
+        l3 = 'a' :: l3;
+    }
+
+    println(l1);
+    println(l2);
+    println(n);
+    println(l3);
+
+    return 0;
+}

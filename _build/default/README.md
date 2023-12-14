@@ -9,36 +9,91 @@
     evelyn.vu@tufts.edu
     nicole.ogen@tufts.edu
 
-# Integration test descriptions
-# Semantically Negative Tests (3): 
-"fail-list.chomp": Incorrectly declares an integer list without the necessary bracket syntax, "[" and "]". Detects mismatched types between id and value.
+## Integration test descriptions ##
+# Positive Tests:
+- test-list: tests cons, car, and cdr using ids and printing them
+- test-list-literals: tests printing for list literals and cons, car, cdr with list literals 
+- test-list-empty: tests printing, cons, car, cdr with the emtpy list
+- test-list-scope: prints a list created & modified in a different scope (both
+    function scope & for loop scope)
+- test-builtins: tests the polymorphic to{Bin type} builtin functions with every 
+    possible type of input
+- test-builtins-get: tests polymorphic setBit, getBit, and flipBit builtin functions with 
+    every possible type of input
+- test-print: tests the polymorphic print and println functions for all types
 
-"fail-scope.chomp": Incorrectly calls a function that is declared after the scope that it is called in. Detects unidentified function name.
+- test-add: prints the addition of 2 integer literals & an integer variable
+- test-sub: prints the addition of 2 integer literals & the combination of an integer literal and an integer variable
+- test-mult: prints multiplication of 2 integer literals & 2 integer variables
+- test-div: prints division of 2 integers car'd from 2 integer lists
+- test-bool-ops: prints the and (&&), or (||) & not (!) of a combination of boolean literals & variables
+- test-bin-binops: prints the binand (&), binor (|) & binxor (^) of a combination of bin type literals & variables
+- test-unops: prints the binnot (~) of all possible bin types, and the neg (-) of an integer
+- test-shift: prints the lshift (<<) & rshift (>>) of bin types
+- test-comp: prints the greater (>), geq (>=), lesser (<) and leq (<=) of a combination of 2 integer literals & variables
+- test-concat: assigns the concatenation (><) of every combination of bin type to its appropriate resulting bin type & prints its value
 
-"bit-length.chomp": Incorrectly assigns a nibble datatype with five bits rather than four. Detects incorrect size of bits assigned to nibble type.
+- test-function-list: tests passing in lists of different types and empty 
+                      list into a function and printing it
+- test-function-list-ret: tests returning a list from a function and printing it
+- test-function-formals: prints all formals passed to a function, tests all types 
+- test-function-ret: prints value that function returns
 
-# Positive Tests (7):
-"test-print.chomp": Calls our polymporhic built-in print function on nibble, byte, integer, and string literals.
+- test-id-scope: give 3 variables that are in different scopes the same name and print their different values
 
-"test-hello-world.chomp": Prints the string "hello world".
+- test-block: creates a block, declares a variable within the block and performs arithmetic operations on the variable in the block and on a variable outside of the block
+- test-block-for: creates a for loop within a block and performs arithmetic operations on variables and prints within the for loop
+- test-for: performs arithmetic operations on a variable within a for loop
+- test-for-for: prints strings using nested for loops
+- test-fors: tests multiple configurations of for loops: loops with a variety of header initialization variables, increment/decrement statements, booean conditions, and inner operations
+- test-function-for: tests that a function with a for loop correctly updates a list literal passed into it
+- test-while: tests a simple while loop that performs arithmetic on a variable
+- test-while-big: tests a while loop to find index of first 1 bit in a bin type
+- test-while-while: tests a nested while loop
+- test-if: tests if and nested if statements in main and in functions
+- test-function-while: tests while within a function
+- test-return: tests that functions with return types of all data types return correctly
 
-"test-scope.chomp": Accesses & modifies a global variable inside a child scope, and ensures its value is retained outside of the scope.
+# Semantically Negative Tests: 
+- fail-add: fails when calling the add operator on 2 strings
+- fail-sub: fails when calling the subtract operator on 2 chars
+- fail-mult: fails when calling the subtract operator on 2 integer lists
+- fail-div: fails when dividing by 0
+- fail-bool-ops: calls boolean operator and (&&) on 2 char literals
+- fail-bin-binops: calls a bin type operator on 2 interger literals
+- fail-unops: calls a binnot (~) on an integer
+- fail-shift: fails when calling a shift (<<) on 2 integers
+- fail-concat: assigns the result of the concat (><) of 2 nibbles to a nibble, when it's supposed to return a byte
+- fail-main: creates a main function with a "void" return type
 
-"test-if.chomp": Prints different strings based on conditions in nested if statements.
+- fail-list-list: fails when trying to create a list of lists
+- fail-list: fails when trying to give car result a list type
+- fail-list-ty: fails when trying to put a bit and nibble in the same list
+- fail-list-empty: fails when trying to cons to empty list of wrong type
 
-"test-formals.chomp": Defines a function that takes 2 integer parameters, and calls said function using arguments.
+- fail-function-formal: fails when calling a function with the wrong number of formals
+- fail-function-formal-ty: fails when calling a function with a formal of the wrong type
+- fail-function-ret: fails when returning the wrong type for a function
+- fail-function-no-return: fails when missing a return statment
+- fail-function-scope: tries to reference variable that is not in functions scope
 
-"test-globals.chomp": Prints globally-defined strings inside a function.
+- fail-id-dup-glob: fails to give a global variable and function the same name
+- fail-id-dup-loc: fails to give local variable and function the same name
 
-"test-fib.chomp": Calculates Fibonacci(10) using a bottom-up algorithm.
+- fail-list-scope: fails when trying to reference a variable in a different scope to a list in main   
+- fail-block: fails when trying to reference a variable declared in a block 
+- fail-for: fails when trying to create a for loop without initializing the counter in the for loop header before the for loop
+- fail-for-for: fails when trying to reference a variable declared in an inner for loop in the outer for loop
+- fail-while: fails when trying to reference a variable in the conditional that doesn't exist
+- fail-if: fails when if statement expression is not type boolean
+- fail-return: fails when trying to return before the end of a function block
+- fail-return-type: fails when trying to return a different type than the function return type
 
-  
-# How to run the scripts to perform the three commands listed above
-Dependendencies:
-    pytest (install using: pip install pytest)
-
+## How to run the scripts to perform the three commands listed above ##
 Compile the compiler into an executable by running: 
     make all
+
+## TODO ##
 
 Run all tests in our testsuite by running:
     make test
@@ -50,24 +105,3 @@ Run a single test by running:
     make run FILENAME=<filename>
 Note: <filename> must only contain the name of the file without the .chomp extension,
 and this command leaves all intermediary files. This is successful if there's no error & the expected output is printed to stdout.
-
-
-# How your test script validates that a compiled program is correct or that an 
-# invalid program couldn’t be compiled
-    make test runs all of the tests in the test suite. It does this by running
-    2 pytest files, run_semant_tests.py and run_tests.py. 
-
-    The run_semant_tests file does the following on all 3 semant tests: 
-    it calls dune exec and compares the output with the gold standard error 
-    output using diff. 
-
-    The run_tests.py file does the folling on all 7 tests: 
-    It comiles the .chomp file into llvm using llc. Then it generates assembly 
-    from this llvm code using gcc. Then it runs this assembly using and pipes 
-    the output into a file. Then this script runs diff with the output file
-    and the expected gold standard output. If the compiled program did not 
-    compile correctly or print the correct output, then the diff would fail and 
-    the script would fail. It does this by asserting that the diff command has 
-    a 0 return code. If the output file piped from running the chomp executable 
-    doesn't exist, one the previous commands didn't run correctly, meaning that 
-    it would be an invalid program.

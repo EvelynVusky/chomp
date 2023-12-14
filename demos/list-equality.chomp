@@ -1,0 +1,58 @@
+bool list_equals(list int a, list int b) {
+    bool equal = true;
+    while (!isEmpty(a) && !isEmpty(b)) {
+        if (car a != car b) {
+            equal = false;
+        }
+        a = cdr a;
+        b = cdr b;
+    }
+    if (!isEmpty(a) || !isEmpty(b)) {
+        equal = false;
+    }
+    return equal;
+}
+
+int main () {
+    list int a1 = [1, 2, 3, 4];
+    list int a2 = [1, 2, 3, 4];
+    
+    list int b = [2, 3, 4, 5];
+    list int c = [1, 2, 3];
+    
+    list int empty = [];
+
+    print("a1 == a1: ");
+    println(list_equals(a1, a1)); /* 1 */
+
+    print("a1 == a2 (identical lists): ");
+    println(list_equals(a1, a2)); /* 1 */
+
+    print("a1 == b (different lists): ");
+    println(list_equals(a1, b)); /* 0 */
+
+    print("a1 == c (different sizes): ");
+    println(list_equals(a1, c)); /* 0 */
+
+    print("a1 == empty: ");
+    println(list_equals(a1, empty)); /* 0 */
+
+    print("empty == empty: ");
+    println(list_equals(empty, empty)); /* 1 */
+
+    print("[] == []: ");
+    println(list_equals([], [])); /* 1 */
+
+    print("[1, 2, 3, 4] == [1, 2, 3, 5]: ");
+    println(list_equals([1, 2, 3, 4], [1, 2, 3, 5])); /* 0 */
+
+    print("[1, 2, 3, 4] == [1, 2, 3, 4]: ");
+    println(list_equals([1, 2, 3, 4], [1, 2, 3, 4])); /* 1 */
+
+    print("[] == [1, 2, 3, 4]: ");
+    println(list_equals([], [1, 2, 3, 4])); /* 0 */
+
+    print("[1, 2] == [3, 4, 5]: ");
+    println(list_equals([1, 2], [3, 4, 5])); /* 0 */
+    return 0; 
+}

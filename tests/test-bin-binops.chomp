@@ -1,0 +1,20 @@
+int main() {
+    bit a = {{1}};
+    nibble b = {{0101}};
+    byte c = {{11100010}};
+    word d = {{0111000110011110}};
+
+    /* binand */
+    println(a & d);
+    println(b & {{10011010}});
+
+    /* binor */
+    println(b | c);
+    println(d | {{1}});
+
+    /* binxor */
+    println(a ^ c);
+    println(c ^ {{1011001000011100}});
+
+    return 0;
+}

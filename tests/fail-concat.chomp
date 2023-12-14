@@ -1,0 +1,4 @@
+int main() {
+    nibble a = {{1010}} >< {{0101}};
+    return 0;
+}

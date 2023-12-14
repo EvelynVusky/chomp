@@ -1,0 +1,29 @@
+int a() {
+    return 1;
+} 
+
+string s() {
+    return "hello";
+} 
+
+bit b() {
+    return {{0}};
+} 
+nibble n() {
+    return {{0101}};
+} 
+char c() {
+    return 'a';
+} 
+bool bo() {
+    return false;
+} 
+int main() {
+    println(a());
+    println(s());
+    println(b());
+    println(n());
+    println(c());
+    println(bo());
+    return 0;
+}

@@ -1,0 +1,29 @@
+int main() {
+	bit a = {{1}};
+    nibble b = {{0101}};
+    byte c = {{11100010}};
+    word d = {{0111000110011110}};
+
+    nibble b_new = a >< a;
+    println(b_new);
+    byte c_new = a >< b;
+    println(c_new);
+    word d_new = a >< c;
+    println(d_new);
+    int i_new = a >< d;
+    println(i_new);
+
+    c_new = b >< b;
+    println(c_new);
+    d_new = b >< c;
+    println(d_new);
+    i_new = b >< d;
+    println(i_new);
+
+    d_new = c >< c;
+    println(d_new);
+    i_new = c >< d;
+    println(i_new);
+
+	return 0;
+}

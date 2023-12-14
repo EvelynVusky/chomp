@@ -24,7 +24,6 @@ type expr =
   | List of expr list
   | Noexpr
   | BinLit of string
-  | Null
 
 type vdecl = {
   typ : typ;
@@ -87,7 +86,6 @@ let rec string_of_expr = function
   | BinLit(s) -> "{{" ^ s ^ "}}"
   | CharLit(c) -> "\'" ^ (Char.escaped c) ^ "\'"
   | StringLit(s) -> "\"" ^ s ^ "\""
-  | Null -> "Null"
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2

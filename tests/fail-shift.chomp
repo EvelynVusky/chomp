@@ -1,0 +1,4 @@
+int main() {
+    println(3 << 2);
+    return 0;
+}

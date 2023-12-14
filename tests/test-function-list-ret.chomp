@@ -1,0 +1,10 @@
+list string foo(list int l, list string s, list char c) {
+    return s;
+} 
+
+int main() {
+    list int a = [1, 2, 3];
+    list string s = ["hello", "world"];
+    print(foo(a, s, []));
+    return 0;
+}

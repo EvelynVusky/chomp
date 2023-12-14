@@ -1,0 +1,18 @@
+int main() {
+    bool a = true;
+    bool b = false; 
+    int i = 10;
+
+    while (a == true) {
+        while (b == false) {
+            if (i == 10){
+                a = false;
+                b = true;
+                i = 9;
+            }
+        }
+    }
+
+    println(i);
+    return 0;
+}

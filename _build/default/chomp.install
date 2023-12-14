@@ -7,6 +7,5 @@ bin: [
   "_build/install/default/bin/toplevel"
 ]
 doc: [
-  "_build/install/default/doc/chomp/README copy.md"
   "_build/install/default/doc/chomp/README.md"
 ]

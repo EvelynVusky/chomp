@@ -6,9 +6,8 @@ all : ./_build/default/binb/toplevel.exe linked_funcs.o
 
 # "make test" Compiles everything and runs the regression tests
 .PHONY : test
-test : all run_tests.py run_semant_tests.py
-	pytest run_tests.py
-	pytest run_semant_tests.py
+test : all testall.sh
+	./testall.sh
 
 # "make run FILENAME=<filename>" runs the compiler on a single test
 .PHONY : run
@@ -35,4 +34,4 @@ linked_funcs : linked_funcs.c
 .PHONY : clean
 clean :
 	dune clean
-	rm -rf chomp.opam *.s *.out *.ll *.exe tests/*.s tests/*.ll tests2/*.exe test2s/*.s tests2/*.ll tests2/*.exe linked_funcs.o
+	rm -rf chomp.opam *.s *.out *.ll *.exe tests/*.s tests/*.ll tests/*.exe demos/*.s demos/*.ll demos/*.exe linked_funcs.o

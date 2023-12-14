@@ -1,0 +1,19 @@
+void foo(int a, string s, bit b, nibble n, bool bo, char c) {
+    println(a);
+    println(s);
+    println(b);
+    println(n);
+    println(bo);
+    println(c);
+} 
+
+int main() {
+    int a = 66;
+    string s = "hi!";
+    bit b = {{1}};
+    nibble n = {{0101}};
+    bool bo = true;
+    char c = '!';
+    foo(a, s, b, n, bo, c);
+    return 0;
+}

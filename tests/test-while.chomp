@@ -1,0 +1,14 @@
+int main() {
+    bool test = true; 
+    int a = 0;
+
+    while (a <= 10) { 
+        if (a == 10) {
+            test = false;
+        }
+        a = a + 1;
+    }
+    
+    println(test);
+    return 0;
+}

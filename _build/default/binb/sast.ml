@@ -19,7 +19,6 @@ and sx =
   | SNibbleLit of string
   | SByteLit of string
   | SWordLit of string
-  | SNull
 
 type svdecl = {
   styp : typ;
@@ -58,7 +57,6 @@ let rec string_of_sexpr (t, e) =
   | SWordLit(s) -> "{{" ^ s ^ "}}"
   | SCharLit(c) -> "\'" ^ (Char.escaped c) ^ "\'"
   | SStringLit(s) -> "\"" ^ s ^ "\""
-  | SNull -> "Null"
   | SId(s) -> s
   | SBinop(e1, o, e2) ->
       string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2

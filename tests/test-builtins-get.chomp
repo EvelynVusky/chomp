@@ -1,0 +1,9 @@
+int main() {
+    bit b = {{1}};
+    bit c = setBit(b, 0, {{0}});
+    println(setBit(b, 0, {{0}}));
+    println(getBit(b, 0));
+    println(flipBit(b, 0));
+   
+    return 0;
+}

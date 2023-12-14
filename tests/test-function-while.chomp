@@ -1,0 +1,51 @@
+list bool foo_bool(list bool l) {
+    int i = 0;
+    while (i < 10){
+        i = i + 1;
+        l = true :: l;
+        println(l);
+    }
+    return l;
+}
+
+list string foo_string(list string l) {
+    int i = 0;
+    while (i < 10){
+        i = i + 1;
+        l = "hi" :: l;
+        println(l);
+    }
+    return l;
+}
+
+list string foo_literal(list string l){
+    return [];
+}
+
+list string foo_empty(list string l){
+    return l;
+}
+
+
+int main() {    
+    list int a;
+    a = [];
+    list string b;
+    b = [];
+    list bool c;
+    c = [];
+
+    list int l1 = [];
+    list string l2 = [];
+    list bool l3 = [];
+    println(l1);
+    println(l2);
+    println(l3);
+    
+    println(foo_string(l2));
+    println(foo_bool(l3));
+    println(foo_literal(l2));
+    println(foo_empty([]));
+
+    return 0;
+}

@@ -1,0 +1,9 @@
+int main(){
+
+    for (i = 0; i < 10; i = i + 1) {
+        println(4);
+    }
+
+    return 0;
+}
+

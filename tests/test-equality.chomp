@@ -1,0 +1,38 @@
+int main() {
+    /* string */
+    println("hi" == "hi");
+    println("hello" == "world");
+    
+    /* int */
+    println(41452 == 41452);
+    println(2 == 3);
+
+    /* bool */
+    println(true == true);
+    println(false == true);
+
+    /* char */
+    println('a' == 'a');
+    println('b' == 'c');
+
+    /* list */
+    println([{{1}}] == [{{1}}]);
+    println([2,1] == [1,2]);
+
+    /* bit */
+    println({{1}} == {{1}});
+    println({{0}} == {{1}});
+
+    /* nibble */
+    println({{1010}} == {{1010}});
+    println({{1111}} == {{1110}});
+
+    /* byte */
+    println({{10011001}} == {{10011001}});
+    println({{11001100}} == {{11100110}});
+
+    /* word */
+    println({{1100110010011001}} == {{1100110010011001}});
+    println({{1100110011011100}} == {{1100110011000101}});
+	return 0;
+}

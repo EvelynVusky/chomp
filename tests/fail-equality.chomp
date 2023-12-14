@@ -1,0 +1,4 @@
+int main() {
+	println("hi" == 4);
+	return 0;
+}

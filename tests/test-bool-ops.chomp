@@ -1,0 +1,11 @@
+int main() {
+	bool t = true;
+	bool f = false;
+	println(true && false);
+    println(t || t);
+	println(false || true);
+	println(f && f);
+	println(!true);
+	println(!f);
+	return 0;
+}

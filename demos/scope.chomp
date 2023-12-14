@@ -1,0 +1,49 @@
+void scope(bit b, char c, list int i) {
+    b = {{0}};
+    c = 'z';
+    i = cdr i;
+    println("In scope function:");
+    println(b);
+    println(c);
+    println(i);
+    println("");
+}
+
+int main() {
+    bit b = {{1}};
+    char c = 'a';
+    list int i = [123, 32, 44];
+
+    println("In main function:");
+    println(b);
+    println(c);
+    println(i);
+    println("");
+
+    scope(b, c, i);
+
+    println("Back in main function:");
+    println(b);
+    println(c);
+    println(i);
+    println("");
+
+    int j = 0;
+    for (j = 0; j < 1; j = j + 1) {
+        nibble n = {{1011}};
+        print("In for loop nibble n: ");
+        println(n);
+    }
+    
+    println("");
+    nibble n = {{0110}};
+    print("Out of for loop nibble n: ");
+    println(n);
+    println("");
+    
+    print("Back in main function j: ");
+    println(j);
+    println("");
+
+    return 0;
+}

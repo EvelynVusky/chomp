@@ -1,0 +1,9 @@
+int main() {
+    bool test = true; 
+
+    while (a > 10) { 
+        test = false;
+    }
+    
+    return 0;
+}

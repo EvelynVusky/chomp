@@ -1,0 +1,11 @@
+int main() {
+    int a = 4501;
+    int b = 23;
+
+    println(4501 > a);
+    println(4500 <= a);
+    println(a < b);
+    println(b >= 21);
+
+    return 0;
+}

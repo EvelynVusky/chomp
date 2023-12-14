@@ -1,0 +1,18 @@
+int main() {
+    nibble b = {{0101}};
+    byte c = {{11100010}};
+    word d = {{0111000110011110}};
+    int i = 401932;
+
+    /* binnot */
+    println(~{{1}});
+    println(~b);
+    println(~c);
+    println(~d);
+
+    /* neg */
+    println(-i);
+    println(-13013);
+
+    return 0;
+}

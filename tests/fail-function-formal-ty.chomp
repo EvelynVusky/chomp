@@ -1,0 +1,8 @@
+void foo (list int a) {
+    print("in");
+}
+
+int main () {
+    foo(["hi"]);
+    return 0;
+}

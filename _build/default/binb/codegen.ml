@@ -233,32 +233,69 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
   let build_program =
     let (the_function, _) = StringMap.find "main" function_decls in
     (* create builder for program *)
-    let builder = L.builder_at_end context (L.entry_block the_function) in
+    let program_builder = L.builder_at_end context (L.entry_block the_function) in
 
     (* define format strings *)
-    let int_format_str = L.build_global_stringptr "%d" "fmt" builder
-    and string_format_str = L.build_global_stringptr "%s" "fmt" builder 
-    and char_format_str = L.build_global_stringptr "%c" "fmt" builder
-    and string_format_ln = L.build_global_stringptr "\n" "fmt" builder 
-    and div_err_format_str = L.build_global_stringptr "Error: cannot call div with divisor of 0\n" "fmt" builder
-    and car_err_format_str = L.build_global_stringptr "Error: cannot call car on empty list\n" "fmt" builder
-    and cdr_err_format_str = L.build_global_stringptr "Error: cannot call cdr on empty list\n" "fmt" builder in
+    let int_format_str = L.build_global_stringptr "%d" "fmt" program_builder
+    and string_format_str = L.build_global_stringptr "%s" "fmt" program_builder 
+    and char_format_str = L.build_global_stringptr "%c" "fmt" program_builder
+    and string_format_ln = L.build_global_stringptr "\n" "fmt" program_builder 
+    and div_err_format_str = L.build_global_stringptr "Error: cannot call div with divisor of 0\n" "fmt" program_builder
+    and car_err_format_str = L.build_global_stringptr "Error: cannot call car on empty list\n" "fmt" program_builder
+    and cdr_err_format_str = L.build_global_stringptr "Error: cannot call cdr on empty list\n" "fmt" program_builder in
 
 
     (************************** Convert exprs **************************)
 
-    (* TODO: call (built-ins) *)
     (* Construct code for an expression; return its value *)
-    let rec expr builder (scope: var_table) (e: sexpr) = match (snd e) with
+    let rec expr builder (scope: var_table) (e: sexpr) the_function = match (snd e) with
 	      SLiteral i -> (scope, L.const_int i32_t i)
       | SStringLit s -> (scope, L.build_global_stringptr s "string" builder)
       | SBoolLit b -> (scope, L.const_int i1_t (if b then 1 else 0))
       | SNoexpr -> (scope, L.const_int i32_t 0)
-      | SNull -> (scope, L.const_null void_t)
       | SCharLit c -> (scope, L.const_int i32_t (Char.code c))
-      | SId s -> 
-        (scope, L.build_load (find_variable scope s) s builder)
-      | SAssign (s, e) -> let (scope, e') = expr builder scope e in
+      | SId s -> (scope, L.build_load (find_variable scope s) s builder)
+        (* let llvalue = L.build_load (find_variable scope s) s builder in
+        (match (fst e) with
+          List ty -> (*check if llvalue is empty node, if so give it type node of ty*)
+            (* conditional *)
+            let list_ptr = L.build_struct_gep llvalue 2 "tmp" builder in
+            let list_val = L.build_load list_ptr "tmp" builder in
+            let cond = L.build_icmp L.Icmp.Eq list_val (L.const_int i1_t 1) "cond" builder in
+            let merge_bb = L.append_block context "merge" the_function in
+            let branch_instr = L.build_br merge_bb in
+            
+            (*then block*)
+            let then_bb = L.append_block context "then" the_function in
+            let then_builder = L.builder_at_end context then_bb in
+            (* make empty list with appropriate type *)
+            let list_node_ty = get_node_ty ty in
+            let node_struct = L.const_named_struct list_node_ty
+              (Array.of_list [L.const_null (ltype_of_typ ty); 
+              L.const_pointer_null (L.pointer_type list_node_ty);
+              L.const_int i1_t 1]) in
+            let _ = L.set_value_name s llvalue in
+            let node_var = L.build_malloc list_node_ty "node_var" builder in
+            let _ = ignore(L.build_store node_struct node_var builder) in
+            (* let _ = L.build_store node_struct llvalue builder in *)
+            let _ = add_terminal then_builder branch_instr in
+           
+            (* else block *)
+            let else_bb = L.append_block context "else" the_function in
+            let else_builder = L.builder_at_end context else_bb in
+            (* let node_var = L.build_malloc list_node_ty "node_var" builder in
+            let _ = ignore(L.build_store llvalue node_var builder) in *)
+            let node_var = (find_variable scope s) in
+            let _ = add_terminal else_builder branch_instr in
+
+            (*put together if statement*)
+            let _ = L.build_cond_br cond then_bb else_bb builder in
+            let _ = (L.position_at_end merge_bb builder) in
+            ({ scope with variables = StringMap.add s node_var scope.variables },
+             L.build_load node_var s builder)
+             (* (scope, llvalue) *)
+          | _ -> (scope, llvalue)) *)
+      | SAssign (s, e) -> let (scope, e') = expr builder scope e the_function in
                           (scope, L.build_store e' (find_variable scope s) builder)
       | SBitLit b -> (scope, L.const_int bit_t (if b = "0" then 0 else 1))
       | SNibbleLit b -> 
@@ -281,7 +318,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         in
         let list_node_ty = get_node_ty list_ty in
         let build_list acc curr = 
-          let (_, e1) = (expr builder scope curr) in
+          let (_, e1) = (expr builder scope curr the_function) in
           (* make & populate struct node with curr's value *)
           let front_node_struct = L.const_named_struct list_node_ty
                            (Array.of_list [L.const_null (ltype_of_typ list_ty); 
@@ -306,8 +343,9 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         (scope, List.fold_left build_list last_node_var lst))
         
       | SBinop (e1, op, e2) ->
-        let (scope, e1') = expr builder scope e1 in 
-        let (scope, e2') = expr builder scope e2 in
+        (* let (the_function, _) = StringMap.find fdecl.sfname function_decls in *)
+        let (scope, e1') = expr builder scope e1 the_function in 
+        let (scope, e2') = expr builder scope e2 the_function in
         (match op with
         | A.Add     -> (scope, L.build_add e1' e2' "tmp" builder)
         | A.Sub     -> (scope, L.build_sub e1' e2' "tmp" builder)
@@ -358,12 +396,14 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
               let e1' = L.build_shl e1' (L.const_int i32_t 8) "tmp" builder in
               let e2' = L.build_and e2' (L.const_int i32_t 255) "tmp" builder in
               L.build_or e1' e2' "tmp" builder
-            | (Word, _) -> e1'
-            | (_, Word) -> e2'
+            | (_, Word) -> 
+              let e1' = L.build_shl e1' (L.const_int i32_t 16) "tmp" builder in
+              let e2' = L.build_and e2' (L.const_int i32_t 65535) "tmp" builder in
+              L.build_or e1' e2' "tmp" builder
             | _ -> raise (InvalidError ("Concat is only applicable to Bin types"))))
         | A.Cons    -> 
           (* make e1 node *)
-          let (scope, e1') = expr builder scope e1 in 
+          let (scope, e1') = expr builder scope e1 the_function in 
           let list_node_ty = get_node_ty (fst e1) in
           let e1_node =  L.const_named_struct list_node_ty
           (Array.of_list [(L.const_null (ltype_of_typ (fst e1))); 
@@ -374,7 +414,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           let _ = ignore(L.build_store e1' e1_val builder) in
 
           (* conditional *)
-          let (scope, e2') = expr builder scope e2 in
+          let (scope, e2') = expr builder scope e2 the_function in
           let list_ptr = L.build_struct_gep e2' 2 "tmp" builder in
           let list_val = L.build_load list_ptr "tmp" builder in
           let cond = L.build_icmp L.Icmp.Eq list_val (L.const_int i1_t 1) "cond" builder in
@@ -409,7 +449,8 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
           (scope, e1_node_var))
           
       | SUnop(op, e) ->
-        let (scope, e') = expr builder scope e in
+        (* let (the_function, _) = StringMap.find fdecl.sfname function_decls in *)
+        let (scope, e') = expr builder scope e the_function in
         (match op with
           A.Neg     -> (scope, L.build_neg e' "tmp" builder)
           | A.Not | A.Binnot     -> (scope, L.build_not e' "tmp" builder)
@@ -463,35 +504,91 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
             let _ = (L.position_at_end merge_bb builder) in
             let list_ptr = L.build_struct_gep e' 1 "tmp" builder in
             (scope, L.build_load list_ptr "tmp" builder))
+
+      | SCall ("isEmpty", [e]) ->
+        (* let (the_function, _) = StringMap.find fdecl.sfname function_decls in *)
+        let (scope, e') = (expr builder scope e the_function) in 
+        let bool_var = L.build_malloc i1_t "bool_var" builder in
+        let _ = ignore(L.build_store (L.const_int i1_t 0) bool_var builder) in
+
+        (* conditional *)
+        let list_ptr = L.build_struct_gep e' 2 "tmp" builder in
+        let list_val = L.build_load list_ptr "tmp" builder in
+        let cond = L.build_icmp L.Icmp.Eq list_val (L.const_int i1_t 1) "cond" builder in
+        let merge_bb = L.append_block context "merge" the_function in
+        let branch_instr = L.build_br merge_bb in
+        
+        (*then block*)
+        let then_bb = L.append_block context "then" the_function in
+        let then_builder = L.builder_at_end context then_bb in
+        let _ = ignore(L.build_store (L.const_int i1_t 1) bool_var then_builder) in
+        let _ = add_terminal then_builder branch_instr in
+       
+        (*else block*)
+        let else_bb = L.append_block context "else" the_function in
+        let else_builder = L.builder_at_end context else_bb in
+        let _ = add_terminal else_builder branch_instr in
+
+        (*put together if statement*)
+        let _ = L.build_cond_br cond then_bb else_bb builder in
+        let _ = (L.position_at_end merge_bb builder) in
+        (scope, L.build_load bool_var "tmp" builder)
             
-      | SCall ("toBit", [e]) | SCall ("toNibble", [e]) | SCall ("toByte", [e]) | SCall ("toWord", [e]) -> (expr builder scope e)
-      | SCall ("toInt", [e]) | SCall ("toChar", [e]) -> (expr builder scope e)
+      | SCall ("toBit", [e]) | SCall ("toNibble", [e]) | SCall ("toByte", [e]) | SCall ("toWord", [e])
+      | SCall ("toInt", [e]) | SCall ("toChar", [e]) 
+      | SCall("intToBit", [e]) | SCall("charToBit", [e]) 
+      | SCall("intToNibble", [e]) | SCall("charToNibble", [e])
+      | SCall("intToByte", [e]) | SCall("charToByte", [e])
+      | SCall("intToWord", [e]) | SCall("charToWord", [e]) -> (expr builder scope e the_function)
     
+      (* "toBit", [Bin], Bit);
+        ("intToBit", [Int], Bit);
+        ("charToBit", [Char], Bit);
+        ("toNibble", [Bin], Nibble);
+        ("intToNibble", [Int], Nibble);
+        ("charToNibble", [Char], Nibble);
+        ("toByte", [Bin], Byte);
+        ("intToByte", [Int], Byte);
+        ("charToByte", [Char], Byte);
+        ("toWord", [Bin], Word);
+        ("intToWord", [Int], Word);
+        ("charToWord", [Char], Word); *)
+      (* | SCall ("bitPack", [e1; e2]) -> 
+          let e1' = (expr builder scope e1 the_function) in 
+          let e2' = (expr builder scope e2 the_function) in 
+          (*shift e1 16 to the left, mask e2, and them*)
+          let e1' = L.build_shl e1' (L.const_int i32_t 1) "tmp" builder in
+              let e2' = L.build_and e2' (L.const_int i32_t 1) "tmp" builder in
+              L.build_or e1' e2' "tmp" builder
+          e1'' = L.build 
+          (scope, L.build_call ) *)
+
       | SCall ("setBit", [e; idx; bit]) -> 
-        let (scope, e') = (expr builder scope e) in 
-        let (scope, idx') = (expr builder scope idx) in 
-        let (scope, bit') = (expr builder scope bit) in 
+        let (scope, e') = (expr builder scope e the_function) in 
+        let (scope, idx') = (expr builder scope idx the_function) in 
+        let (scope, bit') = (expr builder scope bit the_function) in 
         let size = size_of (fst e) in
         (scope, L.build_call set_bit_func [| e'; size; idx'; bit' |] "set_Bit" builder)
 
       | SCall ("flipBit", [e; idx]) ->
-        let (scope, e') = (expr builder scope e) in 
-        let (scope, idx') = (expr builder scope idx) in 
+        let (scope, e') = (expr builder scope e the_function) in 
+        let (scope, idx') = (expr builder scope idx the_function) in 
         let size = size_of (fst e) in
         (scope, L.build_call flip_bit_func [| e'; size; idx' |] "flip_Bit" builder)
 
       | SCall ("getBit", [e; idx]) ->
-        let (scope, e') = (expr builder scope e) in 
-        let (scope, idx') = (expr builder scope idx) in 
+        let (scope, e') = (expr builder scope e the_function) in 
+        let (scope, idx') = (expr builder scope idx the_function) in 
         let size = size_of (fst e) in
         (scope, L.build_call get_bit_func [| e'; size; idx' |] "get_Bit" builder)
       
-        | SCall ("println", [e]) -> 
-        let (scope, _) = (expr builder scope (fst e, SCall("print", [e]))) in
+      | SCall ("println", [e]) -> 
+        let (scope, _) = (expr builder scope (fst e, SCall("print", [e])) the_function) in
         (scope, L.build_call printf_func [| string_format_ln |] "printf" builder)
 
       | SCall ("print", [e]) -> 
-        let (scope, e') = (expr builder scope e) in
+        (* let (the_function, _) = StringMap.find fdecl.sfname function_decls in *)
+        let (scope, e') = (expr builder scope e the_function) in
         let rec print_helper ty e' builder' = 
         (match ty with 
             A.Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder'
@@ -526,7 +623,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
               let list_ptr = L.build_struct_gep rest_list' 0 "tmp" while_builder in
               let list_val = L.build_load list_ptr "tmp" while_builder in
               let _ = print_helper ty list_val while_builder in 
-              let _ = (expr while_builder scope (String, SCall("print", [(String, SStringLit(" "))]))) in
+              let _ = (expr while_builder scope (String, SCall("print", [(String, SStringLit(" "))])) the_function) in
               let rest_list' = L.build_load rest_list "rest_list" while_builder in
               let cdr_ptr = L.build_struct_gep rest_list' 1 "tmp" while_builder in
               let next_list = L.build_load cdr_ptr "next_lst" while_builder in 
@@ -536,7 +633,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
               (* Generate predicate code in pred_bb *)
               let pred_builder = L.builder_at_end context pred_bb in
               (* check if empty list *)
-              (* let (_, curr_list) = (expr while_builder scope (fst e, SUnop(Cdr, e))) in *)
               let rest_list' = L.build_load rest_list "rest_list" pred_builder in
               let list_ptr = L.build_struct_gep rest_list' 2 "tmp" pred_builder in
               let list_val = L.build_load list_ptr "tmp" pred_builder in
@@ -553,7 +649,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         in (scope, print_helper (fst e) e' builder)
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
-        let llargs = List.rev (List.map snd (List.map (expr builder scope) (List.rev args))) in
+        let llargs = List.rev (List.map snd (List.map (fun x -> expr builder scope x the_function) (List.rev args))) in
         let result = (match fdecl.styp with 
                         A.Void -> ""
                       | _ -> f ^ "_result") 
@@ -562,12 +658,12 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
 
     (* declare variable; remember its value in a map, can only be called on 
        variables that have not previously been defined in the scope *)
-      let add_variable (scope: var_table) (t : A.typ) n e builder =
+      let add_variable (scope: var_table) (t : A.typ) n e builder the_function =
       let _ = dont_find_variable scope n in
       let ltype = ltype_of_typ t in
       let (scope, e') = let (_, ex) = e in (match ex with
           SNoexpr -> (scope, L.const_null ltype)
-        | _ -> expr builder scope e)
+        | _ -> expr builder scope e the_function)
       in L.set_value_name n e';
       let l_var = L.build_alloca ltype n builder in
       let _ = L.build_store e' l_var builder in
@@ -580,26 +676,27 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
        the statement's successor (i.e., the next instruction will be built
        after the one generated by this call) *)
     (* Imperative nature of statement processing entails imperative OCaml *)
-    let rec stmt builder scope fdecl = function
+    let rec stmt builder scope fdecl = 
+      let (the_function, _) = StringMap.find fdecl.sfname function_decls in
+      function
 	    SBlock sl ->
         let scope' = {
           variables = StringMap.empty;
           parent = Some(scope);
         } in
-        let (_, builder) = List.fold_left (fun (s, b) curr -> (stmt b s fdecl curr)) (scope', builder) sl in (scope, builder)
+        let (_, builder) = List.fold_left (fun (s, b) curr -> (stmt b s fdecl curr)) (scope', builder) sl 
+        in (scope, builder)
         (* let (_, builder) = List.fold_left stmt (scope', builder, fdecl) sl in (scope, builder) *)
         (* Generate code for this expression, return resulting builder *)
-      | SExpr e -> let (scope, _) = expr builder scope e in (scope, builder) 
-      | SVar (v) -> add_variable scope v.styp v.svname v.svalue builder
-        (* let (s, b) = add_variable scope v.styp v.svname v.svalue builder in
-        dump_scope s ("<var>") *)
+      | SExpr e -> let (scope, _) = expr builder scope e the_function in (scope, builder) 
+      | SVar (v) -> add_variable scope v.styp v.svname v.svalue builder the_function
       | SReturn e -> 
         let _ = match fdecl.styp with
           (* Special "return nothing" instr *)
           A.Void -> L.build_ret_void builder
           (* Build return statement *)
           | _ ->
-          let (_, e') = expr builder scope e in L.build_ret e' builder
+          let (_, e') = expr builder scope e the_function in L.build_ret e' builder
         in (scope, builder)
       (* The order that we create and add the basic blocks for an If statement
       doesnt 'really' matter (seemingly). What hooks them up in the right order
@@ -607,7 +704,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       they don't already have a terminator) and the build_cond_br function at
       the end, which adds jump instructions to the "then" and "else" basic blocks *)
       | SIf (predicate, then_stmt, else_stmt) ->
-        let (scope, bool_val) = expr builder scope predicate in
+        let (scope, bool_val) = expr builder scope predicate the_function in
          (* Add "merge" basic block to our function's list of blocks *)
 	      let merge_bb = L.append_block context "merge" the_function in
          (* Partial function used to generate branch to merge block *)
@@ -649,7 +746,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
 
         (* Generate the predicate code in the predicate block *)
         let pred_builder = L.builder_at_end context pred_bb in
-        let (scope, bool_val) = expr pred_builder scope predicate in
+        let (scope, bool_val) = expr pred_builder scope predicate the_function in
 
         (* Hook everything up *)
         let merge_bb = L.append_block context "merge" the_function in
@@ -669,9 +766,9 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       parent = None;
     } in
 
-    let (global_scope, builder) = List.fold_left 
-      (fun (global_scope, builder) (x : svdecl) -> add_variable global_scope x.styp x.svname x.svalue builder) 
-      (global_scope, builder) vdecls
+    let (global_scope, program_builder) = List.fold_left 
+      (fun (global_scope', program_builder') (x : svdecl) -> add_variable global_scope' x.styp x.svname x.svalue program_builder' the_function) 
+      (global_scope, program_builder) vdecls
     in
 
     (* wrapper function for build_program, creates global scope *)
@@ -689,7 +786,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       let scope = 
         let add_formal scope (t, n) p = 
           let () = L.set_value_name n p in
-          let var = L.build_alloca (ltype_of_typ t) n func_builder in
+          let var = L.build_malloc (ltype_of_typ t) n func_builder in
           let _  = L.build_store p var func_builder in
           { scope with variables = StringMap.add n var scope.variables }
         in
@@ -713,7 +810,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
     in
 
     (* add a return if the last block falls off the end *)
-    add_terminal builder (L.build_ret (L.const_int i32_t 0))
+    add_terminal program_builder (L.build_ret (L.const_int i32_t 0))
   in
 
   build_program;

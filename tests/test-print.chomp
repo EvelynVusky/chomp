@@ -1,0 +1,22 @@
+int main() {
+    print(1);
+    print(true);
+    print('a');
+    print("hello");
+    print([1, 2, 3]);
+    print({{0}});
+    print({{0101}});
+    print({{01101111}});
+    print({{1010101010001111}});
+
+    println(1);
+    println(true);
+    println('a');
+    println("hello");
+    println([1, 2, 3]);
+    println({{0}});
+    println({{0101}});
+    println({{01101111}});
+    println({{1010101010001111}});
+    return 0;
+}

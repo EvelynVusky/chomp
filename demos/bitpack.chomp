@@ -1,0 +1,52 @@
+int pack(char in1, char in2, int age, int id, int gpa, char st1, char st2) {
+    /* convert 2 initial chars into nibbles & pack into 1 byte */
+    nibble in1_new = charToNibble(in1);
+    nibble in2_new = charToNibble(in2);
+    byte in_new = in1_new >< in2_new;
+
+    /* convert integers into bytes */
+    byte age_new = intToByte(age);
+    nibble id_new = intToNibble(id);
+    nibble gpa_new = intToNibble(gpa);
+
+    /* convert 2 class standing chars into nibbles & pack into 1 byte */
+    nibble st1_new = charToNibble(st1);
+    nibble st2_new = charToNibble(st2);
+    byte st_new = st1_new >< st2_new;
+
+    /* pack into 2 words */
+    word w1 = in_new >< age_new;
+    word w2 = (id_new >< gpa_new) >< st_new;
+    
+    return w1 >< w2;
+}
+
+int main() {
+    /* initials: ASCII of 0-255 */
+    char first_initial = 'a';
+    char last_initial = 'd';
+    
+    /* age: 0-255 */
+    int age = 23;
+    
+    /* id: 0-255 */
+    int id = 125; 
+    
+    /* gpa: 0-255 */
+    int gpa = 98;
+    
+    /* class_standing_ : ACII of 0-255 */
+    char class_standing_fst = 'S';
+    char class_standing_snd = 'E';
+    
+    /* bitpacked student info */
+    int student = pack(first_initial, last_initial, age, id, gpa, class_standing_fst, class_standing_snd);
+    
+    /* around 14,000 undergrad students at Tufts */
+    int i;
+    for (i = 0; i < 14000; i = i + 1) {
+        print(student);
+    }
+    
+    return 0;
+}

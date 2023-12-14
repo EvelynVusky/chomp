@@ -1,0 +1,14 @@
+int main() {
+    bit a = {{1}};
+    nibble b = {{0101}};
+    byte c = {{11100010}};
+    word d = {{0111000110011110}};
+    
+    println(a << 2);
+    println(b << 24);
+    println(c >> 3);
+    println(d >> 11);
+    println(b >> 24);
+    
+    return 0;
+}

@@ -1,0 +1,7 @@
+string foo (int a, string b) {
+    return b;
+}
+int main () {
+    string f = foo (1);
+    return 0;
+}

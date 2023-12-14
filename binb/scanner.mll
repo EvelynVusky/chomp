@@ -71,7 +71,6 @@ rule token = parse
 | '\'' (_ as c) '\''        { CHARLIT(c) }      (* char literal *)
 | "true"                    { BLIT(true) }
 | "false"                   { BLIT(false)}
-| "null"                    { NULL       }
 | digits as lxm             { LITERAL(int_of_string lxm) }
 | '\"' (chars+ as s) '\"'   { STRINGLIT(s) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }

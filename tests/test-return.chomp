@@ -1,0 +1,63 @@
+char return_char() {
+    return 'a';
+}
+
+bool return_bool() {
+    return false;
+}
+
+string return_string() {
+    return "hey";
+}
+
+void return_void() {
+    return;
+}
+
+word return_bin() {
+    return {{1010101010101010}};
+}
+
+int return_int() {
+    return 4;
+}
+
+list int return_list_int() {
+    return [1, 2, 3, 4];
+}
+
+list string return_list_string() {
+    return ["hi", "hello", "bye"];
+}
+
+list bool return_list_bool() {
+    return [true, false, true];
+}
+
+list char return_list_char() {
+    return ['a', 'b', 'c'];
+}
+
+list bit return_list_bit() {
+    return [{{1}}, {{0}}, {{1}}];
+}
+
+list bool return_list_empty() {
+    return [];
+}
+
+int main() {
+    println(return_char());
+    println(return_bool());
+    println(return_string());
+    return_void();
+    println(return_bin());
+    println(return_int());
+    println(return_list_int());
+    println(return_list_string());
+    println(return_list_bool());
+    println(return_list_char());
+    println(return_list_bit());
+    println(return_list_empty());
+    return 0;
+}

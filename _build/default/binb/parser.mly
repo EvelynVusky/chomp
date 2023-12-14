@@ -14,7 +14,6 @@
 %token <string> ID
 %token <string> BINLIT
 %token <string> STRINGLIT
-%token NULL
 %token EOF
 
 %start program
@@ -118,7 +117,6 @@ expr:
   | LBRACK l1 = list_fields RBRACK { List (l1) }
   | BINLIT           { BinLit ($1)            }
   | STRINGLIT        { StringLit ($1)         }
-  | NULL             { Null                   }
   | BINNOT expr      { Unop(Binnot, $2)       }
   | expr BINAND expr { Binop($1, Binand, $3)  } 
   | expr LSHIFT expr { Binop($1, Lshift, $3)  }

@@ -16,7 +16,6 @@ type token =
   | RBRACE
   | PLUS
   | OR
-  | NULL
   | NOT
   | NIBBLE
   | NEQ

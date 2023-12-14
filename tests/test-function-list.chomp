@@ -1,0 +1,12 @@
+void foo(list int l, list string s, list char c) {
+    println(l);
+    println(s);
+    println(c);
+} 
+
+int main() {
+    list int a = [1, 2, 3];
+    list string s = ["hello", "world"];
+    foo(a, s, []);
+    return 0;
+}
