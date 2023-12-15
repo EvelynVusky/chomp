@@ -20,7 +20,7 @@ run: all
 	dune exec --no-build toplevel $(FILENAME).chomp > $(FILENAME).ll
 	llc -relocation-model=pic $(FILENAME).ll
 	gcc $(FILENAME).s -o $(FILENAME).exe linked_funcs.o
-	./$(FILENAME).exe
+	# ./$(FILENAME).exe
 	
 linked_funcs : linked_funcs.c
 	cc -o linked_funcs -DBUILD_TEST linked_funcs.c

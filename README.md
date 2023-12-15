@@ -21,7 +21,6 @@
 - test-builtins-get: tests polymorphic setBit, getBit, and flipBit builtin functions with 
     every possible type of input
 - test-print: tests the polymorphic print and println functions for all types
-
 - test-add: prints the addition of 2 integer literals & an integer variable
 - test-sub: prints the addition of 2 integer literals & the combination of an integer literal and an integer variable
 - test-mult: prints multiplication of 2 integer literals & 2 integer variables
@@ -32,15 +31,12 @@
 - test-shift: prints the lshift (<<) & rshift (>>) of bin types
 - test-comp: prints the greater (>), geq (>=), lesser (<) and leq (<=) of a combination of 2 integer literals & variables
 - test-concat: assigns the concatenation (><) of every combination of bin type to its appropriate resulting bin type & prints its value
-
 - test-function-list: tests passing in lists of different types and empty 
                       list into a function and printing it
 - test-function-list-ret: tests returning a list from a function and printing it
 - test-function-formals: prints all formals passed to a function, tests all types 
 - test-function-ret: prints value that function returns
-
 - test-id-scope: give 3 variables that are in different scopes the same name and print their different values
-
 - test-block: creates a block, declares a variable within the block and performs arithmetic operations on the variable in the block and on a variable outside of the block
 - test-block-for: creates a for loop within a block and performs arithmetic operations on variables and prints within the for loop
 - test-for: performs arithmetic operations on a variable within a for loop
@@ -65,21 +61,17 @@
 - fail-shift: fails when calling a shift (<<) on 2 integers
 - fail-concat: assigns the result of the concat (><) of 2 nibbles to a nibble, when it's supposed to return a byte
 - fail-main: creates a main function with a "void" return type
-
 - fail-list-list: fails when trying to create a list of lists
 - fail-list: fails when trying to give car result a list type
 - fail-list-ty: fails when trying to put a bit and nibble in the same list
 - fail-list-empty: fails when trying to cons to empty list of wrong type
-
 - fail-function-formal: fails when calling a function with the wrong number of formals
 - fail-function-formal-ty: fails when calling a function with a formal of the wrong type
 - fail-function-ret: fails when returning the wrong type for a function
 - fail-function-no-return: fails when missing a return statment
 - fail-function-scope: tries to reference variable that is not in functions scope
-
 - fail-id-dup-glob: fails to give a global variable and function the same name
 - fail-id-dup-loc: fails to give local variable and function the same name
-
 - fail-list-scope: fails when trying to reference a variable in a different scope to a list in main   
 - fail-block: fails when trying to reference a variable declared in a block 
 - fail-for: fails when trying to create a for loop without initializing the counter in the for loop header before the for loop
@@ -93,15 +85,16 @@
 Compile the compiler into an executable by running: 
     make all
 
-## TODO ##
-
 Run all tests in our testsuite by running:
     make test
-Note: this runs 2 pytest files run_tests.py & run_semant_tests.py, and leaves
-command intermediary files. This was successful if it says 5 tests were passeed, 
-followed by 2 tests were passed. 
+Note: This was successful if OK is printed after every test name. 
 
-Run a single test by running:
+To compile a single file into an executable:
     make run FILENAME=<filename>
 Note: <filename> must only contain the name of the file without the .chomp extension,
-and this command leaves all intermediary files. This is successful if there's no error & the expected output is printed to stdout.
+and this command leaves all intermediary files. This is successful if there's no error.
+To run this file, use the following command: ./<filename>.exe
+
+## Where to find our demos ##
+Demos can be found under the "demos" subdirectory, and the "make run FILENAME=<filename>"
+command can be used to run it.

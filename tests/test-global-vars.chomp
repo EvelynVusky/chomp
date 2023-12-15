@@ -4,11 +4,15 @@ int b = 4;
 void foo() {
     println(b);
     println(s);    
+    println(c);
 }
+
+int c = 5;
 
 int main() {
     println(b);
     println(s);
+    println(c);
     foo();
     return 0;
 }

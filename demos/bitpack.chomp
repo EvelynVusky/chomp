@@ -34,7 +34,10 @@ int main() {
     int student = pack(first_initial, last_initial, age, grade, credits);
     
     /* around 14,000 undergrad students at Tufts */
-    print(student);
+    int i;
+    for (i = 0; i < 14000; i = i + 1) {
+        print(student);
+    }
     
     return 0;
 }

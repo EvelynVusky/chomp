@@ -244,7 +244,7 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
 	      SLiteral i -> (scope, L.const_int i32_t i)
       | SStringLit s -> (scope, L.build_global_stringptr s "string" builder)
       | SBoolLit b -> (scope, L.const_int i1_t (if b then 1 else 0))
-      | SNoexpr -> (scope, L.const_int i32_t 0)
+      | SNoexpr -> raise (TypeError "Cannot use unitinialized variable")
       | SCharLit c -> (scope, L.const_int i32_t (Char.code c))
       | SId s -> (scope, L.build_load (find_variable scope s) s builder)
       | SAssign (s, e) -> let (scope, e') = expr builder scope e the_function in
@@ -541,7 +541,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
               let pred_bb = L.append_block context "pred" the_function in
               let _ = L.build_br pred_bb builder' in
               
-              (* call car, print car, print ", " *)
               let body_bb = L.append_block context "while_body" the_function in
               let while_builder = L.builder_at_end context body_bb in
               let rest_list' = L.build_load rest_list "rest_list" while_builder in
@@ -612,7 +611,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         } in
         let (_, builder) = List.fold_left (fun (s, b) curr -> (stmt b s fdecl curr)) (scope', builder) sl 
         in (scope, builder)
-        (* let (_, builder) = List.fold_left stmt (scope', builder, fdecl) sl in (scope, builder) *)
         (* Generate code for this expression, return resulting builder *)
       | SExpr e -> let (scope, _) = expr builder scope e the_function in (scope, builder) 
       | SVar (v) -> add_variable scope v.styp v.svname v.svalue builder the_function
@@ -698,7 +696,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
         let (scope, e') = (match (snd vdecl.svalue) with
           SNoexpr -> (scope, L.const_null (ltype_of_typ vdecl.styp))
           | _ -> expr builder scope vdecl.svalue the_function) in
-        (* let (scope, e') = (expr builder scope vdecl.svalue the_function) in *)
         let global = L.define_global vdecl.svname e' the_module
         in { scope with variables = StringMap.add vdecl.svname global scope.variables }
       in
@@ -706,11 +703,6 @@ let translate ((vdecls : svdecl list), (fdecls : sfdecl list)) =
       (fun global_scope' (x : svdecl) -> add_globals global_scope' program_builder x) 
       global_scope vdecls
     in
-
-    (* let (global_scope, program_builder) = List.fold_left 
-      (fun (global_scope', program_builder') (x : svdecl) -> add_variable global_scope' x.styp x.svname x.svalue program_builder' the_function) 
-      (global_scope, program_builder) vdecls
-    in *)
 
     (* wrapper function for build_program, creates global scope *)
     let build_function_body fdecl = 

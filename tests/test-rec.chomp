@@ -1,0 +1,12 @@
+void printi(list char i) {
+    if (!isEmpty(i)) {
+        println(car i);
+        printi(cdr i);
+    }
+}
+
+int main() {
+    list char i = ['a', 'b', 'c'];
+    printi(i);
+    return 0;
+}

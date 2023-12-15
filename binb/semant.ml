@@ -46,7 +46,6 @@ let check (vdecls, fdecls) =
         ("flipBit", [Bin; Int], Bin);
         ("getBit", [Bin; Int], Bit);
         ("toChar", [Bin], Char);
-        (* ("bitPack", [Word; Word], Int); *)
         ("print", [Poly], Void);
         ("println", [Poly], Void);
         ("isEmpty", [List Poly], Bool);
@@ -176,7 +175,6 @@ let check (vdecls, fdecls) =
   (************************** Convert Exprs **************************)
   
   (* converts expr from AST to SAST form *)
-  (* must convert poly type here *)
   let rec convert_expr scope e = match e with
     Literal l -> (scope, (Int, SLiteral(l)))
     | BoolLit b -> (scope, (Bool, SBoolLit(b)))
@@ -207,7 +205,7 @@ let check (vdecls, fdecls) =
           | Binor | Binand | Binxor  when both_bin -> (get_smaller_bin ty1 ty2)
           | Concat when both_bin -> (match (ty1, ty2) with
             (Bit, Bit) -> Nibble
-            | (Bit, Nibble) -> Byte
+            | (Bit, Nibble) -> Byte 
             | (Bit, Byte) -> Word
             | (Nibble, Bit) -> Byte
             | (Nibble, Nibble) -> Byte
@@ -287,7 +285,6 @@ let check (vdecls, fdecls) =
         let ty = (match et with
           List(Poly) -> if (name = "print" || name = "println") then et else ft
           | _ -> et)
-        (* in let _ = raise (InvalidError (name ^ string_of_typ ft ^ " " ^ string_of_typ et)) *)
         in (ty, e')
       in 
       let check_list_size l1 l2 = 
@@ -450,9 +447,7 @@ let check (vdecls, fdecls) =
   (************************** Driver code **************************)
 
   (* adds built in functions to scope *)
-  (* NOTE: it feels like we're treating scope as an obj everywhere except here *)
   let scope = {variables = built_in_funcs; parent = None;} in
-  (* let scope = scope_obj ref in *)
 
   (* add global variables to same scope *)
   let scope, globals' = List.fold_left check_vdecls (scope, []) vdecls in
